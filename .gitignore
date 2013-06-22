@@ -11,3 +11,8 @@
 *.lai
 *.la
 *.a
+
+# Flex and Bison files
+src/parser.cpp
+src/parser.hpp
+src/lexical.cpp
