@@ -12,6 +12,12 @@
 *.la
 *.a
 
+# Vim
+*.swp
+
+# Binaries
+src/tegel
+
 # Flex and Bison files
 src/parser.cpp
 src/parser.hpp
