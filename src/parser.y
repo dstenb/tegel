@@ -17,6 +17,7 @@ void yyerror(const char *);
 %token T_IDENTIFIER
 %token T_FOR T_IN T_ENDFOR
 %token T_IF T_ELIF T_ELSE T_ENDIF
+%token T_BOOL T_INT T_STRING
 %token T_BOOL_TYPE T_INT_TYPE T_STRING_TYPE
 
 %start file
