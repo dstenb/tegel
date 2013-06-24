@@ -14,6 +14,8 @@ INTEGER -?(0|[1-9][0-9]*)
 "arg"                return T_ARGUMENT;
 "="                  return T_ASSIGNMENT;
 "%%"                 return T_SEPARATOR;
+"{"                  return T_L_BRACE;
+"}"                  return T_R_BRACE;
 
 "bool"               { yylval.is_list = false ; return T_BOOL_TYPE; }
 "int"                { yylval.is_list = false ; return T_INT_TYPE; }
