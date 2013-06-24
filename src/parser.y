@@ -21,12 +21,12 @@ void yyerror(const char *);
 }
 
 %token END 0 "end of file"
-%token ARGUMENT
+%token ARGUMENT "argument"
 %token SEPARATOR
 %token CONTROL
-%token L_BRACE R_BRACE SEMI_COLON
-%token ASSIGNMENT
-%token<string> IDENTIFIER
+%token L_BRACE "{" R_BRACE "}" SEMI_COLON ";"
+%token ASSIGNMENT "="
+%token<string> IDENTIFIER "identifier"
 %token FOR IN ENDFOR
 %token IF ELIF ELSE ENDIF
 
