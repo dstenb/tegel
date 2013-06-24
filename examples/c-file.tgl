@@ -1,0 +1,33 @@
+arg string[] global_includes {
+	info = "Relative includes";
+	cmd = [ "g", "global=" ];
+	default = [];
+}
+
+arg string[] relative_includes {
+	info = "Relative includes";
+	cmd = [ "r", "relative=" ];
+	default = [];
+}
+
+arg bool main {
+	info = "Generate main function?";
+	cmd = [ "m", "main=" ];
+	default = true;
+}
+
+%%
+% for h in [ "stdlib.h", "stdio.h" ] + global_includes
+#include <{{ $h }}>
+% endfor
+
+% for h in relative_includes
+#include <{{ $h }}>
+% endfor
+
+% if main
+int main(int argc, char **argv)
+{
+	return 0;
+}
+% endif
