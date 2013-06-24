@@ -12,6 +12,8 @@ INTEGER -?(0|[1-9][0-9]*)
 
 %%
 
+[ \t]*               // Eat up all whitespace
+
 "arg"                return ARGUMENT;
 "="                  return ASSIGNMENT;
 "%%"                 return SEPARATOR;
