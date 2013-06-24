@@ -1,5 +1,6 @@
 %{
 #include "parser.hpp"
+#include "type.hpp"
 #include <iostream>
 
 %}
@@ -17,13 +18,13 @@ INTEGER -?(0|[1-9][0-9]*)
 "{"                  return T_L_BRACE;
 "}"                  return T_R_BRACE;
 
-"bool"               { yylval.is_list = false ; return T_BOOL_TYPE; }
-"int"                { yylval.is_list = false ; return T_INT_TYPE; }
-"string"             { yylval.is_list = false ; return T_STRING_TYPE; }
+"bool"               { yylval.type = BoolType; return T_TYPE; }
+"int"                { yylval.type = IntType; return T_TYPE; }
+"string"             { yylval.type = StringType; return T_TYPE; }
 
-"bool[]"             { yylval.is_list = true ; return T_BOOL_TYPE; }
-"int[]"              { yylval.is_list = true ; return T_INT_TYPE; }
-"string[]"           { yylval.is_list = true ; return T_STRING_TYPE; }
+"bool[]"             { yylval.type = BoolListType; return T_TYPE; }
+"int[]"              { yylval.type = IntListType; return T_TYPE; }
+"string[]"           { yylval.type = StringListType; return T_TYPE; }
 
 "true"               { std::cerr << "Bool(true)\n";
 			yylval.boolean = true; return T_BOOL; }

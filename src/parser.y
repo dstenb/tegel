@@ -1,17 +1,23 @@
 %{
 #include <iostream>
 
+
 extern int yylex();
 void yyerror(const char *);
 %}
 
 %error-verbose
 
+%code requires {
+	#include "type.hpp"
+}
+
 %union {
 	char *string;
 	bool boolean;
 	int integer;
 	bool is_list;
+	Type type;
 }
 
 %token END 0 "end of file"
@@ -28,7 +34,7 @@ void yyerror(const char *);
 %token<integer> T_INT
 %token<string> T_STRING
 
-%token T_BOOL_TYPE T_INT_TYPE T_STRING_TYPE
+%token<type> T_TYPE
 
 %start file
 
@@ -42,8 +48,12 @@ header_block : header_block header_item { }
 	     |
 	     ;
 
-header_item :
+header_item : arg
 	    ;
+
+arg : T_ARGUMENT T_TYPE T_IDENTIFIER T_L_BRACE T_R_BRACE {
+    std::cout << "type: " << type_to_str($2) << std::endl;
+}
 
 %%
 
