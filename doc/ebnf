@@ -3,8 +3,8 @@ file               = header-block , "%%\n" , body-block |
 
 header-block       = header-block , header-item | header-item | epsilon ;
 header-item        = arg
-header-item-params = header-items-params , hparam | hparam | epsilon ;
-hparam             = identifier , "=" , constant , ";" ;
+header-item-params = header-item-params , param | param | epsilon ;
+param              = identifier , "=" , constant , ";" ;
 
 arg                = "arg" , type , identifier , "{" , header-item-params , "}" ;
 
