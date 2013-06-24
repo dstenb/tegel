@@ -12,28 +12,28 @@ INTEGER -?(0|[1-9][0-9]*)
 
 %%
 
-"arg"                return T_ARGUMENT;
-"="                  return T_ASSIGNMENT;
-"%%"                 return T_SEPARATOR;
-"{"                  return T_L_BRACE;
-"}"                  return T_R_BRACE;
+"arg"                return ARGUMENT;
+"="                  return ASSIGNMENT;
+"%%"                 return SEPARATOR;
+"{"                  return L_BRACE;
+"}"                  return R_BRACE;
 
-"bool"               { yylval.type = BoolType; return T_TYPE; }
-"int"                { yylval.type = IntType; return T_TYPE; }
-"string"             { yylval.type = StringType; return T_TYPE; }
+"bool"               { yylval.type = BoolType; return TYPE; }
+"int"                { yylval.type = IntType; return TYPE; }
+"string"             { yylval.type = StringType; return TYPE; }
 
-"bool[]"             { yylval.type = BoolListType; return T_TYPE; }
-"int[]"              { yylval.type = IntListType; return T_TYPE; }
-"string[]"           { yylval.type = StringListType; return T_TYPE; }
+"bool[]"             { yylval.type = BoolListType; return TYPE; }
+"int[]"              { yylval.type = IntListType; return TYPE; }
+"string[]"           { yylval.type = StringListType; return TYPE; }
 
 "true"               { std::cerr << "Bool(true)\n";
-			yylval.boolean = true; return T_BOOL; }
+			yylval.boolean = true; return BOOL; }
 "false"              { std::cerr << "Bool(false)\n";
-			yylval.boolean = false; return T_BOOL; }
+			yylval.boolean = false; return BOOL; }
 
-{IDENTIFIER}         { yylval.string = strdup(yytext); return T_IDENTIFIER; }
+{IDENTIFIER}         { yylval.string = strdup(yytext); return IDENTIFIER; }
 
 {INTEGER}            { std::cerr << "Integer(" << atoi(yytext) << ")\n";
 			yylval.integer = atoi(yytext);
-			return T_INT; } // TODO yylval
+			return INT; } // TODO yylval
 %%

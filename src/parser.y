@@ -21,20 +21,20 @@ void yyerror(const char *);
 }
 
 %token END 0 "end of file"
-%token T_ARGUMENT
-%token T_SEPARATOR
-%token T_CONTROL
-%token T_L_BRACE T_R_BRACE
-%token T_ASSIGNMENT
-%token<string> T_IDENTIFIER
-%token T_FOR T_IN T_ENDFOR
-%token T_IF T_ELIF T_ELSE T_ENDIF
+%token ARGUMENT
+%token SEPARATOR
+%token CONTROL
+%token L_BRACE R_BRACE
+%token ASSIGNMENT
+%token<string> IDENTIFIER
+%token FOR IN ENDFOR
+%token IF ELIF ELSE ENDIF
 
-%token<boolean> T_BOOL
-%token<integer> T_INT
-%token<string> T_STRING
+%token<boolean> BOOL
+%token<integer> INT
+%token<string> STRING
 
-%token<type> T_TYPE
+%token<type> TYPE
 
 %start file
 
@@ -51,8 +51,9 @@ header_block : header_block header_item { }
 header_item : arg
 	    ;
 
-arg : T_ARGUMENT T_TYPE T_IDENTIFIER T_L_BRACE T_R_BRACE {
+arg : ARGUMENT TYPE IDENTIFIER L_BRACE R_BRACE {
     std::cout << "type: " << type_to_str($2) << std::endl;
+    std::cout << "identifier: " << $3 << std::endl;
 }
 
 %%
