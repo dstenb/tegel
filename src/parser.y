@@ -6,6 +6,9 @@ void yyerror(const char *);
 %}
 
 %union {
+	char *string;
+	bool boolean;
+	int integer;
 	bool is_list;
 }
 
@@ -14,7 +17,7 @@ void yyerror(const char *);
 %token T_CONTROL
 %token T_L_BRACE T_R_BRACE
 %token T_ASSIGNMENT
-%token T_IDENTIFIER
+%token<string> T_IDENTIFIER
 %token T_FOR T_IN T_ENDFOR
 %token T_IF T_ELIF T_ELSE T_ENDIF
 %token T_BOOL T_INT T_STRING
