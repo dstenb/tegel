@@ -1,0 +1,11 @@
+file               = header-block , "%%\n" , body-block |
+                       header-block , "%%" ;
+
+header-block       = header-block , header-item | header-item | epsilon ;
+header-item        = arg
+
+arg                = "arg" , type , identifier , "{" , arg-param-list , "}" ;
+arg-param-list     = arg-param-list , arg-param | arg-param | epsilon ;
+arg-param          = identifier , "=" , constant , ";" ;
+
+type               = ("string" | "bool" | "int")[ "[]" ] ;
