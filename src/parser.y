@@ -24,7 +24,7 @@ void yyerror(const char *);
 %token ARGUMENT
 %token SEPARATOR
 %token CONTROL
-%token L_BRACE R_BRACE
+%token L_BRACE R_BRACE SEMI_COLON
 %token ASSIGNMENT
 %token<string> IDENTIFIER
 %token FOR IN ENDFOR
@@ -51,9 +51,19 @@ header_block : header_block header_item { }
 header_item : arg
 	    ;
 
-arg : ARGUMENT TYPE IDENTIFIER L_BRACE R_BRACE {
+arg : ARGUMENT TYPE IDENTIFIER L_BRACE header_item_params R_BRACE  {
     std::cout << "type: " << type_to_str($2) << std::endl;
     std::cout << "identifier: " << $3 << std::endl;
+}
+
+header_item_params : header_item_params param { }
+		   | param { }
+		   |
+		   ;
+
+param              : IDENTIFIER ASSIGNMENT IDENTIFIER SEMI_COLON {
+                                           /* ^ -> constant */
+		   std::cout << "param(" << $1 << "=" << $3 << ")\n";
 }
 
 %%

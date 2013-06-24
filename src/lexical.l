@@ -19,6 +19,7 @@ INTEGER -?(0|[1-9][0-9]*)
 "%%"                 return SEPARATOR;
 "{"                  return L_BRACE;
 "}"                  return R_BRACE;
+";"                  return SEMI_COLON;
 
 "bool"               { yylval.type = BoolType; return TYPE; }
 "int"                { yylval.type = IntType; return TYPE; }
