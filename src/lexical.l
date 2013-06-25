@@ -12,6 +12,7 @@ INTEGER -?(0|[1-9][0-9]*)
 
 %%
 
+#.*\n                // Comment
 [ \t\n]*             // Eat up all whitespace
 
 "arg"                return ARGUMENT;
