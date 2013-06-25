@@ -9,6 +9,8 @@ void yyerror(const char *);
 %error-verbose
 
 %code requires {
+	#include "constant.hpp"
+	#include "symbol.hpp"
 	#include "type.hpp"
 }
 
@@ -18,6 +20,7 @@ void yyerror(const char *);
 	int integer;
 	bool is_list;
 	Type type;
+	ConstantData *constant;
 }
 
 %token END 0 "end of file"
@@ -36,6 +39,10 @@ void yyerror(const char *);
 
 %token<type> TYPE
 
+%type<constant> constant
+%type<constant> scalar_constant
+%type<constant> list_constant
+
 %start file
 
 %%
@@ -51,10 +58,23 @@ header_block_p : header_block_p header_item { }
 	       | header_item { }
 	       ;
 
-header_item : arg
+header_item :
+	    arg
+	    {
+	      // TODO: add to argument vector
+	      // TODO: add to symbol table
+	    }
 	    ;
 
 arg : ARGUMENT TYPE IDENTIFIER L_BRACE header_item_params R_BRACE  {
+    // TODO:
+    // $$ = new Argument($3, $2);
+    // try {
+    // $$->add_parameters($5)
+    // } catch(const ParameterException &e) {
+    //
+    // }
+    // Free data (e.g. $3);
     std::cout << "type: " << type_to_str($2) << std::endl;
     std::cout << "identifier: " << $3 << std::endl;
 }
@@ -68,15 +88,15 @@ header_item_params_p : header_item_params_p param { }
 		   ;
 
 param : IDENTIFIER ASSIGNMENT constant SEMI_COLON {
-		   std::cout << "param(" << $1 << "=" << ")\n";
+	std::cout << "param(" << $1 << "=" << *$3 << ")\n";
 }
 
-constant : scalar_constant { }
-	 | list_constant { }
+constant : scalar_constant { $$ = $1; }
+	 | list_constant { $$ = $1; }
 
-scalar_constant : BOOL { }
-		| INT { }
-		| STRING { }
+scalar_constant : BOOL { $$ = new BoolConstantData($1); }
+		| INT { $$ = new IntConstantData($1); }
+		| STRING { $$ = new StringConstantData($1); }
 		;
 
 list_constant : L_BRACKET list_values R_BRACKET { }
@@ -86,7 +106,5 @@ list_constant : L_BRACKET list_values R_BRACKET { }
 list_values : list_values scalar_constant { }
 	    | scalar_constant { }
 	    ;
-
-
 
 %%
