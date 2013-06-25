@@ -32,14 +32,11 @@ INTEGER -?(0|[1-9][0-9]*)
 "int[]"              { yylval.type = IntListType; return TYPE; }
 "string[]"           { yylval.type = StringListType; return TYPE; }
 
-"true"               { std::cerr << "Bool(true)\n";
-			yylval.boolean = true; return BOOL; }
-"false"              { std::cerr << "Bool(false)\n";
-			yylval.boolean = false; return BOOL; }
+"true"               { yylval.boolean = true; return BOOL; }
+"false"              { yylval.boolean = false; return BOOL; }
 
 {IDENTIFIER}         { yylval.string = strdup(yytext); return IDENTIFIER; }
 
-{INTEGER}            { std::cerr << "Integer(" << atoi(yytext) << ")\n";
-			yylval.integer = atoi(yytext);
-			return INT; } // TODO yylval
+{INTEGER}            { yylval.integer = atoi(yytext); return INT; }
+
 %%
