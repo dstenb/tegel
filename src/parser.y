@@ -67,10 +67,25 @@ header_item_params_p : header_item_params_p param { }
 		   | param { }
 		   ;
 
-param              : IDENTIFIER ASSIGNMENT STRING SEMI_COLON {
-                                           /* ^ -> constant */
-		   std::cout << "param(" << $1 << "=" << $3 << ")\n";
+param : IDENTIFIER ASSIGNMENT constant SEMI_COLON {
+		   std::cout << "param(" << $1 << "=" << ")\n";
 }
+
+constant : scalar_constant { }
+	 | list_constant { }
+
+scalar_constant : BOOL { }
+		| INT { }
+		| STRING { }
+		;
+
+list_constant : L_BRACKET list_values R_BRACKET { }
+	      | L_BRACKET R_BRACKET {}
+	      ;
+
+list_values : list_values scalar_constant { }
+	    | scalar_constant { }
+	    ;
 
 
 
