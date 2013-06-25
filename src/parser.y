@@ -43,10 +43,13 @@ void yyerror(const char *);
 file : header_block
      ;
 
-header_block : header_block header_item { }
-	     | header_item {}
+header_block : header_block_p { }
 	     |
 	     ;
+
+header_block_p : header_block_p header_item { }
+	       | header_item { }
+	       ;
 
 header_item : arg
 	    ;
@@ -56,9 +59,12 @@ arg : ARGUMENT TYPE IDENTIFIER L_BRACE header_item_params R_BRACE  {
     std::cout << "identifier: " << $3 << std::endl;
 }
 
-header_item_params : header_item_params param { }
-		   | param { }
+header_item_params : header_item_params_p { }
 		   |
+		   ;
+
+header_item_params_p : header_item_params_p param { }
+		   | param { }
 		   ;
 
 param              : IDENTIFIER ASSIGNMENT IDENTIFIER SEMI_COLON {
