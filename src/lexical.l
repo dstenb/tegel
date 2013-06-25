@@ -1,5 +1,6 @@
 %{
 #include <iostream>
+#include <cstdarg>
 
 #include "parser.hpp"
 #include "type.hpp"
@@ -7,8 +8,11 @@
 char *string_builder = NULL;
 
 void string_builder_append(const char *s);
-char *string_builder_take(void);
 
+void yyerror(const char *);
+void vyyerror(const char *, ...);
+
+int str_caller; // calling state for str
 %}
 
 %option noyywrap
@@ -43,7 +47,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 "["                  return L_BRACKET;
 "]"                  return R_BRACKET;
 
-"\""                 { BEGIN(str); }
+"\""                 { str_caller = INITIAL; BEGIN(str); }
 
 "bool"               { yylval.type = BoolType; return TYPE; }
 "int"                { yylval.type = IntType; return TYPE; }
@@ -60,18 +64,17 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 {INTEGER}            { yylval.integer = atoi(yytext); return INT; }
 
-<str><<EOF>>         { std::cerr << yylineno << "unclosed\n";  yyterminate(); }
-<str>"\""            { yylval.string = string_builder_take(); return STRING; }
+<str><<EOF>>         { yyerror("syntax error, unmatched '\"'"); yyterminate(); }
+<str>"\""            { yylval.string = string_builder; string_builder = NULL;
+                       BEGIN(str_caller);
+		       return STRING; }
 <str>"\\n"           { string_builder_append("\n"); }
 <str>"\\t"           { string_builder_append("\t"); }
 <str>"\\\""          { string_builder_append("\""); }
 <str>"\\\\"          { string_builder_append("\\"); }
-<str>"\\".           { std::cerr << "unknown escape sequence \\" << yytext <<
-"\n"; }
-
+<str>"\\".           { vyyerror("unknown escape sequence \%s", yytext);
+                       yyterminate(); }
 <str>{UANYN}         { string_builder_append(yytext); }
-
-<str>.               { std::cerr << "okänd: '" << yytext << "'" << std::endl; }
 
 %%
 
@@ -94,9 +97,19 @@ void string_builder_append(const char *s)
 	}
 }
 
-char *string_builder_take(void)
+void yyerror(const char *s)
 {
-	char *p = string_builder;
-	string_builder = NULL;
-	return p;
+	fprintf(stderr, "Error on line %i: %s\n", yylineno, s);
+}
+
+void vyyerror(const char *fmt, ...)
+{
+	va_list val;
+
+	fprintf(stderr, "Error on line %i: ", yylineno);
+
+	va_start(val, fmt);
+	vfprintf(stderr, fmt, val);
+	va_end(val);
+	fprintf(stderr, "\n");
 }

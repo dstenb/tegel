@@ -67,7 +67,7 @@ header_item_params_p : header_item_params_p param { }
 		   | param { }
 		   ;
 
-param              : IDENTIFIER ASSIGNMENT IDENTIFIER SEMI_COLON {
+param              : IDENTIFIER ASSIGNMENT STRING SEMI_COLON {
                                            /* ^ -> constant */
 		   std::cout << "param(" << $1 << "=" << $3 << ")\n";
 }
@@ -75,8 +75,3 @@ param              : IDENTIFIER ASSIGNMENT IDENTIFIER SEMI_COLON {
 
 
 %%
-
-void yyerror(const char *s)
-{
-	std::cerr << "Error: " << s << "\n";
-}
