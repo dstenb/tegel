@@ -25,7 +25,7 @@ void yyerror(const char *);
 %token SEPARATOR
 %token CONTROL
 %token L_BRACE "{" R_BRACE "}" SEMI_COLON ";"
-%token ASSIGNMENT "="
+%token L_BRACKET "[" R_BRACKET "]" ASSIGNMENT "="
 %token<string> IDENTIFIER "identifier"
 %token FOR IN ENDFOR
 %token IF ELIF ELSE ENDIF
@@ -71,6 +71,8 @@ param              : IDENTIFIER ASSIGNMENT IDENTIFIER SEMI_COLON {
                                            /* ^ -> constant */
 		   std::cout << "param(" << $1 << "=" << $3 << ")\n";
 }
+
+
 
 %%
 
