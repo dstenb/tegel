@@ -31,7 +31,7 @@ void vyyerror(const char *, ...);
 	Type type;
 	ConstantData *constant;
 	ScalarConstantData *scalar_const;
-	ListConstantData *scalar_const;
+	ListConstantData *list_const;
 	Argument *argument;
 }
 
@@ -39,7 +39,7 @@ void vyyerror(const char *, ...);
 %token ARGUMENT "argument"
 %token SEPARATOR
 %token CONTROL
-%token L_BRACE "{" R_BRACE "}" SEMI_COLON ";"
+%token L_BRACE "{" R_BRACE "}" SEMI_COLON ";" COMMA ","
 %token L_BRACKET "[" R_BRACKET "]" ASSIGNMENT "="
 %token<string> IDENTIFIER "identifier"
 %token FOR IN ENDFOR

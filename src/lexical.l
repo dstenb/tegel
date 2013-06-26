@@ -47,6 +47,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 ";"                  return SEMI_COLON;
 "["                  return L_BRACKET;
 "]"                  return R_BRACKET;
+","                  return COMMA;
 
 "\""                 { str_caller = INITIAL; BEGIN(str); }
 
