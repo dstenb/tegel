@@ -16,6 +16,7 @@ int str_caller; // calling state for str
 %}
 
 %option noyywrap
+%option yylineno
 
 IDENTIFIER [[:alpha:]]([[:alnum:]]|_)*
 INTEGER -?(0|[1-9][0-9]*)
