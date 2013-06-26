@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <stdexcept>
 #include <vector>
 
 #include "constant.hpp"
@@ -31,7 +32,10 @@ class Symbol
 			: name_(name), type_(t) {}
 		virtual bool is_constant() const = 0;
 
-		string get_name() const;
+		string get_name() const { return name_; }
+		Type get_type() const { return type_; }
+
+		virtual void print(ostream &os) const = 0;
 	private:
 		string name_;
 		Type type_;
@@ -40,10 +44,15 @@ class Symbol
 class Argument : public Symbol
 {
 	public:
+		Argument(const string &name, Type t)
+			: Symbol(name, t) {}
+
 		bool is_constant() const { return true; }
 
-		void add(Param *p);
-		Param *get(const string &);
+		void add(Param *p) { /* TODO */ }
+		Param *get(const string &) { /* TODO */ return nullptr; }
+
+		void print(ostream &os) const;
 };
 
 class Variable : public Symbol
@@ -52,13 +61,29 @@ class Variable : public Symbol
 		bool is_constant() const { return false; }
 };
 
+class SymTabAlreadyDefinedError : public runtime_error
+{
+	public:
+		SymTabAlreadyDefinedError(const string &what)
+			: runtime_error(what) {}
+};
+
+class SymTabNoSuchSymbolError : public runtime_error
+{
+	public:
+		SymTabNoSuchSymbolError(const string &what)
+			: runtime_error(what) {}
+};
+
 class SymbolTable
 {
 	public:
-		SymbolTable(SymbolTable *parent = nullptr) : parent_(parent) {}
+		SymbolTable(SymbolTable *parent = nullptr)
+			: parent_(parent) {}
 
 		void add(Symbol *s);
 		Symbol *lookup(const string &);
+		void print(ostream &os) const;
 	private:
 		SymbolTable *parent_;
 		map<string, Symbol *> map_;

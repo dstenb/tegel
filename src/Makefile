@@ -4,7 +4,7 @@ LDFLAGS =
 
 all: tegel
 
-tegel: main.o parser.o lexical.o type.o
+tegel: main.o parser.o lexical.o type.o symbol.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 main.o: main.cpp
@@ -20,12 +20,15 @@ lexical.o: lexical.cpp
 type.o: type.cpp
 	$(CC) -c $(CFLAGS) $<
 
+symbol.o: symbol.cpp
+	$(CC) -c $(CFLAGS) $<
+
 parser.cpp: parser.y type.hpp
 	bison -d -o $@ parser.y
 
 parser.hpp: parser.cpp
 
-lexical.cpp: lexical.l parser.hpp type.hpp
+lexical.cpp: lexical.l parser.hpp type.hpp symbol.hpp
 	flex -o $@ $^
 
 clean:
