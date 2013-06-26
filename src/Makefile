@@ -16,7 +16,7 @@ parser.cpp: parser.y type.hpp
 
 parser.hpp: parser.cpp
 
-lexical.cpp: lexical.l parser.hpp type.hpp symbol.hpp
+lexical.cpp: lexical.l parser.hpp type.hpp symbol.hpp constant.hpp
 	flex -o $@ $^
 
 clean:
