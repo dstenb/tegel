@@ -105,8 +105,14 @@ arg
 
         for (Param *p : param_list) {
             // TODO: $$->set(p);
-            p->print(cout);
-            cout << "\n";
+            try {
+                Param *op = $$->replace(p);
+                if (op)
+                    delete op;
+            } catch (const ParamException &e) {
+                vyyerror("%s", e.what());
+                YYERROR;
+            }
         }
         param_list.clear();
         free($3); // free identifier string
