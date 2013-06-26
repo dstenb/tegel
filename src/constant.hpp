@@ -81,4 +81,6 @@ class StringConstantData : public ScalarConstantData
 		string value_;
 };
 
+ConstantData *create_default_constant(Type t);
+
 #endif

@@ -21,3 +21,22 @@ void ListConstantData::print(ostream &os) const
 
 	os << "]";
 }
+
+ConstantData *create_default_constant(Type t)
+{
+	switch (t) {
+		case BoolType:
+			return new BoolConstantData(false);
+		case IntType:
+			return new IntConstantData(0);
+		case StringType:
+			return new StringConstantData("");
+		case BoolListType:
+		case IntListType:
+		case StringListType:
+			return new ListConstantData(t);
+		default:
+			return NULL;
+			break;
+	}
+}
