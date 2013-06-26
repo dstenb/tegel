@@ -37,11 +37,7 @@ class ListConstantData : public ConstantData
 
  		void add(ScalarConstantData *d);
 
-		void print(ostream &os) const {
-			os << "[";
-			// TODO
-			os << "]";
-		}
+		void print(ostream &os) const;
 	private:
 		vector<ScalarConstantData *> data_;
 };
