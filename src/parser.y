@@ -7,8 +7,11 @@ SymbolTable symbol_table;
 
 /* constant_list is used by list_constant to hold the list elements.
   This is used instead of a AST approach and is ok since only one list will be
-  handled at a time (a list can only contain scalars) */
+  handled at a time (since a list can only contain scalars) */
 std::vector<ScalarConstantData *> constant_list;
+
+/* same reasoning as above */
+std::vector<Param *> param_list;
 
 extern int yylex();
 void yyerror(const char *);
@@ -33,6 +36,7 @@ void vyyerror(const char *, ...);
 	ScalarConstantData *scalar_const;
 	ListConstantData *list_const;
 	Argument *argument;
+    Param *param;
 }
 
 %token END 0 "end of file"
@@ -56,6 +60,8 @@ void vyyerror(const char *, ...);
 %type<list_const> list_constant
 
 %type<argument> arg
+
+%type<param> param
 
 %start file
 
@@ -96,7 +102,13 @@ arg
     : ARGUMENT TYPE IDENTIFIER L_BRACE header_item_params R_BRACE
     {
         $$ = new Argument($3, $2);
-        // TODO: Add parameters to $$ && free eventual param data
+
+        for (Param *p : param_list) {
+            // TODO: $$->set(p);
+            p->print(cout);
+            cout << "\n";
+        }
+        param_list.clear();
         free($3); // free identifier string
     }
 
@@ -106,14 +118,15 @@ header_item_params
     ;
 
 header_item_params_p
-    : header_item_params_p param { }
-    | param { }
+    : header_item_params_p param { param_list.push_back($2); }
+    | param { param_list.push_back($1); }
     ;
 
 param
     : IDENTIFIER ASSIGNMENT constant SEMI_COLON
     {
-        std::cout << "param(" << $1 << "=" << *$3 << ")\n";
+        $$ = new Param($1, $3);
+        free($1);
     }
     ;
 
@@ -148,7 +161,7 @@ list_constant
     ;
 
 list_values
-    : list_values COMMA scalar_constant{ constant_list.push_back($3); }
+    : list_values COMMA scalar_constant { constant_list.push_back($3); }
     | scalar_constant { constant_list.push_back($1); }
     ;
 
