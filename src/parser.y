@@ -54,63 +54,81 @@ void vyyerror(const char *, ...);
 
 %%
 
-file : header_block { symbol_table.print(std::cout); }
-     ;
+file
+    : header_block
+    {
+        symbol_table.print(std::cout);
+    }
+    ;
 
-header_block : header_block_p { }
-	     |
-	     ;
+header_block
+    : header_block_p { }
+    |
+    ;
 
-header_block_p : header_block_p header_item { }
-	       | header_item { }
-	       ;
+header_block_p
+    : header_block_p header_item { }
+    | header_item { }
+    ;
 
-header_item :
-	    arg
-	    {
-	      // TODO: add to argument vector
-	      try {
-			symbol_table.add($1);
-		} catch(const SymTabAlreadyDefinedError &e) {
-			vyyerror("Argument %s is already defined",
-				$1->get_name().c_str());
-			YYERROR;
-		}
-	    }
-	    ;
+header_item
+    : arg
+    {
+        // TODO: add to argument vector
+        try {
+            symbol_table.add($1);
+        } catch(const SymTabAlreadyDefinedError &e) {
+            vyyerror("Argument %s is already defined",
+                $1->get_name().c_str());
+            YYERROR;
+        }
+    }
+    ;
 
-arg : ARGUMENT TYPE IDENTIFIER L_BRACE header_item_params R_BRACE  {
-    $$ = new Argument($3, $2);
-    // TODO: Add parameters to $$ && free eventual param data
-    free($3); // free identifier string
-}
+arg
+    : ARGUMENT TYPE IDENTIFIER L_BRACE header_item_params R_BRACE
+    {
+        $$ = new Argument($3, $2);
+        // TODO: Add parameters to $$ && free eventual param data
+        free($3); // free identifier string
+    }
 
-header_item_params : header_item_params_p { }
-		   |
-		   ;
+header_item_params
+    : header_item_params_p { }
+    |
+    ;
 
-header_item_params_p : header_item_params_p param { }
-		   | param { }
-		   ;
+header_item_params_p
+    : header_item_params_p param { }
+    | param { }
+    ;
 
-param : IDENTIFIER ASSIGNMENT constant SEMI_COLON {
-	std::cout << "param(" << $1 << "=" << *$3 << ")\n";
-}
+param
+    : IDENTIFIER ASSIGNMENT constant SEMI_COLON
+    {
+        std::cout << "param(" << $1 << "=" << *$3 << ")\n";
+    }
+    ;
 
-constant : scalar_constant { $$ = $1; }
-	 | list_constant { $$ = $1; }
+constant
+    : scalar_constant { $$ = $1; }
+    | list_constant { $$ = $1; }
+    ;
 
-scalar_constant : BOOL { $$ = new BoolConstantData($1); }
-		| INT { $$ = new IntConstantData($1); }
-		| STRING { $$ = new StringConstantData($1); }
-		;
+scalar_constant
+    : BOOL { $$ = new BoolConstantData($1); }
+	| INT { $$ = new IntConstantData($1); }
+	| STRING { $$ = new StringConstantData($1); }
+	;
 
-list_constant : L_BRACKET list_values R_BRACKET { }
-	      | L_BRACKET R_BRACKET {}
-	      ;
+list_constant
+    : L_BRACKET list_values R_BRACKET { }
+    | L_BRACKET R_BRACKET {}
+    ;
 
-list_values : list_values scalar_constant { }
-	    | scalar_constant { }
-	    ;
+list_values
+    : list_values scalar_constant { }
+    | scalar_constant { }
+    ;
 
 %%
