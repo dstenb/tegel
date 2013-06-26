@@ -1,6 +1,7 @@
 #ifndef __CONSTANT_H__
 #define __CONSTANT_H__
 
+#include <cassert>
 #include <iostream>
 #include <vector>
 
@@ -20,6 +21,8 @@ class ConstantData
 			d.print(os);
 			return os;
 		}
+	protected:
+		void set_type(Type t) { type_ = t; }
 	private:
 		Type type_;
 };
@@ -33,7 +36,9 @@ class ScalarConstantData : public ConstantData
 class ListConstantData : public ConstantData
 {
 	public:
-		ListConstantData(Type t) : ConstantData(t) {}
+		ListConstantData(Type t = EmptyList) : ConstantData(t) {
+			assert(t == EmptyList || type_is_list(t)); // TODO ugly
+		 }
 
  		void add(ScalarConstantData *d);
 

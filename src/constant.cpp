@@ -2,8 +2,13 @@
 
 void ListConstantData::add(ScalarConstantData *d)
 {
-	if (d->get_type() != get_type())
-		throw InvalidTypeError(d->get_type(), get_type());
+	// Specify the list for a specific scalar type
+	if (get_type() == EmptyList)
+		set_type(type_scalar_to_list(d->get_type()));
+
+	if (d->get_type() != type_list_to_scalar(get_type()))
+		throw DifferentTypesError(d->get_type(),
+			    type_list_to_scalar(get_type()));
 	data_.push_back(d);
 }
 
@@ -34,9 +39,9 @@ ConstantData *create_default_constant(Type t)
 		case BoolListType:
 		case IntListType:
 		case StringListType:
+		case EmptyList:
 			return new ListConstantData(t);
 		default:
-			return NULL;
-			break;
+			return nullptr;
 	}
 }

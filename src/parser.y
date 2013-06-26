@@ -150,12 +150,15 @@ scalar_constant
 list_constant
     : L_BRACKET list_values R_BRACKET
     {
-        $$ = new ListConstantData(constant_list.front()->get_type());
+        $$ = new ListConstantData();
 
         try {
             for (ScalarConstantData *d : constant_list)
                 $$->add(d);
         } catch (const InvalidTypeError &e) {
+            yyerror(e.what());
+            YYERROR;
+        } catch (const DifferentTypesError &e) {
             vyyerror("A list can only hold items of same type (%s)",
                 e.what());
             YYERROR;

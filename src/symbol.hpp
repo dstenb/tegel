@@ -1,6 +1,7 @@
 #ifndef __SYMBOL_H__
 #define __SYMBOL_H__
 
+#include <cassert>
 #include <map>
 #include <string>
 #include <stdexcept>
@@ -14,15 +15,29 @@ using namespace std;
 class Param
 {
 	public:
-		Param(const string &id, const ConstantData &data)
+		Param(const string &id, ConstantData *data)
 			: id_(id), data_(data) {}
 
-		string get_id() const;
-		ConstantData *get() const;
-		void set(const ConstantData &);
+		string get_id() const { return id_; }
+		const ConstantData *get() const { return data_; }
+
+		Type type() const { return data_->get_type(); }
+
+		virtual void print(ostream &os) {
+			os << "Param(" << id_ << ", ";
+			data_->print(os);
+			os << ")";
+		}
 	private:
 		string id_;
-		ConstantData data_;
+		ConstantData *data_;
+};
+
+// TODO: rename
+class ParamException : public runtime_error
+{
+	public:
+		ParamException(const string &what) : runtime_error(what) {}
 };
 
 class Symbol
@@ -45,14 +60,26 @@ class Argument : public Symbol
 {
 	public:
 		Argument(const string &name, Type t)
-			: Symbol(name, t) {}
+			: Symbol(name, t)
+		{
+			add("cmd", new ListConstantData(StringListType));
+			add("default", create_default_constant(t));
+			add("info", new StringConstantData(""));
+		}
 
 		bool is_constant() const { return true; }
 
-		void add(Param *p) { /* TODO */ }
-		Param *get(const string &) { /* TODO */ return nullptr; }
-
+		Param *replace(Param *p);
+		const Param *get(const string &s) const;
 		void print(ostream &os) const;
+
+	private:
+		void add(const string &id, ConstantData *data) {
+			assert(data != NULL);
+			params_[id] = new Param(id, data);
+		}
+
+		map<string, Param *> params_;
 };
 
 class Variable : public Symbol
