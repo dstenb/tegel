@@ -1,27 +1,15 @@
 CC = g++
 CFLAGS = -std=c++0x -pedantic -Wall -Wextra
 LDFLAGS =
+OBJFILES := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 all: tegel
 
-tegel: main.o parser.o lexical.o type.o symbol.o
+tegel: main.o $(OBJFILES)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-main.o: main.cpp
-	$(CC) -c $(CFLAGS) $<
-
-
-parser.o: parser.cpp
-	$(CC) -c $(CFLAGS) $<
-
-lexical.o: lexical.cpp
-	$(CC) -c $(CFLAGS) $<
-
-type.o: type.cpp
-	$(CC) -c $(CFLAGS) $<
-
-symbol.o: symbol.cpp
-	$(CC) -c $(CFLAGS) $<
+%.o: %.cpp
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 parser.cpp: parser.y type.hpp
 	bison -d -o $@ parser.y
