@@ -148,7 +148,7 @@ list_constant
     ;
 
 list_values
-    : list_values scalar_constant { constant_list.push_back($2); }
+    : list_values COMMA scalar_constant{ constant_list.push_back($3); }
     | scalar_constant { constant_list.push_back($1); }
     ;
 
