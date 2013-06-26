@@ -11,7 +11,7 @@ extern FILE *yyin;
 
 int main(int argc, char **argv)
 {
-	yyparse();
+	cout << yyparse() << endl;
 
 	return 0;
 }

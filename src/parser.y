@@ -1,9 +1,13 @@
 %{
 #include <iostream>
 
+#include "symbol.hpp"
+
+SymbolTable symbol_table;
 
 extern int yylex();
 void yyerror(const char *);
+void vyyerror(const char *, ...);
 %}
 
 %error-verbose
@@ -21,6 +25,7 @@ void yyerror(const char *);
 	bool is_list;
 	Type type;
 	ConstantData *constant;
+	Argument *argument;
 }
 
 %token END 0 "end of file"
@@ -43,11 +48,13 @@ void yyerror(const char *);
 %type<constant> scalar_constant
 %type<constant> list_constant
 
+%type<argument> arg
+
 %start file
 
 %%
 
-file : header_block
+file : header_block { symbol_table.print(std::cout); }
      ;
 
 header_block : header_block_p { }
@@ -62,21 +69,20 @@ header_item :
 	    arg
 	    {
 	      // TODO: add to argument vector
-	      // TODO: add to symbol table
+	      try {
+			symbol_table.add($1);
+		} catch(const SymTabAlreadyDefinedError &e) {
+			vyyerror("Argument %s is already defined",
+				$1->get_name().c_str());
+			YYERROR;
+		}
 	    }
 	    ;
 
 arg : ARGUMENT TYPE IDENTIFIER L_BRACE header_item_params R_BRACE  {
-    // TODO:
-    // $$ = new Argument($3, $2);
-    // try {
-    // $$->add_parameters($5)
-    // } catch(const ParameterException &e) {
-    //
-    // }
-    // Free data (e.g. $3);
-    std::cout << "type: " << type_to_str($2) << std::endl;
-    std::cout << "identifier: " << $3 << std::endl;
+    $$ = new Argument($3, $2);
+    // TODO: Add parameters to $$ && free eventual param data
+    free($3); // free identifier string
 }
 
 header_item_params : header_item_params_p { }
