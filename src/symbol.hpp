@@ -23,7 +23,7 @@ class Param
 
 		Type type() const { return data_->get_type(); }
 
-		virtual void print(ostream &os) {
+		void print(ostream &os) {
 			os << "Param(" << id_ << ", ";
 			data_->print(os);
 			os << ")";
