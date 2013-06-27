@@ -11,8 +11,7 @@
 
 using namespace std;
 
-// TODO: make TypeFactory a friend of Type, make constructors and destructors
-// protected
+class TypeFactory;
 
 class Type
 {
@@ -28,6 +27,8 @@ class Type
 
 		// TODO: possibly add PrimitiveType *primitive() ...
 		// to avoid using dynamic_cast
+	protected:
+		virtual ~Type() {}
 };
 
 class SingleType : public Type
@@ -37,13 +38,9 @@ class SingleType : public Type
 class PrimitiveType : public SingleType
 {
 	public:
-		void print(ostream &os) const {
-			os << "PrimitiveType(" << str() << ")";
-		}
+		void print(ostream &os) const;
 
-		virtual const string &str() const {
-			return str_;
-		}
+		const string &str() const { return str_; }
 	protected:
 		PrimitiveType(const string &s) : str_(s) {}
 	private:
@@ -52,19 +49,25 @@ class PrimitiveType : public SingleType
 
 class BoolType : public PrimitiveType
 {
-	public:
+	friend class TypeFactory;
+
+	protected:
 		BoolType() : PrimitiveType("bool") {}
 };
 
 class IntType : public PrimitiveType
 {
-	public:
+	friend class TypeFactory;
+
+	protected:
 		IntType() : PrimitiveType("int") {}
 };
 
 class StringType : public PrimitiveType
 {
-	public:
+	friend class TypeFactory;
+
+	protected:
 		StringType() : PrimitiveType("string") {}
 };
 
@@ -77,35 +80,18 @@ class NoSuchFieldError : public runtime_error
 
 class RecordType : public SingleType
 {
+	friend class TypeFactory;
+
 	public:
+		bool eql_fields(const RecordType *, // TODO
+			const vector<const PrimitiveType *> &v);
+		const Type *field(const string &f) const;
+		const string &str() const { return str_; }
+		void print(ostream &os) const;
+	protected:
 		RecordType(const string &name,
 			const unordered_map<string, const PrimitiveType *> &m)
 			: str_(name), fields_(m) {}
-
-		bool eql_fields(const RecordType *,
-			const vector<const PrimitiveType *> &v);
-
-		const Type *field(const string &f) const {
-			auto it = fields_.find(f);
-
-			if (it == fields_.end())
-				throw NoSuchFieldError(f, str());
-			return it->second;
-		}
-
-		const string &str() const {
-			return str_;
-		}
-
-		void print(ostream &os) const {
-			os << "RecordType(" << str() << ")\n";
-			os << "  Fields:";
-			for (auto it = fields_.begin(); it != fields_.end();
-					++it) {
-				os << "\n    " << it->first << "=";
-				it->second->print(os);
-			}
-		}
 	private:
 		string str_;
 		unordered_map<string, const PrimitiveType *> fields_;
@@ -113,18 +99,15 @@ class RecordType : public SingleType
 
 class ListType : public Type
 {
+	friend class TypeFactory;
+
 	public:
+		const SingleType *elem() const { return elem_; }
+		const string &str() const { return str_; }
+		void print(ostream &os) const;
+	protected:
 		ListType(const SingleType *t)
 			: str_(t->str() + "[]"), elem_(t) {}
-		const SingleType *elem() const;
-
-		const string &str() const {
-			return str_;
-		}
-
-		void print(ostream &os) const {
-			os << "ListType(" << str() << ")";
-		}
 	private:
 		string str_;
 		const SingleType *elem_;
