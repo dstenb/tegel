@@ -27,10 +27,10 @@ class ConstantData
 		Type type_;
 };
 
-class ScalarConstantData : public ConstantData
+class SingleConstantData : public ConstantData
 {
 	public:
-		ScalarConstantData(Type t) : ConstantData(t) {}
+		SingleConstantData(Type t) : ConstantData(t) {}
 };
 
 class ListConstantData : public ConstantData
@@ -40,18 +40,18 @@ class ListConstantData : public ConstantData
 			assert(t == EmptyList || type_is_list(t)); // TODO ugly
 		 }
 
- 		void add(ScalarConstantData *d);
+ 		void add(SingleConstantData *d);
 
 		void print(ostream &os) const;
 	private:
-		vector<ScalarConstantData *> data_;
+		vector<SingleConstantData *> data_;
 };
 
-class BoolConstantData : public ScalarConstantData
+class BoolConstantData : public SingleConstantData
 {
 	public:
 		BoolConstantData(bool b)
-			: ScalarConstantData(BoolType), value_(b) {}
+			: SingleConstantData(BoolType), value_(b) {}
 
 		void print(ostream &os) const {
 			os << value_;
@@ -60,11 +60,11 @@ class BoolConstantData : public ScalarConstantData
 		bool value_;
 };
 
-class IntConstantData : public ScalarConstantData
+class IntConstantData : public SingleConstantData
 {
 	public:
 		IntConstantData(int i)
-			: ScalarConstantData(IntType), value_(i) {}
+			: SingleConstantData(IntType), value_(i) {}
 
 		void print(ostream &os) const {
 			os << value_;
@@ -73,11 +73,11 @@ class IntConstantData : public ScalarConstantData
 		int value_;
 };
 
-class StringConstantData : public ScalarConstantData
+class StringConstantData : public SingleConstantData
 {
 	public:
 		StringConstantData(const string &s)
-			: ScalarConstantData(StringType), value_(s) {}
+			: SingleConstantData(StringType), value_(s) {}
 
 		void print(ostream &os) const {
 			os << "\"" << value_ << "\"";

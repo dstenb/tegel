@@ -8,7 +8,7 @@ SymbolTable symbol_table;
 /* constant_list is used by list_constant to hold the list elements.
   This is used instead of a AST approach and is ok since only one list will be
   handled at a time (since a list can only contain scalars) */
-std::vector<ScalarConstantData *> constant_list;
+std::vector<SingleConstantData *> constant_list;
 
 /* same reasoning as above */
 std::vector<Param *> param_list;
@@ -33,7 +33,7 @@ void vyyerror(const char *, ...);
 	bool is_list;
 	Type type;
 	ConstantData *constant;
-	ScalarConstantData *scalar_const;
+	SingleConstantData *scalar_const;
 	ListConstantData *list_const;
 	Argument *argument;
     Param *param;
@@ -153,7 +153,7 @@ list_constant
         $$ = new ListConstantData();
 
         try {
-            for (ScalarConstantData *d : constant_list)
+            for (SingleConstantData *d : constant_list)
                 $$->add(d);
         } catch (const InvalidTypeError &e) {
             yyerror(e.what());

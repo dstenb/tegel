@@ -1,6 +1,6 @@
 #include "constant.hpp"
 
-void ListConstantData::add(ScalarConstantData *d)
+void ListConstantData::add(SingleConstantData *d)
 {
 	// Specify the list for a specific scalar type
 	if (get_type() == EmptyList)
