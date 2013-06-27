@@ -10,10 +10,11 @@ Param *Argument::replace(Param *p)
 	} else {
 		Param *r = it->second;
 
-		if (p->type() != r->type())
-		    throw ParamException("Parameter " + id +" must be of type "
-				    + type_to_str(r->type()) + " (got " +
-				    type_to_str(p->type()) + ")");
+		// TODO
+		// if (p->type() != r->type())
+		//     throw ParamException("Parameter " + id +" must be of type "
+		// 		    + type_to_str(r->type()) + " (got " +
+		// 		    type_to_str(p->type()) + ")");
 
 		params_[id] = p;
 		return r;
@@ -28,8 +29,8 @@ const Param *Argument::get(const string &s) const
 
 void Argument::print(ostream &os) const
 {
-	os << "Argument(" << get_name() << ", " <<
-		type_to_str(get_type()) << ")\n";
+	// os << "Argument(" << get_name() << ", " <<
+	// 	type_to_str(get_type()) << ")\n";
 	for (auto it = params_.begin(); it != params_.end(); ++it) {
 		Param *p = it->second;
 		os << "\t";

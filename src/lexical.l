@@ -3,7 +3,6 @@
 #include <cstdarg>
 
 #include "parser.hpp"
-#include "type.hpp"
 
 char *string_builder = NULL;
 
@@ -51,13 +50,13 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 "\""                 { str_caller = INITIAL; BEGIN(str); }
 
-"bool"               { yylval.type = BoolType; return TYPE; }
-"int"                { yylval.type = IntType; return TYPE; }
-"string"             { yylval.type = StringType; return TYPE; }
+"bool"              return TYPE; // TODO
+"int"               return TYPE; // TODO
+"string"            return TYPE; // TODO
 
-"bool[]"             { yylval.type = BoolListType; return TYPE; }
-"int[]"              { yylval.type = IntListType; return TYPE; }
-"string[]"           { yylval.type = StringListType; return TYPE; }
+"bool[]"            return TYPE; // TODO
+"int[]"             return TYPE; // TODO
+"string[]"          return TYPE; // TODO
 
 "true"               { yylval.boolean = true; return BOOL; }
 "false"              { yylval.boolean = false; return BOOL; }

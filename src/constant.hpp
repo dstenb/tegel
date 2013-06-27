@@ -12,8 +12,8 @@ using namespace std;
 class ConstantData
 {
 	public:
-		ConstantData(Type t) : type_(t) {}
-		Type get_type() const { return type_; }
+		ConstantData(const Type *t) : type_(t) {}
+		const Type *type() const { return type_; }
 
 		virtual void print(ostream &os) const {}
 
@@ -21,24 +21,27 @@ class ConstantData
 			d.print(os);
 			return os;
 		}
-	protected:
-		void set_type(Type t) { type_ = t; }
 	private:
-		Type type_;
+		const Type *type_;
 };
 
 class SingleConstantData : public ConstantData
 {
 	public:
-		SingleConstantData(Type t) : ConstantData(t) {}
+		SingleConstantData(const Type *t) : ConstantData(t) {}
+};
+
+class PrimitiveConstantData : public SingleConstantData
+{
+	protected:
+		PrimitiveConstantData(const Type *t)
+			: SingleConstantData(t) {}
 };
 
 class ListConstantData : public ConstantData
 {
 	public:
-		ListConstantData(Type t = EmptyList) : ConstantData(t) {
-			assert(t == EmptyList || type_is_list(t)); // TODO ugly
-		 }
+		ListConstantData(const ListType *t) : ConstantData(t) {}
 
  		void add(SingleConstantData *d);
 
@@ -47,11 +50,12 @@ class ListConstantData : public ConstantData
 		vector<SingleConstantData *> data_;
 };
 
-class BoolConstantData : public SingleConstantData
+class BoolConstantData : public PrimitiveConstantData
 {
 	public:
 		BoolConstantData(bool b)
-			: SingleConstantData(BoolType), value_(b) {}
+			: PrimitiveConstantData(
+				TypeFactory::get("bool")), value_(b) {}
 
 		void print(ostream &os) const {
 			os << value_;
@@ -60,11 +64,12 @@ class BoolConstantData : public SingleConstantData
 		bool value_;
 };
 
-class IntConstantData : public SingleConstantData
+class IntConstantData : public PrimitiveConstantData
 {
 	public:
 		IntConstantData(int i)
-			: SingleConstantData(IntType), value_(i) {}
+			: PrimitiveConstantData(
+				TypeFactory::get("int")), value_(i) {}
 
 		void print(ostream &os) const {
 			os << value_;
@@ -73,11 +78,12 @@ class IntConstantData : public SingleConstantData
 		int value_;
 };
 
-class StringConstantData : public SingleConstantData
+class StringConstantData : public PrimitiveConstantData
 {
 	public:
 		StringConstantData(const string &s)
-			: SingleConstantData(StringType), value_(s) {}
+			: PrimitiveConstantData(
+				TypeFactory::get("string")), value_(s) {}
 
 		void print(ostream &os) const {
 			os << "\"" << value_ << "\"";
@@ -86,6 +92,8 @@ class StringConstantData : public SingleConstantData
 		string value_;
 };
 
-ConstantData *create_default_constant(Type t);
+// TODO add RecordConstantData
+
+ConstantData *create_default_constant(const Type *t);
 
 #endif

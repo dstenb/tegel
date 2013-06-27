@@ -2,14 +2,15 @@
 
 void ListConstantData::add(SingleConstantData *d)
 {
+	// TODO
 	// Specify the list for a specific scalar type
-	if (get_type() == EmptyList)
-		set_type(type_scalar_to_list(d->get_type()));
+	// if (type() == EmptyList)
+	// 	set_type(type_scalar_to_list(d->get_type()));
 
-	if (d->get_type() != type_list_to_scalar(get_type()))
-		throw DifferentTypesError(d->get_type(),
-			    type_list_to_scalar(get_type()));
-	data_.push_back(d);
+	// if (d->get_type() != type_list_to_scalar(get_type()))
+	// 	throw DifferentTypesError(d->get_type(),
+	// 		    type_list_to_scalar(get_type()));
+	// data_.push_back(d);
 }
 
 void ListConstantData::print(ostream &os) const
@@ -27,21 +28,23 @@ void ListConstantData::print(ostream &os) const
 	os << "]";
 }
 
-ConstantData *create_default_constant(Type t)
+ConstantData *create_default_constant(const Type *t)
 {
-	switch (t) {
-		case BoolType:
-			return new BoolConstantData(false);
-		case IntType:
-			return new IntConstantData(0);
-		case StringType:
-			return new StringConstantData("");
-		case BoolListType:
-		case IntListType:
-		case StringListType:
-		case EmptyList:
-			return new ListConstantData(t);
-		default:
-			return nullptr;
-	}
+	// TODO
+	return new BoolConstantData(false);
+	// switch (t) {
+	// 	case BoolType:
+	// 		return new BoolConstantData(false);
+	// 	case IntType:
+	// 		return new IntConstantData(0);
+	// 	case StringType:
+	// 		return new StringConstantData("");
+	// 	case BoolListType:
+	// 	case IntListType:
+	// 	case StringListType:
+	// 	case EmptyList:
+	// 		return new ListConstantData(t);
+	// 	default:
+	// 		return nullptr;
+	// }
 }

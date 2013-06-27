@@ -31,7 +31,7 @@ void vyyerror(const char *, ...);
 	bool boolean;
 	int integer;
 	bool is_list;
-	Type type;
+	const Type *type;
 	ConstantData *constant;
 	SingleConstantData *scalar_const;
 	ListConstantData *list_const;
@@ -150,21 +150,21 @@ scalar_constant
 list_constant
     : L_BRACKET list_values R_BRACKET
     {
-        $$ = new ListConstantData();
+        /*$$ = new ListConstantData();*/
 
-        try {
-            for (SingleConstantData *d : constant_list)
-                $$->add(d);
-        } catch (const InvalidTypeError &e) {
-            yyerror(e.what());
-            YYERROR;
-        } catch (const DifferentTypesError &e) {
-            vyyerror("A list can only hold items of same type (%s)",
-                e.what());
-            YYERROR;
-        }
+        /*try {*/
+        /*    for (SingleConstantData *d : constant_list)*/
+        /*        $$->add(d);*/
+        /*} catch (const InvalidTypeError &e) {*/
+        /*    yyerror(e.what());*/
+        /*    YYERROR;*/
+        /*} catch (const DifferentTypesError &e) {*/
+        /*    vyyerror("A list can only hold items of same type (%s)",*/
+        /*        e.what());*/
+        /*    YYERROR;*/
+        /*}*/
 
-        constant_list.clear();
+        /*constant_list.clear();*/
     }
     | L_BRACKET R_BRACKET {}
     ;

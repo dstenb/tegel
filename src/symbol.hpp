@@ -21,7 +21,7 @@ class Param
 		string get_id() const { return id_; }
 		const ConstantData *get() const { return data_; }
 
-		Type type() const { return data_->get_type(); }
+		const Type *type() const { return data_->type(); }
 
 		void print(ostream &os) {
 			os << "Param(" << id_ << ", ";
@@ -43,26 +43,28 @@ class ParamException : public runtime_error
 class Symbol
 {
 	public:
-		Symbol(const string &name, Type t)
+		Symbol(const string &name, const Type *t)
 			: name_(name), type_(t) {}
 		virtual bool is_constant() const = 0;
 
 		string get_name() const { return name_; }
-		Type get_type() const { return type_; }
+		const Type *get_type() const { return type_; }
 
 		virtual void print(ostream &os) const = 0;
 	private:
 		string name_;
-		Type type_;
+		const Type *type_;
 };
 
 class Argument : public Symbol
 {
 	public:
-		Argument(const string &name, Type t)
+		Argument(const string &name, const Type *t)
 			: Symbol(name, t)
 		{
-			add("cmd", new ListConstantData(StringListType));
+			add("cmd", new ListConstantData(
+				dynamic_cast<const ListType *>(
+					TypeFactory::get("string[]"))));
 			add("default", create_default_constant(t));
 			add("info", new StringConstantData(""));
 		}

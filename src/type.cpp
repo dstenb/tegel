@@ -1,54 +1,35 @@
 #include "type.hpp"
 
-string type_to_str(Type t)
+// TypeFactory data
+bool TypeFactory::initialized_ = false;
+map<string, Type*> TypeFactory::map_;
+
+void PrimitiveType::print(ostream &os) const
 {
-	switch (t) {
-		case BoolType:
-			return "bool";
-		case BoolListType:
-			return "bool[]";
-		case IntType:
-			return "int";
-		case IntListType:
-			return "int[]";
-		case StringType:
-			return "string";
-		case StringListType:
-			return "string[]";
-		case EmptyList:
-			return "[]";
-		default:
-			return "";
+	os << "PrimitiveType(" << str() << ")";
+}
+
+const Type *RecordType::field(const string &f) const
+{
+	auto it = fields_.find(f);
+
+	if (it == fields_.end())
+		throw NoSuchFieldError(f, str());
+	return it->second;
+}
+
+void RecordType::print(ostream &os) const
+{
+	os << "RecordType(" << str() << ")\n";
+	os << "  Fields:";
+	for (auto it = fields_.begin(); it != fields_.end();
+			++it) {
+		os << "\n    " << it->first << "=";
+		it->second->print(os);
 	}
 }
 
-Type type_list_to_scalar(Type t)
+void ListType::print(ostream &os) const
 {
-	if (t == BoolListType)
-		return BoolType;
-	else if (t == IntListType)
-		return IntType;
-	else if (t == StringListType)
-		return StringType;
-	else
-		throw InvalidTypeError("Expected a list type (got " +
-				type_to_str(t) + ")");
-}
-
-Type type_scalar_to_list(Type t)
-{
-	if (t == BoolType)
-		return BoolListType;
-	else if (t == IntType)
-		return IntListType;
-	else if (t == StringType)
-		return StringListType;
-	else
-		throw InvalidTypeError("Expected a scalar type (got " +
-				type_to_str(t) + ")");
-}
-
-bool type_is_list(Type t)
-{
-	return (t == BoolListType || t == IntListType || t == StringListType);
+	os << "ListType(" << str() << ")";
 }
