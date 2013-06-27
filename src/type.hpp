@@ -189,4 +189,21 @@ class TypeFactory
 		static bool initialized_;
 };
 
+class DifferentTypesError : public runtime_error
+{
+	public:
+		DifferentTypesError(const Type *g, const Type *e)
+			: runtime_error("Got " + g->str() +
+					", expected " + e->str()) {}
+};
+
+class InvalidTypeError : public runtime_error
+{
+	public:
+		InvalidTypeError(const string &what)
+			: runtime_error(what) {}
+};
+
+
+
 #endif
