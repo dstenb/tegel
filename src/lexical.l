@@ -50,18 +50,11 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 "\""                 { str_caller = INITIAL; BEGIN(str); }
 
-"bool"              return TYPE; // TODO
-"int"               return TYPE; // TODO
-"string"            return TYPE; // TODO
-
-"bool[]"            return TYPE; // TODO
-"int[]"             return TYPE; // TODO
-"string[]"          return TYPE; // TODO
-
 "true"               { yylval.boolean = true; return BOOL; }
 "false"              { yylval.boolean = false; return BOOL; }
 
 {IDENTIFIER}         { yylval.string = strdup(yytext); return IDENTIFIER; }
+{IDENTIFIER}"[]"     { yylval.string = strdup(yytext); return LIST; }
 
 {INTEGER}            { yylval.integer = atoi(yytext); return INT; }
 

@@ -3,6 +3,8 @@
 
 #include "symbol.hpp"
 
+// TODO: fix Single/Scalar/Primtive things
+
 SymbolTable symbol_table;
 
 /* constant_list is used by list_constant to hold the list elements.
@@ -32,6 +34,8 @@ void vyyerror(const char *, ...);
 	int integer;
 	bool is_list;
 	const Type *type;
+	const SingleType *stype;
+	const ListType *ltype;
 	ConstantData *constant;
 	SingleConstantData *scalar_const;
 	ListConstantData *list_const;
@@ -53,7 +57,7 @@ void vyyerror(const char *, ...);
 %token<integer> INT
 %token<string> STRING
 
-%token<type> TYPE
+%token<string> LIST
 
 %type<constant> constant
 %type<scalar_const> scalar_constant
@@ -62,6 +66,10 @@ void vyyerror(const char *, ...);
 %type<argument> arg
 
 %type<param> param
+
+%type<type> type
+%type<stype> single_type
+%type<ltype> list_type
 
 %start file
 
@@ -99,7 +107,7 @@ header_item
     ;
 
 arg
-    : ARGUMENT TYPE IDENTIFIER L_BRACE header_item_params R_BRACE
+    : ARGUMENT type IDENTIFIER L_BRACE header_item_params R_BRACE
     {
         $$ = new Argument($3, $2);
 
@@ -147,26 +155,56 @@ scalar_constant
 	| STRING { $$ = new StringConstantData($1); }
 	;
 
+type
+    : single_type { $$ = $1; }
+    | list_type { $$ = $1; }
+
+single_type
+    : IDENTIFIER
+    {
+        $$ = dynamic_cast<const SingleType *>(TypeFactory::get($1));
+
+        if ($$ == nullptr) {
+            vyyerror("Unknown type %s", $1);
+            YYERROR;
+        }
+    }
+    ;
+
+list_type
+    : LIST
+    {
+        $$ = dynamic_cast<const ListType *>(TypeFactory::get($1));
+
+        if ($$ == nullptr) {
+            vyyerror("Unknown type %s", $1);
+            YYERROR;
+        }
+    }
+
 list_constant
     : L_BRACKET list_values R_BRACKET
     {
-        /*$$ = new ListConstantData();*/
+        //$$ = new ListConstantData();
 
-        /*try {*/
-        /*    for (SingleConstantData *d : constant_list)*/
-        /*        $$->add(d);*/
-        /*} catch (const InvalidTypeError &e) {*/
-        /*    yyerror(e.what());*/
-        /*    YYERROR;*/
-        /*} catch (const DifferentTypesError &e) {*/
-        /*    vyyerror("A list can only hold items of same type (%s)",*/
-        /*        e.what());*/
-        /*    YYERROR;*/
-        /*}*/
+        try {
+            for (SingleConstantData *d : constant_list)
+                $$->add(d);
+        } catch (const InvalidTypeError &e) {
+            yyerror(e.what());
+            YYERROR;
+        } catch (const DifferentTypesError &e) {
+            vyyerror("A list can only hold items of same type (%s)",
+                e.what());
+            YYERROR;
+        }
 
         /*constant_list.clear();*/
     }
-    | L_BRACKET R_BRACKET {}
+    | list_type
+    {
+        $$ = new ListConstantData($1);
+    }
     ;
 
 list_values
