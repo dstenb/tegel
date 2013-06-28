@@ -124,19 +124,6 @@ class TypeAlreadyDefined : public runtime_error
 class TypeFactory
 {
 	public:
-		static void add_list(const SingleType *s) {
-			ListType *t = new ListType(s);
-
-			auto it = map_.find(t->str());
-
-			if (it == map_.end()) {
-				map_[t->str()] = t;
-			} else {
-				delete t;
-				throw TypeAlreadyDefined(it->second);
-			}
-		}
-
 		static void add_record(const string &n,
 			const unordered_map<string, const PrimitiveType *> &m)
 		{
@@ -152,6 +139,8 @@ class TypeFactory
 				delete t;
 				throw TypeAlreadyDefined(it->second);
 			}
+
+			add_list(t);
 		}
 
 		static const Type *get(const string &s) {
@@ -171,18 +160,28 @@ class TypeFactory
 		static void init() {
 			initialized_ = true;
 
-			SingleType *b = new BoolType;
-			SingleType *i = new IntType;
-			SingleType *s = new StringType;
+			add_primitive(new BoolType);
+			add_primitive(new IntType);
+			add_primitive(new StringType);
+		}
 
-			map_["bool"] = b;
-			add_list(b);
+		static void add_list(const SingleType *s) {
+			ListType *t = new ListType(s);
 
-			map_["int"] = i;
-			add_list(i);
+			auto it = map_.find(t->str());
 
-			map_["string"] = s;
-			add_list(s);
+			if (it == map_.end()) {
+				map_[t->str()] = t;
+			} else {
+				delete t;
+				throw TypeAlreadyDefined(it->second);
+			}
+		}
+
+		static void add_primitive(PrimitiveType *p)
+		{
+			map_[p->str()] = p;
+			add_list(p);
 		}
 
 		static map<string, Type *> map_;
