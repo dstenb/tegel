@@ -1,6 +1,7 @@
 #ifndef __TYPE_H__
 #define __TYPE_H__
 
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <map>
@@ -8,16 +9,19 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <utility>
 
 using namespace std;
 
 class TypeFactory;
+
 
 class Type
 {
 	public:
 		virtual const string &str() const = 0;
 
+		// TODO: rename to something more suitable (dot?)
 		virtual const Type *field(const string &) const {
 			return nullptr;
 		}
@@ -77,23 +81,33 @@ class NoSuchFieldError : public runtime_error
 			: runtime_error("No field named " + f + " in " + r) {}
 };
 
+struct RecordField
+{
+	string name;
+	const PrimitiveType *type;
+};
+
 class RecordType : public SingleType
 {
 	friend class TypeFactory;
 
 	public:
-		typedef unordered_map<string, const PrimitiveType *> field_map;
-		typedef vector<const PrimitiveType *> field_vector;
+		typedef vector<RecordField> field_vector;
+		typedef field_vector::const_iterator iterator;
 
-		const PrimitiveType *field(const string &f) const;
+		const PrimitiveType *field(const string &) const;
+		const PrimitiveType *field(int) const;
 		const string &str() const { return str_; }
 		void print(ostream &os) const;
+
+		iterator begin() const;
+		iterator end() const;
 	protected:
-		RecordType(const string &name, const field_map &m)
+		RecordType(const string &name, const field_vector &m)
 			: str_(name), fields_(m) {}
 	private:
 		string str_;
-		field_map fields_;
+		field_vector fields_;
 };
 
 class ListType : public Type
@@ -124,7 +138,7 @@ class TypeFactory
 {
 	public:
 		static void add_record(const string &n,
-				const RecordType::field_map &m)
+			    const RecordType::field_vector &m)
 		{
 			// TODO: check n [a-zA-Z]...
 			//
