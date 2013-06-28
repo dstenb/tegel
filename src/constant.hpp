@@ -9,18 +9,21 @@ using namespace std;
 
 #include "type.hpp"
 
+
 class ConstantData
 {
 	public:
 		virtual const Type *type() const = 0;
 
-		virtual void print(ostream &os) const {}
+		virtual void print(ostream &os) const = 0;
 
 		friend ostream &operator<<(ostream &os, const ConstantData &d) {
 			d.print(os);
 			return os;
 		}
 };
+
+ConstantData *create_default_constant(const Type *t);
 
 class SingleConstantData : public ConstantData
 {
@@ -107,17 +110,22 @@ class RecordConstantData : public SingleConstantData
 {
 	public:
 		RecordConstantData(const RecordType *t)
-			: SingleConstantData(), type_(t) {}
+			: SingleConstantData(), type_(t) {
+			for (auto it = t->begin(); it != t->end(); ++it) {
+				RecordField f = (*it);
+				values_.push_back(
+					static_cast<PrimitiveConstantData *>(
+						create_default_constant(f.type)));
+			}
+		}
 
 		virtual const RecordType *type() const { return type_; }
 
-		void print(ostream &os) const {
-			// TODO
-		}
+		void print(ostream &os) const;
 	private:
+		vector<PrimitiveConstantData *> values_;
 		const RecordType *type_;
 };
 
-ConstantData *create_default_constant(const Type *t);
 
 #endif

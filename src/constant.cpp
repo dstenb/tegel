@@ -22,6 +22,21 @@ void ListConstantData::print(ostream &os) const
 	os << "]";
 }
 
+void RecordConstantData::print(ostream &os) const
+{
+	os << "{";
+
+	auto it = values_.begin();
+
+	while (it != values_.end()) {
+		(*it)->print(os);
+		if (++it != values_.end())
+			os << ", ";
+	}
+
+	os << "}";
+}
+
 ConstantData *create_default_constant(const Type *t)
 {
 	const ListType *l;
