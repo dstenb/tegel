@@ -2,15 +2,9 @@
 
 void ListConstantData::add(SingleConstantData *d)
 {
-	// TODO
-	// Specify the list for a specific scalar type
-	// if (type() == EmptyList)
-	// 	set_type(type_scalar_to_list(d->get_type()));
-
-	// if (d->get_type() != type_list_to_scalar(get_type()))
-	// 	throw DifferentTypesError(d->get_type(),
-	// 		    type_list_to_scalar(get_type()));
-	// data_.push_back(d);
+	if (d->type() != type()->elem())
+		throw DifferentTypesError(d->type(), type()->elem());
+	data_.push_back(d);
 }
 
 void ListConstantData::print(ostream &os) const
@@ -30,21 +24,19 @@ void ListConstantData::print(ostream &os) const
 
 ConstantData *create_default_constant(const Type *t)
 {
-	// TODO
-	return new BoolConstantData(false);
-	// switch (t) {
-	// 	case BoolType:
-	// 		return new BoolConstantData(false);
-	// 	case IntType:
-	// 		return new IntConstantData(0);
-	// 	case StringType:
-	// 		return new StringConstantData("");
-	// 	case BoolListType:
-	// 	case IntListType:
-	// 	case StringListType:
-	// 	case EmptyList:
-	// 		return new ListConstantData(t);
-	// 	default:
-	// 		return nullptr;
-	// }
+	const ListType *l;
+	const RecordType *r;
+
+	if (t == TypeFactory::get("bool"))
+		return new BoolConstantData(false);
+	else if (t == TypeFactory::get("int"))
+		return new IntConstantData(0);
+	else if (t == TypeFactory::get("string"))
+		return new StringConstantData("");
+	else if ((l = dynamic_cast<const ListType *>(t)))
+		return new ListConstantData(l);
+	else if ((r = dynamic_cast<const RecordType *>(t)))
+		return new RecordConstantData(r);
+	else
+		return nullptr;
 }

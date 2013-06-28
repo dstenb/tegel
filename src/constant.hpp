@@ -12,8 +12,7 @@ using namespace std;
 class ConstantData
 {
 	public:
-		ConstantData(const Type *t) : type_(t) {}
-		const Type *type() const { return type_; }
+		virtual const Type *type() const = 0;
 
 		virtual void print(ostream &os) const {}
 
@@ -21,32 +20,39 @@ class ConstantData
 			d.print(os);
 			return os;
 		}
-	private:
-		const Type *type_;
 };
 
 class SingleConstantData : public ConstantData
 {
 	public:
-		SingleConstantData(const Type *t) : ConstantData(t) {}
+		virtual const SingleType *type() const = 0;
+	protected:
+		SingleConstantData() = default;
 };
 
 class PrimitiveConstantData : public SingleConstantData
 {
 	protected:
-		PrimitiveConstantData(const Type *t)
-			: SingleConstantData(t) {}
+		PrimitiveConstantData(const PrimitiveType *t)
+			: SingleConstantData(), type_(t) {}
+
+		virtual const PrimitiveType *type() const { return type_; }
+	private:
+		const PrimitiveType *type_;
 };
 
 class ListConstantData : public ConstantData
 {
 	public:
-		ListConstantData(const ListType *t) : ConstantData(t) {}
+		ListConstantData(const ListType *t) : type_(t) {}
+
+		virtual const ListType *type() const { return type_; }
 
  		void add(SingleConstantData *d);
 
 		void print(ostream &os) const;
 	private:
+		const ListType *type_;
 		vector<SingleConstantData *> data_;
 };
 
@@ -55,7 +61,8 @@ class BoolConstantData : public PrimitiveConstantData
 	public:
 		BoolConstantData(bool b)
 			: PrimitiveConstantData(
-				TypeFactory::get("bool")), value_(b) {}
+				static_cast<const PrimitiveType *>(
+					TypeFactory::get("bool"))), value_(b) {}
 
 		void print(ostream &os) const {
 			os << value_;
@@ -69,7 +76,8 @@ class IntConstantData : public PrimitiveConstantData
 	public:
 		IntConstantData(int i)
 			: PrimitiveConstantData(
-				TypeFactory::get("int")), value_(i) {}
+				static_cast<const PrimitiveType *>(
+					TypeFactory::get("int"))), value_(i) {}
 
 		void print(ostream &os) const {
 			os << value_;
@@ -83,7 +91,9 @@ class StringConstantData : public PrimitiveConstantData
 	public:
 		StringConstantData(const string &s)
 			: PrimitiveConstantData(
-				TypeFactory::get("string")), value_(s) {}
+				static_cast<const PrimitiveType *>(
+					TypeFactory::get("string"))), value_(s) {}
+
 
 		void print(ostream &os) const {
 			os << "\"" << value_ << "\"";
@@ -92,7 +102,21 @@ class StringConstantData : public PrimitiveConstantData
 		string value_;
 };
 
-// TODO add RecordConstantData
+// TODO: add fields_, set(), etc.
+class RecordConstantData : public SingleConstantData
+{
+	public:
+		RecordConstantData(const RecordType *t)
+			: SingleConstantData(), type_(t) {}
+
+		virtual const RecordType *type() const { return type_; }
+
+		void print(ostream &os) const {
+			// TODO
+		}
+	private:
+		const RecordType *type_;
+};
 
 ConstantData *create_default_constant(const Type *t);
 
