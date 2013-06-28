@@ -185,7 +185,8 @@ list_type
 list_constant
     : L_BRACKET list_values R_BRACKET
     {
-        //$$ = new ListConstantData();
+        $$ = new ListConstantData(TypeFactory::get_list(
+            constant_list.front()->type()));
 
         try {
             for (SingleConstantData *d : constant_list)
@@ -199,7 +200,7 @@ list_constant
             YYERROR;
         }
 
-        /*constant_list.clear();*/
+        constant_list.clear();
     }
     | list_type
     {
