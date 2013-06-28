@@ -150,6 +150,15 @@ class TypeFactory
 			return (it != map_.end()) ? it->second : nullptr;
 		}
 
+		static const ListType *get_list(const SingleType *t) {
+			if (!initialized_)
+				init();
+			auto it = map_.find(t->str() + "[]");
+			return (it != map_.end()) ?
+				dynamic_cast<const ListType *>(it->second)
+				: nullptr;
+		}
+
 		static void print(ostream &os) {
 			for (auto it = map_.begin(); it != map_.end(); ++it) {
 				it->second->print(os);
