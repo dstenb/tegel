@@ -63,8 +63,9 @@ class Argument : public Symbol
 			: Symbol(name, t)
 		{
 			add("cmd", new ListConstantData(
-				dynamic_cast<const ListType *>(
-					TypeFactory::get("string[]"))));
+				TypeFactory::get_list(
+					static_cast<const SingleType *>(
+						TypeFactory::get("string")))));
 			add("default", create_default_constant(t));
 			add("info", new StringConstantData(""));
 		}
