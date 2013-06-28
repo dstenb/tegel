@@ -82,18 +82,18 @@ class RecordType : public SingleType
 	friend class TypeFactory;
 
 	public:
-		bool eql_fields(const RecordType *, // TODO
-			const vector<const PrimitiveType *> &v);
-		const Type *field(const string &f) const;
+		typedef unordered_map<string, const PrimitiveType *> field_map;
+		typedef vector<const PrimitiveType *> field_vector;
+
+		const PrimitiveType *field(const string &f) const;
 		const string &str() const { return str_; }
 		void print(ostream &os) const;
 	protected:
-		RecordType(const string &name,
-			const unordered_map<string, const PrimitiveType *> &m)
+		RecordType(const string &name, const field_map &m)
 			: str_(name), fields_(m) {}
 	private:
 		string str_;
-		unordered_map<string, const PrimitiveType *> fields_;
+		field_map fields_;
 };
 
 class ListType : public Type

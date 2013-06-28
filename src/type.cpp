@@ -9,7 +9,7 @@ void PrimitiveType::print(ostream &os) const
 	os << "PrimitiveType(" << str() << ")";
 }
 
-const Type *RecordType::field(const string &f) const
+const PrimitiveType *RecordType::field(const string &f) const
 {
 	auto it = fields_.find(f);
 
