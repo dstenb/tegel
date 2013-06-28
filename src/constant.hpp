@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 using namespace std;
@@ -35,11 +36,12 @@ class SingleConstantData : public ConstantData
 
 class PrimitiveConstantData : public SingleConstantData
 {
+	public:
+		virtual const PrimitiveType *type() const { return type_; }
 	protected:
 		PrimitiveConstantData(const PrimitiveType *t)
 			: SingleConstantData(), type_(t) {}
 
-		virtual const PrimitiveType *type() const { return type_; }
 	private:
 		const PrimitiveType *type_;
 };
@@ -105,6 +107,13 @@ class StringConstantData : public PrimitiveConstantData
 		string value_;
 };
 
+class UnevenNoOfFieldsException : public runtime_error
+{
+	public:
+		UnevenNoOfFieldsException(const string &what)
+			: runtime_error(what) {}
+};
+
 // TODO: add fields_, set(), etc.
 class RecordConstantData : public SingleConstantData
 {
@@ -119,13 +128,19 @@ class RecordConstantData : public SingleConstantData
 			}
 		}
 
+		RecordConstantData(const RecordType *t,
+				vector<PrimitiveConstantData *> &v)
+			: SingleConstantData(), type_(t), values_(v) {}
+
 		virtual const RecordType *type() const { return type_; }
 
 		void print(ostream &os) const;
 	private:
-		vector<PrimitiveConstantData *> values_;
 		const RecordType *type_;
+		vector<PrimitiveConstantData *> values_;
 };
 
+void validate_field_types(const RecordType *t,
+		const vector<PrimitiveConstantData *> &v);
 
 #endif

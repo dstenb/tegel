@@ -102,6 +102,8 @@ class RecordType : public SingleType
 
 		iterator begin() const;
 		iterator end() const;
+
+		size_t no_of_fields() const { return fields_.size(); }
 	protected:
 		RecordType(const string &name, const field_vector &m)
 			: str_(name), fields_(m) {}

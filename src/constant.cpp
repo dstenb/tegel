@@ -55,3 +55,23 @@ ConstantData *create_default_constant(const Type *t)
 	else
 		return nullptr;
 }
+
+// TODO: fix
+void validate_field_types(const RecordType *t,
+		const vector<PrimitiveConstantData *> &v)
+{
+	if (v.size() != t->no_of_fields()) {
+		stringstream s;
+		s << "Uneven number of fields (got " << v.size()
+			<< ", expected " << t->no_of_fields() << ")";
+		throw UnevenNoOfFieldsException(s.str());
+	}
+
+	// TODO rewrite
+	int i = 0;
+	for (auto it = t->begin(); it != t->end(); ++it, ++i) {
+		RecordField r = (*it);
+		if (r.type != v[i]->type()) // TODO: improve error
+			throw DifferentTypesError(v[i]->type(), r.type);
+	}
+}
