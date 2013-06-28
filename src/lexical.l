@@ -39,6 +39,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 [ \t\n]*             // Eat up all whitespace
 
 "arg"                return ARGUMENT;
+"record"             return RECORD;
 "="                  return ASSIGNMENT;
 "%%"                 return SEPARATOR;
 "{"                  return L_BRACE;

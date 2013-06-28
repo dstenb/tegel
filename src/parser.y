@@ -15,6 +15,8 @@ std::vector<SingleConstantData *> constant_list;
 /* same reasoning as above */
 std::vector<Param *> param_list;
 
+RecordType::field_map record_members;
+
 extern int yylex();
 void yyerror(const char *);
 void vyyerror(const char *, ...);
@@ -45,6 +47,7 @@ void vyyerror(const char *, ...);
 
 %token END 0 "end of file"
 %token ARGUMENT "argument"
+%token RECORD "record"
 %token SEPARATOR
 %token CONTROL
 %token L_BRACE "{" R_BRACE "}" SEMI_COLON ";" COMMA ","
@@ -104,6 +107,7 @@ header_item
             YYERROR;
         }
     }
+    | record_def
     ;
 
 arg
@@ -124,6 +128,54 @@ arg
         }
         param_list.clear();
         free($3); // free identifier string
+    }
+
+record_def
+    : RECORD IDENTIFIER L_BRACE record_def_members R_BRACE
+    {
+        const Type *t = TypeFactory::get($2);
+
+        if (t != nullptr) {
+            vyyerror("Multiple definitions of type '%s'", $2);
+            YYERROR;
+        }
+
+        TypeFactory::add_record($2, record_members);
+        record_members.clear();
+
+        free($2);
+    }
+
+record_def_members
+    : record_def_members record_member { }
+    | record_member { }
+    ;
+
+record_member
+    : single_type IDENTIFIER SEMI_COLON
+    {
+        const PrimitiveType *p = dynamic_cast<const PrimitiveType *>($1);
+
+        if (p == nullptr) {
+            vyyerror("A record can only hold primitive types", $2);
+            YYERROR;
+        }
+
+        auto it = record_members.find($2);
+
+        if (it != record_members.end()) {
+            vyyerror("Multiple definitions of field '%s'", $2);
+            YYERROR;
+        }
+
+        record_members[$2] = p;
+
+        free($2);
+    }
+    | list_type IDENTIFIER SEMI_COLON
+    {
+        vyyerror("A record can only hold primitive types", $2);
+        YYERROR;
     }
 
 header_item_params

@@ -14,10 +14,10 @@ lexical.cpp: lexical.l parser.hpp type.hpp symbol.hpp constant.hpp
 %.o: %.cpp
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-parser.cpp: parser.y type.hpp lexical.cpp
+parser.cpp: parser.y type.hpp
 	bison -d -o $@ parser.y
 
-parser.hpp: parser.cpp lexical.cpp
+parser.hpp: parser.cpp
 
 clean:
 	rm -f *.o tegel parser.cpp parser.hpp lexical.cpp

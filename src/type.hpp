@@ -124,7 +124,7 @@ class TypeFactory
 {
 	public:
 		static void add_record(const string &n,
-			const unordered_map<string, const PrimitiveType *> &m)
+				const RecordType::field_map &m)
 		{
 			// TODO: check n [a-zA-Z]...
 			//
