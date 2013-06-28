@@ -17,7 +17,6 @@ class Type
 {
 	public:
 		virtual const string &str() const = 0;
-		bool operator==(const Type *other);
 
 		virtual const Type *field(const string &) const {
 			return nullptr;
@@ -211,7 +210,5 @@ class InvalidTypeError : public runtime_error
 		InvalidTypeError(const string &what)
 			: runtime_error(what) {}
 };
-
-
 
 #endif
