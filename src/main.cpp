@@ -13,8 +13,9 @@ extern FILE *yyin;
 
 int main(int argc, char **argv)
 {
-	cout << yyparse() << endl;
+	yyparse();
 
+	cout << "Types that are defined:\n";
 	TypeFactory::print(cout);
 
 	return 0;

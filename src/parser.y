@@ -1,4 +1,5 @@
 %{
+#include <algorithm>
 #include <iostream>
 
 #include "symbol.hpp"
@@ -9,13 +10,15 @@ SymbolTable symbol_table;
 
 /* constant_list is used by list_constant to hold the list elements.
   This is used instead of a AST approach and is ok since only one list will be
-  handled at a time (since a list can only contain scalars) */
+  handled at a time (since a list can only contain primitives and records)
+  same reasoning for constant_record */
 std::vector<SingleConstantData *> constant_list;
+std::vector<PrimitiveConstantData *> constant_record;
 
 /* same reasoning as above */
 std::vector<Param *> param_list;
 
-RecordType::field_map record_members;
+RecordType::field_vector record_members;
 
 extern int yylex();
 void yyerror(const char *);
@@ -39,7 +42,9 @@ void vyyerror(const char *, ...);
 	const SingleType *stype;
 	const ListType *ltype;
 	ConstantData *constant;
-	SingleConstantData *scalar_const;
+	SingleConstantData *single_const;
+	PrimitiveConstantData *primitive_const;
+	RecordConstantData *record_const;
 	ListConstantData *list_const;
 	Argument *argument;
     Param *param;
@@ -63,7 +68,9 @@ void vyyerror(const char *, ...);
 %token<string> LIST
 
 %type<constant> constant
-%type<scalar_const> scalar_constant
+%type<single_const> single_constant
+%type<primitive_const> primitive_constant
+%type<record_const> record_constant
 %type<list_const> list_constant
 
 %type<argument> arg
@@ -161,14 +168,15 @@ record_member
             YYERROR;
         }
 
-        auto it = record_members.find($2);
+        auto it = find_if(record_members.begin(), record_members.end(),
+            [&] (const RecordField &r) { return r.name == $2; });
 
         if (it != record_members.end()) {
             vyyerror("Multiple definitions of field '%s'", $2);
             YYERROR;
         }
 
-        record_members[$2] = p;
+        record_members.push_back({ $2, p});
 
         free($2);
     }
@@ -197,15 +205,44 @@ param
     ;
 
 constant
-    : scalar_constant { $$ = $1; }
+    : single_constant { $$ = $1; }
     | list_constant { $$ = $1; }
     ;
 
-scalar_constant
+single_constant
+    : primitive_constant { $$ = $1; }
+    | record_constant { $$ = $1; }
+
+primitive_constant
     : BOOL { $$ = new BoolConstantData($1); }
 	| INT { $$ = new IntConstantData($1); }
 	| STRING { $$ = new StringConstantData($1); }
 	;
+
+record_constant
+    : IDENTIFIER L_BRACE record_values R_BRACE
+    {
+        const Type *t = TypeFactory::get($1);
+
+        if (t == nullptr) {
+            vyyerror("Unknown type '%s'", $1);
+            YYERROR;
+        }
+
+        const RecordType *p = dynamic_cast<const RecordType *>(t);
+
+        if (p == nullptr) {
+            vyyerror("Expected a record (got '%s')", t->str().c_str());
+        }
+
+        // TODO: create $$ using constant_record
+        $$ = new RecordConstantData(p);
+    }
+
+record_values
+    : record_values COMMA primitive_constant { constant_record.push_back($3); }
+    | primitive_constant { constant_record.push_back($1); }
+    ;
 
 type
     : single_type { $$ = $1; }
@@ -217,7 +254,7 @@ single_type
         $$ = dynamic_cast<const SingleType *>(TypeFactory::get($1));
 
         if ($$ == nullptr) {
-            vyyerror("Unknown type %s", $1);
+            vyyerror("Unknown type '%s'", $1);
             YYERROR;
         }
     }
@@ -229,7 +266,7 @@ list_type
         $$ = dynamic_cast<const ListType *>(TypeFactory::get($1));
 
         if ($$ == nullptr) {
-            vyyerror("Unknown type %s", $1);
+            vyyerror("Unknown type '%s'", $1);
             YYERROR;
         }
     }
@@ -261,8 +298,8 @@ list_constant
     ;
 
 list_values
-    : list_values COMMA scalar_constant { constant_list.push_back($3); }
-    | scalar_constant { constant_list.push_back($1); }
+    : list_values COMMA single_constant { constant_list.push_back($3); }
+    | single_constant { constant_list.push_back($1); }
     ;
 
 %%
