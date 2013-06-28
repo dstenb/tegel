@@ -11,10 +11,10 @@ Param *Argument::replace(Param *p)
 		Param *r = it->second;
 
 		// TODO
-		// if (p->type() != r->type())
-		//     throw ParamException("Parameter " + id +" must be of type "
-		// 		    + type_to_str(r->type()) + " (got " +
-		// 		    type_to_str(p->type()) + ")");
+		if (p->type() != r->type())
+		     throw ParamException("Parameter " + id +" must be of type "
+				     + r->type()->str() + " (got " +
+				     p->type()->str() + ")");
 
 		params_[id] = p;
 		return r;
