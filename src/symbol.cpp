@@ -29,8 +29,8 @@ const Param *Argument::get(const string &s) const
 
 void Argument::print(ostream &os) const
 {
-	// os << "Argument(" << get_name() << ", " <<
-	// 	type_to_str(get_type()) << ")\n";
+	os << "Argument(\"" << get_name() << "\", "
+		<< get_type()->str() << ")\n";
 	for (auto it = params_.begin(); it != params_.end(); ++it) {
 		Param *p = it->second;
 		os << "\t";
