@@ -15,7 +15,23 @@ using namespace std;
 
 class TypeFactory;
 
+class SingleType;
+class PrimitiveType;
+class RecordType;
+class ListType;
 
+/** Abstract type class
+ *
+ * A Type object represents a type in the language (e.g. string).
+ *
+ * The objects contain protected constructors and destructors, and they are
+ * only created by the TypeFactory. This means that each type in the language
+ * corresponds to an unique object, meaning that simple pointer comparison can
+ * be made to compare types in the language.
+ *
+ * The class contains safe methods for safe upcasting, so that RTTI doesn't
+ * have to be used.
+ */
 class Type
 {
 	public:
@@ -28,14 +44,32 @@ class Type
 
 		virtual void print(ostream &os) const = 0;
 
-		// TODO: possibly add PrimitiveType *primitive() ...
-		// to avoid using dynamic_cast
+		virtual const SingleType *single() const {
+			return nullptr;
+		}
+
+		virtual const PrimitiveType *primitive() const {
+			return nullptr;
+		}
+
+		virtual const RecordType *record() const {
+			return nullptr;
+		}
+
+		virtual const ListType *list() const {
+			return nullptr;
+		}
 	protected:
 		virtual ~Type() {}
 };
 
+/**
+ * A SingleType is either a primitive or a record.
+ */
 class SingleType : public Type
 {
+	public:
+		virtual const SingleType *single() const { return this; }
 };
 
 class PrimitiveType : public SingleType
@@ -44,6 +78,8 @@ class PrimitiveType : public SingleType
 		void print(ostream &os) const;
 
 		const string &str() const { return str_; }
+
+		const PrimitiveType *primitive() const { return this; }
 	protected:
 		PrimitiveType(const string &s) : str_(s) {}
 	private:
@@ -104,6 +140,8 @@ class RecordType : public SingleType
 		iterator end() const;
 
 		size_t no_of_fields() const { return fields_.size(); }
+
+		virtual const RecordType *record() const { return this; }
 	protected:
 		RecordType(const string &name, const field_vector &m)
 			: str_(name), fields_(m) {}
@@ -120,6 +158,8 @@ class ListType : public Type
 		const SingleType *elem() const { return elem_; }
 		const string &str() const { return str_; }
 		void print(ostream &os) const;
+
+		virtual const ListType *list() const { return this; }
 	protected:
 		ListType(const SingleType *t)
 			: str_(t->str() + "[]"), elem_(t) {}
@@ -136,6 +176,11 @@ class TypeAlreadyDefined : public runtime_error
 					" is already defined") {}
 };
 
+/**
+ * The TypeFactory class is a singleton that handles the declared types in the
+ * language. The class is responsible for the allocation and indexing of the
+ * types.
+ */
 class TypeFactory
 {
 	public:
@@ -170,8 +215,7 @@ class TypeFactory
 				init();
 			auto it = map_.find(t->str() + "[]");
 			return (it != map_.end()) ?
-				dynamic_cast<const ListType *>(it->second)
-				: nullptr;
+				it->second->list() : nullptr;
 		}
 
 		static void print(ostream &os) {

@@ -161,7 +161,7 @@ record_def_members
 record_member
     : single_type IDENTIFIER SEMI_COLON
     {
-        const PrimitiveType *p = dynamic_cast<const PrimitiveType *>($1);
+        const PrimitiveType *p = $1 ? $1->primitive() : nullptr;
 
         if (p == nullptr) {
             vyyerror("A record can only hold primitive types", $2);
@@ -229,7 +229,7 @@ record_constant
             YYERROR;
         }
 
-        const RecordType *p = dynamic_cast<const RecordType *>(t);
+        const RecordType *p = t->record();
 
         if (p == nullptr) {
             vyyerror("Expected a record (got '%s')", t->str().c_str());
@@ -262,7 +262,9 @@ type
 single_type
     : IDENTIFIER
     {
-        $$ = dynamic_cast<const SingleType *>(TypeFactory::get($1));
+        const Type *t = TypeFactory::get($1);
+
+        $$ = t ? t->single() : nullptr;
 
         if ($$ == nullptr) {
             vyyerror("Unknown type '%s'", $1);
@@ -274,7 +276,9 @@ single_type
 list_type
     : LIST
     {
-        $$ = dynamic_cast<const ListType *>(TypeFactory::get($1));
+        const Type *t = TypeFactory::get($1);
+
+        $$ = t ? t->list() : nullptr;
 
         if ($$ == nullptr) {
             vyyerror("Unknown type '%s'", $1);
