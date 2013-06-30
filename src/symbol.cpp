@@ -1,5 +1,12 @@
 #include "symbol.hpp"
 
+void Param::print(ostream &os)
+{
+	os << "Param(" << id_ << ", ";
+	data_->print(os);
+	os << ")";
+}
+
 Param *Argument::replace(Param *p)
 {
 	string id = p->get_id();
@@ -10,7 +17,6 @@ Param *Argument::replace(Param *p)
 	} else {
 		Param *r = it->second;
 
-		// TODO
 		if (p->type() != r->type())
 		     throw ParamException("Parameter " + id +" must be of type "
 				     + r->type()->str() + " (got " +
@@ -37,6 +43,20 @@ void Argument::print(ostream &os) const
 		p->print(os);
 		os << "\n";
 	}
+}
+
+void Argument::add(const string &id, ConstantData *data)
+{
+	assert(data != NULL);
+	params_[id] = new Param(id, data);
+}
+
+void Argument::setup_parameters()
+{
+	add("cmd", new ListConstantData(
+		TypeFactory::get("string[]")->list()));
+	add("default", create_default_constant(get_type()));
+	add("info", new StringConstantData(""));
 }
 
 void SymbolTable::add(Symbol *s)

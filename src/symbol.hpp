@@ -20,20 +20,13 @@ class Param
 
 		string get_id() const { return id_; }
 		const ConstantData *get() const { return data_; }
-
 		const Type *type() const { return data_->type(); }
-
-		void print(ostream &os) {
-			os << "Param(" << id_ << ", ";
-			data_->print(os);
-			os << ")";
-		}
+		void print(ostream &os);
 	private:
 		string id_;
 		ConstantData *data_;
 };
 
-// TODO: rename
 class ParamException : public runtime_error
 {
 	public:
@@ -45,12 +38,12 @@ class Symbol
 	public:
 		Symbol(const string &name, const Type *t)
 			: name_(name), type_(t) {}
+
 		virtual bool is_constant() const = 0;
+		virtual void print(ostream &os) const = 0;
 
 		string get_name() const { return name_; }
 		const Type *get_type() const { return type_; }
-
-		virtual void print(ostream &os) const = 0;
 	private:
 		string name_;
 		const Type *type_;
@@ -60,27 +53,18 @@ class Argument : public Symbol
 {
 	public:
 		Argument(const string &name, const Type *t)
-			: Symbol(name, t)
-		{
-			add("cmd", new ListConstantData(
-				TypeFactory::get_list(
-					static_cast<const SingleType *>(
-						TypeFactory::get("string")))));
-			add("default", create_default_constant(t));
-			add("info", new StringConstantData(""));
+			: Symbol(name, t) {
+			setup_parameters();
 		}
 
-		bool is_constant() const { return true; }
+		virtual bool is_constant() const { return true; }
+		virtual void print(ostream &os) const;
 
 		Param *replace(Param *p);
 		const Param *get(const string &s) const;
-		void print(ostream &os) const;
-
 	private:
-		void add(const string &id, ConstantData *data) {
-			assert(data != NULL);
-			params_[id] = new Param(id, data);
-		}
+		void add(const string &id, ConstantData *data);
+		void setup_parameters();
 
 		map<string, Param *> params_;
 };
@@ -88,7 +72,7 @@ class Argument : public Symbol
 class Variable : public Symbol
 {
 	public:
-		bool is_constant() const { return false; }
+		virtual bool is_constant() const { return false; }
 };
 
 class SymTabAlreadyDefinedError : public runtime_error
