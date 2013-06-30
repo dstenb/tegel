@@ -22,3 +22,6 @@ src/tegel
 src/parser.cpp
 src/parser.hpp
 src/lexical.cpp
+
+# Ignore the gh-pages
+html/
