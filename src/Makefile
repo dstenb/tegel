@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++0x -pedantic -Wall -Wextra
+CFLAGS = -g -std=c++0x -pedantic -Wall -Wextra
 LDFLAGS =
 OBJFILES := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
@@ -24,3 +24,6 @@ clean:
 
 generate-tags:
 	ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q
+
+doc:
+	doxygen doxygen
