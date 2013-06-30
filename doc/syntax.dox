@@ -74,8 +74,29 @@
   }
   ~~~~~~~~~~~~~
 
-
-
   \section body Body
-  More text.
+
+  \subsection for For loops
+
+  \subsection conditional Conditional statements
+
+  \subsection text Text
+
+  \subsubsection newline Suppressing newlines
+  Newlines can be suppressed by adding `\\` to the end of a text line. For
+  example
+
+  ~~~
+  Hello, \\
+  World
+  ~~~
+
+  Generates "Hello, World".
+
+  If you need to add "\\" to the end of a line, this can easiest be done by
+  escaping it
+
+  ~~~
+  {{ "\\\\" }}
+  ~~~
 */

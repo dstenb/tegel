@@ -9,6 +9,12 @@
       int year;
   }
 
+  string caption {
+  	info = "Caption";
+	cmd = [ "c", "caption=" ];
+	default = "Books";
+  }
+
   arg book[] books {
       default = [ book{"Book 1", 1997}, book{"Book 2", 2001} ];
       cmd = [ "b", "books=" ];
@@ -17,13 +23,36 @@
 
   # The body starts below
   %%
+  \begin{table}[H]
+      \caption{{ "{" + caption + "}" }}
+      \begin{tabular}{l l}
+          Book & Published {{ "\\" }}
 
-  \begin{document}
+          % if hline
+          \hline {{ "\\" }}
+          % endif
 
-  \end{document}
+          % for b in books
+          {{ b.name }} & {{ b.year }} {{ "\\" }}
+          % endfor
+      \end{tabular}
+  \end{table}
+
   ~~~~~~~~~~~~~
 
   \section compile Compiling the file
+
+  ~~~
+  $ tegel -b py -o example.py
+  ~~~
+
+  ~~~
+  $ tegel -b sh -o example.sh
+  ~~~
+
+  ~~~
+  $ tegel -b pygtk -o example-gtk.py
+  ~~~
 
   \section running Running the generated script
   More text.
