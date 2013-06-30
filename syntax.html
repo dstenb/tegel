@@ -84,7 +84,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li class="level2"><a href="#argument">Argument</a></li>
 </ul>
 </li>
-<li class="level1"><a href="#body">Body</a></li>
+<li class="level1"><a href="#body">Body</a><ul><li class="level2"><a href="#for">For loops</a></li>
+<li class="level2"><a href="#conditional">Conditional statements</a></li>
+<li class="level2"><a href="#text">Text</a><ul><li class="level3"><a href="#newline">Suppressing newlines</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="textblock"><p>This page describes the syntax of TeGeL. </p>
@@ -148,11 +154,24 @@ Argument</h2>
 <div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="body"></a>
 Body</h1>
-<p>More text. </p>
-</div></div><!-- contents -->
+<h2><a class="anchor" id="for"></a>
+For loops</h2>
+<h2><a class="anchor" id="conditional"></a>
+Conditional statements</h2>
+<h2><a class="anchor" id="text"></a>
+Text</h2>
+<h3><a class="anchor" id="newline"></a>
+Suppressing newlines</h3>
+<p>Newlines can be suppressed by adding <code>\\</code> to the end of a text line. For example</p>
+<div class="fragment"><div class="line">Hello, \\</div>
+<div class="line">World</div>
+</div><!-- fragment --><p>Generates "Hello, World".</p>
+<p>If you need to add "\\" to the end of a line, this can easiest be done by escaping it</p>
+<div class="fragment"><div class="line">{{ <span class="stringliteral">&quot;\\\\&quot;</span> }}</div>
+</div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jun 30 2013 17:11:43 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Jun 30 2013 18:07:53 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

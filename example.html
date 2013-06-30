@@ -92,6 +92,12 @@ File</h1>
 <div class="line">    <span class="keywordtype">int</span> year;</div>
 <div class="line">}</div>
 <div class="line"></div>
+<div class="line"><span class="keywordtype">string</span> caption {</div>
+<div class="line">   info = <span class="stringliteral">&quot;Caption&quot;</span>;</div>
+<div class="line">  cmd = [ <span class="stringliteral">&quot;c&quot;</span>, <span class="stringliteral">&quot;caption=&quot;</span> ];</div>
+<div class="line">  <span class="keywordflow">default</span> = <span class="stringliteral">&quot;Books&quot;</span>;</div>
+<div class="line">}</div>
+<div class="line"></div>
 <div class="line">arg book[] books {</div>
 <div class="line">    <span class="keywordflow">default</span> = [ book{<span class="stringliteral">&quot;Book 1&quot;</span>, 1997}, book{<span class="stringliteral">&quot;Book 2&quot;</span>, 2001} ];</div>
 <div class="line">    cmd = [ <span class="stringliteral">&quot;b&quot;</span>, <span class="stringliteral">&quot;books=&quot;</span> ];</div>
@@ -100,19 +106,32 @@ File</h1>
 <div class="line"></div>
 <div class="line"><span class="preprocessor"># The body starts below</span></div>
 <div class="line"><span class="preprocessor"></span>%%</div>
+<div class="line">\begin{table}[H]</div>
+<div class="line">    \caption{{ <span class="stringliteral">&quot;{&quot;</span> + caption + <span class="stringliteral">&quot;}&quot;</span> }}</div>
+<div class="line">    \begin{tabular}{l l}</div>
+<div class="line">        Book &amp; Published {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
 <div class="line"></div>
-<div class="line">\begin{document}</div>
+<div class="line">        % <span class="keywordflow">if</span> hline</div>
+<div class="line">        \hline {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
+<div class="line">        % endif</div>
 <div class="line"></div>
-<div class="line">\end{document}</div>
+<div class="line">        % <span class="keywordflow">for</span> b in books</div>
+<div class="line">        {{ b.name }} &amp; {{ b.year }} {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
+<div class="line">        % endfor</div>
+<div class="line">    \end{tabular}</div>
+<div class="line">\end{table}</div>
 </div><!-- fragment --><h1><a class="anchor" id="compile"></a>
 Compiling the file</h1>
-<h1><a class="anchor" id="running"></a>
+<div class="fragment"><div class="line">$ tegel -b py -o example.py</div>
+</div><!-- fragment --><div class="fragment"><div class="line">$ tegel -b sh -o example.sh</div>
+</div><!-- fragment --><div class="fragment"><div class="line">$ tegel -b pygtk -o example-gtk.py</div>
+</div><!-- fragment --><h1><a class="anchor" id="running"></a>
 Running the generated script</h1>
 <p>More text. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jun 30 2013 17:11:43 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Jun 30 2013 18:07:53 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
