@@ -1,0 +1,81 @@
+/*! \page syntax Syntax
+  \tableofcontents
+  This page describes the syntax of TeGeL.
+  \section overview File overview
+  A .tgl file consists of a \ref header section and \ref body
+  section. The sections are divided by the "%%" separator.
+  \section header Header
+
+  The header consists of a list of \ref record and \ref argument declarations.
+
+  ~~~~~~~~~~~~~
+  # Example record
+  record book {
+      string title;
+      int year;
+  }
+
+  arg book[] books {
+      default = [ book{"Book 1", 1997}, book{"Book 2", 2001} ];
+      cmd = [ "b", "books=" ];
+      info = "Book list";
+  }
+
+  # The body starts below
+  %%
+  ~~~~~~~~~~~~~
+
+ 
+  \subsection record Record
+  A record is declared using the following syntax
+  ~~~~~~~~~~~~~
+  record [name]  {
+      [type] [field-name];
+      ...
+  }
+  ~~~~~~~~~~~~~
+
+  A record can only hold primitive values. Below is an example of a record
+  declaration
+
+  ~~~~~~~~~~~~~
+  # Example record
+  record book {
+      string title;
+      int year;
+  }
+  ~~~~~~~~~~~~~
+
+  \subsection argument Argument
+  An argument is declared using the following syntax
+  ~~~~~~~~~~~~~
+  arg [type] [name]  {
+      [param-name] = [constant];
+      ...
+  }
+  ~~~~~~~~~~~~~
+
+  Where `param-name` can be any of the following
+
+  Parameter     | Description 
+  ------------- | -------------
+  default       | Default value for the argument
+  cmd           | Command line parameters for the argument ("X" for short, "X=" for long)
+  info          | Information string
+
+  Below is an example of an argument declaration
+
+  ~~~~~~~~~~~~~
+  # Example argument
+  arg book[] books {
+      default = [ book{"Book 1", 1997}, book{"Book 2", 2001} ];
+      cmd = [ "b", "books=" ];
+      info = "Book list";
+  }
+  ~~~~~~~~~~~~~
+
+
+
+  \section body Body
+  More text.
+*/
