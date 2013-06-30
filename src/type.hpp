@@ -44,21 +44,10 @@ class Type
 
 		virtual void print(ostream &os) const = 0;
 
-		virtual const SingleType *single() const {
-			return nullptr;
-		}
-
-		virtual const PrimitiveType *primitive() const {
-			return nullptr;
-		}
-
-		virtual const RecordType *record() const {
-			return nullptr;
-		}
-
-		virtual const ListType *list() const {
-			return nullptr;
-		}
+		virtual const SingleType *single() const;
+		virtual const PrimitiveType *primitive() const;
+		virtual const RecordType *record() const;
+		virtual const ListType *list() const;
 	protected:
 		virtual ~Type() {}
 };
@@ -75,11 +64,10 @@ class SingleType : public Type
 class PrimitiveType : public SingleType
 {
 	public:
-		void print(ostream &os) const;
+		virtual void print(ostream &os) const;
+		virtual const string &str() const { return str_; }
 
-		const string &str() const { return str_; }
-
-		const PrimitiveType *primitive() const { return this; }
+		virtual const PrimitiveType *primitive() const { return this; }
 	protected:
 		PrimitiveType(const string &s) : str_(s) {}
 	private:
@@ -131,10 +119,10 @@ class RecordType : public SingleType
 		typedef vector<RecordField> field_vector;
 		typedef field_vector::const_iterator iterator;
 
-		const PrimitiveType *field(const string &) const;
-		const PrimitiveType *field(int) const;
-		const string &str() const { return str_; }
-		void print(ostream &os) const;
+		virtual const PrimitiveType *field(const string &) const;
+		virtual const PrimitiveType *field(int) const;
+		virtual const string &str() const { return str_; }
+		virtual void print(ostream &os) const;
 
 		iterator begin() const;
 		iterator end() const;
@@ -155,9 +143,9 @@ class ListType : public Type
 	friend class TypeFactory;
 
 	public:
-		const SingleType *elem() const { return elem_; }
-		const string &str() const { return str_; }
-		void print(ostream &os) const;
+		virtual const SingleType *elem() const { return elem_; }
+		virtual const string &str() const { return str_; }
+		virtual void print(ostream &os) const;
 
 		virtual const ListType *list() const { return this; }
 	protected:

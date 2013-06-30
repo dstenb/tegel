@@ -4,6 +4,26 @@
 bool TypeFactory::initialized_ = false;
 map<string, Type*> TypeFactory::map_;
 
+const SingleType *Type::single() const
+{
+	return nullptr;
+}
+
+const PrimitiveType *Type::primitive() const
+{
+	return nullptr;
+}
+
+const RecordType *Type::record() const
+{
+	return nullptr;
+}
+
+const ListType *Type::list() const
+{
+	return nullptr;
+}
+
 void PrimitiveType::print(ostream &os) const
 {
 	os << "PrimitiveType(" << str() << ")";
