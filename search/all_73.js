@@ -7,5 +7,6 @@ var searchData=
   ['symbol',['Symbol',['../classSymbol.html',1,'']]],
   ['symboltable',['SymbolTable',['../classSymbolTable.html',1,'']]],
   ['symtabalreadydefinederror',['SymTabAlreadyDefinedError',['../classSymTabAlreadyDefinedError.html',1,'']]],
-  ['symtabnosuchsymbolerror',['SymTabNoSuchSymbolError',['../classSymTabNoSuchSymbolError.html',1,'']]]
+  ['symtabnosuchsymbolerror',['SymTabNoSuchSymbolError',['../classSymTabNoSuchSymbolError.html',1,'']]],
+  ['syntax',['Syntax',['../syntax.html',1,'']]]
 ];
