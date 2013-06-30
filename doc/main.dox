@@ -1,7 +1,12 @@
 /**
-@brief Documentation file for Mainpage, and defgroups.
-@author Rick Foos at Solengtech dot Com
+@brief
+@author dstenb at gmail dot com
 @file
 @mainpage TeGeL - Template Generating Language
 TODO
+
+  \section getting_started Getting Started
+
+  - [Syntax](@ref syntax)
+  - [Example](@ref example)
 */

@@ -1,0 +1,30 @@
+/*! \page example Example
+  \tableofcontents
+
+  \section file File
+  ~~~~~~~~~~~~~
+  # Example record
+  record book {
+      string title;
+      int year;
+  }
+
+  arg book[] books {
+      default = [ book{"Book 1", 1997}, book{"Book 2", 2001} ];
+      cmd = [ "b", "books=" ];
+      info = "Book list";
+  }
+
+  # The body starts below
+  %%
+
+  \begin{document}
+
+  \end{document}
+  ~~~~~~~~~~~~~
+
+  \section compile Compiling the file
+
+  \section running Running the generated script
+  More text.
+*/
