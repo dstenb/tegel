@@ -4,6 +4,10 @@
 @file
 @mainpage TeGeL - Template Generator Language
 
+ \section source Source Code
+
+ The source code can be found at https://github.com/dstenb/tegel
+
  \section installation Installation
 
  TeGeL requires:
