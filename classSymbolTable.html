@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.3.1"/>
-<title>TeGeL: Main Page</title>
+<title>TeGeL: SymbolTable Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -36,8 +36,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </script>
   <div id="navrow1" class="tabs">
     <ul class="tablist">
-      <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -57,7 +57,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-</div><!-- top -->
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
+      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
+    </ul>
+  </div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -72,11 +79,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
+</div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="classSymbolTable-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">TeGeL Documentation</div>  </div>
+<div class="title">SymbolTable Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a7ffff1a2a7a77f663b873b80e90600e2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ffff1a2a7a77f663b873b80e90600e2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SymbolTable</b> (<a class="el" href="classSymbolTable.html">SymbolTable</a> *parent=nullptr)</td></tr>
+<tr class="separator:a7ffff1a2a7a77f663b873b80e90600e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdf2175301001f36a8c0e108f82f3795"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acdf2175301001f36a8c0e108f82f3795"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>add</b> (<a class="el" href="classSymbol.html">Symbol</a> *s)</td></tr>
+<tr class="separator:acdf2175301001f36a8c0e108f82f3795"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb07f05631bc399dfbbe1e1b2220d1fe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb07f05631bc399dfbbe1e1b2220d1fe"></a>
+<a class="el" href="classSymbol.html">Symbol</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>lookup</b> (const string &amp;)</td></tr>
+<tr class="separator:aeb07f05631bc399dfbbe1e1b2220d1fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bcd5b1b18e4ee728c2206143048621a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1bcd5b1b18e4ee728c2206143048621a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> (ostream &amp;os) const </td></tr>
+<tr class="separator:a1bcd5b1b18e4ee728c2206143048621a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>src/<a class="el" href="symbol_8hpp_source.html">symbol.hpp</a></li>
+<li>src/symbol.cpp</li>
+</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
