@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['differenttypeserror',['DifferentTypesError',['../classDifferentTypesError.html',1,'']]]
+  ['differenttypeserror',['DifferentTypesError',['../classtype_1_1DifferentTypesError.html',1,'type']]]
 ];

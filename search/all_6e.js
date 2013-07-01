@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nosuchfielderror',['NoSuchFieldError',['../classNoSuchFieldError.html',1,'']]]
+  ['nosuchfielderror',['NoSuchFieldError',['../classtype_1_1NoSuchFieldError.html',1,'type']]]
 ];
