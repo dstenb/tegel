@@ -105,7 +105,8 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <control>elif             return ELIF;
 <control>else             return ELSE;
 <control>endif            return ENDIF;
-<control>"\""             { str_caller = control; string_builder_append(""); }
+<control>"\""             { str_caller = control; string_builder_append("");
+                           BEGIN(str); }
 <control>{IDENTIFIER}     { yylval.string = strdup(yytext); return IDENTIFIER; }
 <control>{IDENTIFIER}"[]" { yylval.string = strdup(yytext); return LIST; }
 
