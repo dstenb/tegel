@@ -16,7 +16,7 @@ namespace constant {
 class ConstantData
 {
 	public:
-		virtual ~ConstantData();
+		virtual ~ConstantData() {}
 
 		virtual const Type *type() const = 0;
 
