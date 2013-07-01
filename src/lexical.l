@@ -31,6 +31,7 @@ UANY    {ASC}|{U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 UANYN   {ASCN}|{U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
+%x body
 %x str
 
 %%
@@ -41,7 +42,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 "arg"                return ARGUMENT;
 "record"             return RECORD;
 "="                  return ASSIGNMENT;
-"%%"                 return SEPARATOR;
+"%%"[ \t]*\n         { BEGIN(body); return SEPARATOR; }
 "{"                  return L_BRACE;
 "}"                  return R_BRACE;
 ";"                  return SEMI_COLON;
@@ -70,6 +71,8 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <str>"\\".           { vyyerror("unknown escape sequence \%s", yytext);
                        yyterminate(); }
 <str>{UANYN}         { string_builder_append(yytext); }
+
+<body>{UANYN}*       { yylval.string = strdup(yytext); return TEXT; }
 
 %%
 

@@ -61,13 +61,14 @@ void vyyerror(const char *, ...);
 %token END 0 "end of file"
 %token ARGUMENT "argument"
 %token RECORD "record"
-%token SEPARATOR
+%token SEPARATOR "%%"
 %token CONTROL
 %token L_BRACE "{" R_BRACE "}" SEMI_COLON ";" COMMA ","
 %token L_BRACKET "[" R_BRACKET "]" ASSIGNMENT "="
 %token<string> IDENTIFIER "identifier"
 %token FOR IN ENDFOR
 %token IF ELIF ELSE ENDIF
+%token<string> TEXT
 
 %token<boolean> BOOL
 %token<integer> INT
@@ -94,7 +95,7 @@ void vyyerror(const char *, ...);
 %%
 
 file
-    : header_block
+    : header_block SEPARATOR body_block
     {
         symbol_table.print(std::cout);
     }
@@ -211,6 +212,27 @@ param
         free($1);
     }
     ;
+
+body_block
+    : body_block_p {}
+    |
+    ;
+
+body_block_p
+    : body_block_p body_item { }
+    | body_item { }
+    ;
+
+body_item
+    : text { }
+    ;
+
+text
+    : TEXT { std::cout << "text(" << $1 << ")\n"; }
+    ;
+
+control
+    : { }
 
 constant
     : single_constant { $$ = $1; }
