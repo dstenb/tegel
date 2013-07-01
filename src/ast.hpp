@@ -3,8 +3,10 @@
 
 using namespace std;
 
+#include "constant.hpp"
 #include "type.hpp"
 
+using namespace constant;
 using namespace type;
 
 namespace ast {
@@ -51,7 +53,8 @@ class InlinedExpression;
  */
 class Statements : public AST_Node
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -67,7 +70,8 @@ class Statement : public AST_Node
  */
 class For : public Statement
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -75,7 +79,14 @@ class For : public Statement
  */
 class If : public Statement
 {
+	public:
+		virtual void accept(AST_Visitor &);
+};
 
+class Elif : public Statement
+{
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -83,7 +94,8 @@ class If : public Statement
  */
 class Else : public Statement
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /** Raw text
@@ -93,7 +105,8 @@ class Else : public Statement
  */
 class Text : public Statement
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -101,7 +114,8 @@ class Text : public Statement
  */
 class InlinedExpression : public Statement
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -110,7 +124,7 @@ class InlinedExpression : public Statement
 class Expression : public AST_Node
 {
 	public:
-		virtual const Type *type() = 0;
+		virtual const Type *type() const = 0;
 };
 
 /**
@@ -145,7 +159,8 @@ class UnaryExpression : public Expression
  */
 class And : public BinaryExpression
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -153,7 +168,8 @@ class And : public BinaryExpression
  */
 class Or : public BinaryExpression
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -161,7 +177,8 @@ class Or : public BinaryExpression
  */
 class Plus : public BinaryExpression
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -169,7 +186,8 @@ class Plus : public BinaryExpression
  */
 class Minus : public BinaryExpression
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -177,7 +195,8 @@ class Minus : public BinaryExpression
  */
 class Times : public BinaryExpression
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -185,7 +204,18 @@ class Times : public BinaryExpression
  */
 class Constant : public UnaryExpression
 {
+	public:
+		Constant(ConstantData *d)
+			: data_(d) {}
 
+		~Constant() {
+			delete data_;
+		}
+
+		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const { return data_->type(); }
+	private:
+		ConstantData *data_;
 };
 
 /**
@@ -193,7 +223,8 @@ class Constant : public UnaryExpression
  */
 class FunctionCall : public UnaryExpression
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
@@ -201,7 +232,8 @@ class FunctionCall : public UnaryExpression
  */
 class SymbolRef : public UnaryExpression
 {
-
+	public:
+		virtual void accept(AST_Visitor &);
 };
 
 /**
