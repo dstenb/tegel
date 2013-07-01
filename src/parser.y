@@ -67,13 +67,13 @@ void vyyerror(const char *, ...);
 %token L_BRACE "{" R_BRACE "}" SEMI_COLON ";" COMMA ","
 %token L_BRACKET "[" R_BRACKET "]" ASSIGNMENT "="
 %token<string> IDENTIFIER "identifier"
-%token FOR IN ENDFOR
-%token IF ELIF ELSE ENDIF
+%token FOR "for" IN "in" ENDFOR "endfor"
+%token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
 %token<string> TEXT
 
-%token<boolean> BOOL
-%token<integer> INT
-%token<string> STRING
+%token<boolean> BOOL "bool constant"
+%token<integer> INT "integer constant"
+%token<string> STRING "string constant"
 
 %token<string> LIST
 
