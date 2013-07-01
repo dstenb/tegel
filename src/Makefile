@@ -8,7 +8,7 @@ all: tegel
 tegel: main.o $(OBJFILES)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-lexical.cpp: lexical.l parser.hpp type.hpp symbol.hpp constant.hpp
+lexical.cpp: lexical.l parser.hpp type.hpp symbol.hpp constant.hpp ast.hpp
 	flex -o $@ lexical.l
 
 %.o: %.cpp

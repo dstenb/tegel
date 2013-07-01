@@ -31,6 +31,7 @@ void vyyerror(const char *, ...);
 %error-verbose
 
 %code requires {
+	#include "ast.hpp"
 	#include "constant.hpp"
 	#include "symbol.hpp"
 	#include "type.hpp"
