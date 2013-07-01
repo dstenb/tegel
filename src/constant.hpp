@@ -11,6 +11,8 @@
 using namespace std;
 using namespace type;
 
+namespace constant {
+
 class ConstantData
 {
 	public:
@@ -142,5 +144,7 @@ class RecordConstantData : public SingleConstantData
 
 void validate_field_types(const RecordType *t,
 		const vector<PrimitiveConstantData *> &v);
+
+}
 
 #endif

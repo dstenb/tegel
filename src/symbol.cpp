@@ -1,5 +1,7 @@
 #include "symbol.hpp"
 
+namespace symbol {
+
 void Param::print(ostream &os)
 {
 	os << "Param(" << id_ << ", ";
@@ -55,7 +57,7 @@ void Argument::setup_parameters()
 {
 	add("cmd", new ListConstantData(
 		TypeFactory::get("string[]")->list()));
-	add("default", create_default_constant(get_type()));
+	add("default", constant::create_default_constant(get_type()));
 	add("info", new StringConstantData(""));
 }
 
@@ -87,4 +89,6 @@ void SymbolTable::print(ostream &os) const
 		it->second->print(os);
 		os << endl;
 	}
+}
+
 }

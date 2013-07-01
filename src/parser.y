@@ -4,6 +4,9 @@
 
 #include "symbol.hpp"
 
+using namespace constant;
+using namespace symbol;
+
 // TODO: fix Single/Scalar/Primtive things
 
 SymbolTable symbol_table;
@@ -31,6 +34,11 @@ void vyyerror(const char *, ...);
 	#include "constant.hpp"
 	#include "symbol.hpp"
 	#include "type.hpp"
+
+	using namespace constant;
+	using namespace symbol;
+
+
 }
 
 %union {
@@ -47,7 +55,7 @@ void vyyerror(const char *, ...);
 	RecordConstantData *record_const;
 	ListConstantData *list_const;
 	Argument *argument;
-    Param *param;
+	Param *param;
 }
 
 %token END 0 "end of file"

@@ -1,5 +1,7 @@
 #include "constant.hpp"
 
+namespace constant {
+
 void ListConstantData::add(SingleConstantData *d)
 {
 	if (d->type() != type()->elem())
@@ -71,4 +73,6 @@ void validate_field_types(const RecordType *t,
 		if (r.type != v[i]->type()) // TODO: improve error
 			throw DifferentTypesError(v[i]->type(), r.type);
 	}
+}
+
 }

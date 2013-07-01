@@ -11,7 +11,10 @@
 #include "type.hpp"
 
 using namespace std;
+using namespace constant;
 using namespace type;
+
+namespace symbol {
 
 class Param
 {
@@ -103,5 +106,7 @@ class SymbolTable
 		SymbolTable *parent_;
 		map<string, Symbol *> map_;
 };
+
+}
 
 #endif
