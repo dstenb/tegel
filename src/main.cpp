@@ -6,6 +6,7 @@
 #include "type.hpp"
 
 using namespace std;
+using type::TypeFactory;
 
 extern int yyparse();
 

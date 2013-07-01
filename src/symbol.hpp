@@ -11,6 +11,7 @@
 #include "type.hpp"
 
 using namespace std;
+using namespace type;
 
 class Param
 {

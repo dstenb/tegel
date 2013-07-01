@@ -6,10 +6,10 @@
 #include <sstream>
 #include <vector>
 
-using namespace std;
-
 #include "type.hpp"
 
+using namespace std;
+using namespace type;
 
 class ConstantData
 {

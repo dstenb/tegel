@@ -13,6 +13,8 @@
 
 using namespace std;
 
+namespace type {
+
 class TypeFactory;
 
 class SingleType;
@@ -258,5 +260,7 @@ class InvalidTypeError : public runtime_error
 		InvalidTypeError(const string &what)
 			: runtime_error(what) {}
 };
+
+}
 
 #endif

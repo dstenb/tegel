@@ -1,5 +1,7 @@
 #include "type.hpp"
 
+namespace type {
+
 // TypeFactory data
 bool TypeFactory::initialized_ = false;
 map<string, Type*> TypeFactory::map_;
@@ -72,4 +74,6 @@ RecordType::iterator RecordType::end() const
 void ListType::print(ostream &os) const
 {
 	os << "ListType(" << str() << ")";
+}
+
 }
