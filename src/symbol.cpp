@@ -4,7 +4,7 @@ namespace symbol {
 
 void Param::print(ostream &os)
 {
-	os << "Param(" << id_ << ", ";
+	os << "Param(\"" << id_ << "\", ";
 	data_->print(os);
 	os << ")";
 }
