@@ -96,6 +96,8 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
   * a way that is more suitable for adding single characters */
 
  /* control section (i.e. "% <control>") */
+ /* TODO: add support for continuing the control sequence on the following
+  * lines (suggestion: use '\') */
 <control>[ \t]*           // Eat up all whitespace
 <control>\n               { BEGIN(body); printf("Closing\n"); }
 <control>for              return FOR;
