@@ -49,8 +49,8 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 "]"                  return R_BRACKET;
 ","                  return COMMA;
 
-"\""                 { str_caller = INITIAL; BEGIN(str); }
-
+"\""                 { str_caller = INITIAL; string_builder_append("");
+                       BEGIN(str); }
 "true"               { yylval.boolean = true; return BOOL; }
 "false"              { yylval.boolean = false; return BOOL; }
 
