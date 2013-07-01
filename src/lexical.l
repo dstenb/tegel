@@ -91,10 +91,12 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
                          yylval.string = string_builder; string_builder = NULL;
 			 printf("yylval.string = '%s'\n", yylval.string);
 			 BEGIN(body); return TEXT; }
- /* TODO: add support for inlining ({{ }}) */
+ /* TODO: add support for inlining ({{ }}), the above rules will have to be
+  * rewritten for single characters, and string_builder should be rewritten in
+  * a way that is more suitable for adding single characters */
 
  /* control section (i.e. "% <control>") */
-<control>[ \t]*          // Eat up all whitespace
+<control>[ \t]*           // Eat up all whitespace
 <control>\n               { BEGIN(body); printf("Closing\n"); }
 <control>for              return FOR;
 <control>in               return IN;

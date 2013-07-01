@@ -268,7 +268,6 @@ class AST_Visitor
 		virtual void visit(Else *) = 0;
 		virtual void visit(Text *) = 0;
 		virtual void visit(InlinedExpression *) = 0;
-
 };
 
 class AST_Printer : public AST_Visitor

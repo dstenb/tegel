@@ -63,7 +63,7 @@ void vyyerror(const char *, ...);
 %token ARGUMENT "argument"
 %token RECORD "record"
 %token SEPARATOR "%%"
-%token CONTROL
+%token CONTROL "%"
 %token L_BRACE "{" R_BRACE "}" SEMI_COLON ";" COMMA ","
 %token L_BRACKET "[" R_BRACKET "]" ASSIGNMENT "="
 %token<string> IDENTIFIER "identifier"
@@ -240,8 +240,9 @@ conditional
     ;
 
 loop
-    : FOR IDENTIFIER IN expression
+    : CONTROL FOR IDENTIFIER IN expression statements CONTROL ENDFOR
     {
+        std::cout << "for " << $3 << " in " << std::endl;
         /* TODO */
     }
     ;
@@ -252,6 +253,10 @@ inlined
 
 expression
     : { /* TODO */ }
+
+
+statements
+    : { /* TODO: combine with body_block_p && body_item */ }
 
 constant
     : single_constant { $$ = $1; }
