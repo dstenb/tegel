@@ -23,6 +23,8 @@ class AST_Visitor;
 class AST_Node
 {
 	public:
+		virtual ~AST_Node() {}
+
 		virtual void accept(AST_Visitor &) = 0;
 };
 
@@ -83,6 +85,9 @@ class If : public Statement
 		virtual void accept(AST_Visitor &);
 };
 
+/**
+ *
+ */
 class Elif : public Statement
 {
 	public:
@@ -106,7 +111,14 @@ class Else : public Statement
 class Text : public Statement
 {
 	public:
+		Text(const string &s)
+			: text_(s) {}
+
 		virtual void accept(AST_Visitor &);
+
+		string text() const { return text_; }
+	private:
+		string text_;
 };
 
 /**
@@ -242,6 +254,22 @@ class SymbolRef : public UnaryExpression
 class AST_Visitor
 {
 	public:
+		virtual void visit(And *) = 0;
+		virtual void visit(Or *) = 0;
+		virtual void visit(Plus *) = 0;
+		virtual void visit(Minus *) = 0;
+		virtual void visit(Times *) = 0;
+		virtual void visit(Constant *) = 0;
+		virtual void visit(FunctionCall *) = 0;
+		virtual void visit(SymbolRef *) = 0;
+
+		virtual void visit(For *) = 0;
+		virtual void visit(If *) = 0;
+		virtual void visit(Elif *)  = 0;
+		virtual void visit(Else *)  = 0;
+		virtual void visit(Text *) = 0;
+		virtual void visit(InlinedExpression *) = 0;
+
 };
 
 }
