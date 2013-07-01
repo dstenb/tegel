@@ -16,6 +16,8 @@ namespace constant {
 class ConstantData
 {
 	public:
+		virtual ~ConstantData();
+
 		virtual const Type *type() const = 0;
 
 		virtual void print(ostream &os) const = 0;
@@ -52,6 +54,13 @@ class ListConstantData : public ConstantData
 {
 	public:
 		ListConstantData(const ListType *t) : type_(t) {}
+
+
+		~ListConstantData() {
+			for (auto it = data_.begin();
+					it != data_.end(); ++it)
+				delete (*it);
+		}
 
 		virtual const ListType *type() const { return type_; }
 
@@ -116,7 +125,6 @@ class UnevenNoOfFieldsException : public runtime_error
 			: runtime_error(what) {}
 };
 
-// TODO: add fields_, set(), etc.
 class RecordConstantData : public SingleConstantData
 {
 	public:
@@ -133,6 +141,12 @@ class RecordConstantData : public SingleConstantData
 		RecordConstantData(const RecordType *t,
 				vector<PrimitiveConstantData *> &v)
 			: SingleConstantData(), type_(t), values_(v) {}
+
+		~RecordConstantData() {
+			for (auto it = values_.begin();
+					it != values_.end(); ++it)
+				delete (*it);
+		}
 
 		virtual const RecordType *type() const { return type_; }
 
