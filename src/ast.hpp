@@ -155,7 +155,6 @@ class BinaryExpression : public Expression
 	protected:
 		Expression *lhs_;
 		Expression *rhs_;
-
 };
 
 /**
@@ -265,11 +264,71 @@ class AST_Visitor
 
 		virtual void visit(For *) = 0;
 		virtual void visit(If *) = 0;
-		virtual void visit(Elif *)  = 0;
-		virtual void visit(Else *)  = 0;
+		virtual void visit(Elif *) = 0;
+		virtual void visit(Else *) = 0;
 		virtual void visit(Text *) = 0;
 		virtual void visit(InlinedExpression *) = 0;
 
+};
+
+class AST_Printer : public AST_Visitor
+{
+	public:
+		virtual void visit(And *) {
+			cerr << "And\n";
+		}
+
+		virtual void visit(Or *) {
+			cerr << "Or\n";
+		}
+
+		virtual void visit(Plus *) {
+			cerr << "Plus\n";
+		}
+
+		virtual void visit(Minus *) {
+			cerr << "Minus\n";
+		}
+
+		virtual void visit(Times *) {
+			cerr << "Times\n";
+		}
+
+		virtual void visit(Constant *) {
+			cerr << "Constant\n";
+		}
+
+		virtual void visit(FunctionCall *) {
+			cerr << "FunctionCall\n";
+		}
+
+		virtual void visit(SymbolRef *) {
+			cerr << "SymbolRef\n";
+		}
+
+		virtual void visit(For *) {
+			cerr << "For\n";
+		}
+
+		virtual void visit(If *) {
+			cerr << "If\n";
+		}
+
+		virtual void visit(Elif *) {
+			cerr << "Elif\n";
+		}
+
+		virtual void visit(Else *)  {
+			cerr << "Else\n";
+		}
+
+		virtual void visit(Text *t) {
+			cerr << "Text('" << t->text() << "')\n";
+		}
+
+		virtual void visit(InlinedExpression *) {
+			cerr << "InlinedExpression\n";
+		}
 };
 
 }
