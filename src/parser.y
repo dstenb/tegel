@@ -226,14 +226,32 @@ body_block_p
 
 body_item
     : text { }
+    | conditional { }
+    | loop { }
+    | inlined { }
     ;
 
 text
     : TEXT { std::cout << "text(" << $1 << ")\n"; }
     ;
 
-control
-    : { }
+conditional
+    : { /* TODO */ }
+    ;
+
+loop
+    : FOR IDENTIFIER IN expression
+    {
+        /* TODO */
+    }
+    ;
+
+inlined
+    : { /* TODO */ }
+    ;
+
+expression
+    : { /* TODO */ }
 
 constant
     : single_constant { $$ = $1; }
