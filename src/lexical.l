@@ -33,7 +33,9 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 %x body
 %x control
+%x inline
 %x str
+%x text
 
 %%
 
@@ -44,23 +46,25 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 "record"             return RECORD;
 "="                  return ASSIGNMENT;
 "%%"[ \t]*\n         { BEGIN(body); return SEPARATOR; }
-"{"                  return L_BRACE;
-"}"                  return R_BRACE;
-";"                  return SEMI_COLON;
-"["                  return L_BRACKET;
-"]"                  return R_BRACKET;
-","                  return COMMA;
+
+
+ /* shared rules */
+<INITIAL,control,inline>"{"       return L_BRACE;
+<INITIAL,control,inline>"}"       return R_BRACE;
+<INITIAL,control,inline>";"       return SEMI_COLON;
+<INITIAL,control,inline>"["       return L_BRACKET;
+<INITIAL,control,inline>"]"       return R_BRACKET;
+<INITIAL,control,inline>","       return COMMA;
+<INITIAL,control,inline>"true"    { yylval.boolean = true; return BOOL; }
+<INITIAL,control,inline>"false"   { yylval.boolean = false; return BOOL; }
+<INITIAL,control,inline>{INTEGER} { yylval.integer = atoi(yytext); return INT; }
 
 "\""                 { str_caller = INITIAL; string_builder_append("");
                        BEGIN(str); }
-"true"               { yylval.boolean = true; return BOOL; }
-"false"              { yylval.boolean = false; return BOOL; }
-
 {IDENTIFIER}         { yylval.string = strdup(yytext); return IDENTIFIER; }
 {IDENTIFIER}"[]"     { yylval.string = strdup(yytext); return LIST; }
 
-{INTEGER}            { yylval.integer = atoi(yytext); return INT; }
-
+ /* string rules */
 <str><<EOF>>         { yyerror("syntax error, unmatched '\"'"); yyterminate(); }
 <str>"\""            { yylval.string = string_builder; string_builder = NULL;
                        BEGIN(str_caller);
@@ -74,14 +78,34 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <str>{UANYN}         { string_builder_append(yytext); }
 
 <body>[ \t]*"%"      { BEGIN(control); return CONTROL; }
+<body>.              { string_builder_append(yytext); BEGIN(text); }
 
-<body>{UANYN}*"\\\\\n" { yylval.string = strdup(yytext);
-			yylval.string[strlen(yylval.string) - 3] = '\0';
-			printf("yylval.string = '%s'\n", yylval.string);
-			return TEXT; }
-<body>{UANYN}*"\n"     { yylval.string = strdup(yytext);
-			printf("yylval.string = '%s'\n", yylval.string);
-			return TEXT; }
+ /* rules for raw text lines */
+<text>{UANYN}*"\\\\\n" { string_builder_append(yytext);
+                         yylval.string = string_builder; string_builder = NULL;
+			 yylval.string[strlen(yylval.string) - 3] = '\0';
+		         printf("yylval.string = '%s'\n", yylval.string);
+			 BEGIN(body); return TEXT;
+			}
+<text>{UANYN}*"\n"     { string_builder_append(yytext);
+                         yylval.string = string_builder; string_builder = NULL;
+			 printf("yylval.string = '%s'\n", yylval.string);
+			 BEGIN(body); return TEXT; }
+ /* TODO: add support for inlining ({{ }}) */
+
+ /* control section (i.e. "% <control>") */
+<control>[ \t]*          // Eat up all whitespace
+<control>\n               { BEGIN(body); printf("Closing\n"); }
+<control>for              return FOR;
+<control>in               return IN;
+<control>endfor           return ENDFOR;
+<control>if               return IF;
+<control>elif             return ELIF;
+<control>else             return ELSE;
+<control>endif            return ENDIF;
+<control>"\""             { str_caller = control; string_builder_append(""); }
+<control>{IDENTIFIER}     { yylval.string = strdup(yytext); return IDENTIFIER; }
+<control>{IDENTIFIER}"[]" { yylval.string = strdup(yytext); return LIST; }
 
 %%
 
