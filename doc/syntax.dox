@@ -78,9 +78,51 @@
 
   \subsection for For loops
 
+  For(each) loops that iterate over lists are defined using the following
+  syntax
+
+  ~~~
+  % for [identifier] in [list-expression]
+  [statements]
+  % endfor
+  ~~~
+
+  For example
+
+  ~~~
+  % for b in books
+  b.title
+  % endfor
+  ~~~
+
+  \subsubsection enumerated Enumerated For loops (TODO)
+
   \subsection conditional Conditional statements
 
+  Conditional statements are defined using the following syntax
+
+  ~~~
+  % if [condition]
+  [statements]
+  % elif [condition]
+  [statements]
+  % else
+  [statements]
+  % endif
+  ~~~
+
   \subsection text Text
+  Every line where the first non-whitespace character isn't a "%" is treated as
+  a raw text line. Everything on the line is seen as raw text except for the
+  following:
+
+  \subsubsection inline Inlining expressions
+  Expressions can be inlined using the `{{ [expression] }}` syntax. If you need
+  to add "{{" to a text line, this can easiest be done by escaping it
+
+  ~~~
+  {{ "{{" }}
+  ~~~
 
   \subsubsection newline Suppressing newlines
   Newlines can be suppressed by adding `\\` to the end of a text line. For
