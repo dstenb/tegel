@@ -32,6 +32,7 @@ UANYN   {ASCN}|{U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 %x body
+%x control
 %x str
 
 %%
@@ -72,7 +73,15 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
                        yyterminate(); }
 <str>{UANYN}         { string_builder_append(yytext); }
 
-<body>{UANYN}*       { yylval.string = strdup(yytext); return TEXT; }
+<body>[ \t]*"%"      { BEGIN(control); return CONTROL; }
+
+<body>{UANYN}*"\\\\\n" { yylval.string = strdup(yytext);
+			yylval.string[strlen(yylval.string) - 3] = '\0';
+			printf("yylval.string = '%s'\n", yylval.string);
+			return TEXT; }
+<body>{UANYN}*"\n"     { yylval.string = strdup(yytext);
+			printf("yylval.string = '%s'\n", yylval.string);
+			return TEXT; }
 
 %%
 
