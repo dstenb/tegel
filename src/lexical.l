@@ -57,9 +57,9 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <INITIAL,control,inline>","       return COMMA;
 <INITIAL,control,inline>"("       return L_PAREN;
 <INITIAL,control,inline>")"       return R_PAREN;
-<INITIAL,control,inline>"+"       return PLUS;
-<INITIAL,control,inline>"-"       return MINUS;
-<INITIAL,control,inline>"*"       return TIMES;
+<INITIAL,control,inline>"+"       return '+';
+<INITIAL,control,inline>"-"       return '-';
+<INITIAL,control,inline>"*"       return '*';
 <INITIAL,control,inline>and       return AND;
 <INITIAL,control,inline>or        return OR;
 <INITIAL,control,inline>not       return NOT;

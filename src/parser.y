@@ -83,7 +83,6 @@ ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
 %token FOR "for" IN "in" ENDFOR "endfor"
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
 %token AND "and" OR "or" NOT "not"
-%token PLUS "+" MINUS "-" TIMES "*"
 %token<string> TEXT
 
 %token<boolean> BOOL "bool constant"
@@ -296,17 +295,17 @@ expression
             YYERROR;
         }
     }
-    | expression PLUS expression
+    | expression '+' expression
     {
         /* TODO: $1,2->type() == string => string append */
         /* TODO: $1,2->type() == int => + */
         /* TODO: $1,2->type() == list => list append */
     }
-    | expression MINUS expression
+    | expression '-' expression
     {
         /* TODO: $1,2->type() == int => - */
     }
-    | expression TIMES expression
+    | expression '*' expression
     {
         /* TODO: $1->type() == string, 2->type() == int => string repeat */
         /* TODO: $1->type() == int, 2->type() == string => string repeat */
