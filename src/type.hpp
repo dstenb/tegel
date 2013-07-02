@@ -61,6 +61,9 @@ class SingleType : public Type
 {
 	public:
 		virtual const SingleType *single() const { return this; }
+	protected:
+		virtual ~SingleType() {}
+
 };
 
 class PrimitiveType : public SingleType
@@ -72,6 +75,7 @@ class PrimitiveType : public SingleType
 		virtual const PrimitiveType *primitive() const { return this; }
 	protected:
 		PrimitiveType(const string &s) : str_(s) {}
+		virtual ~PrimitiveType() {}
 	private:
 		string str_;
 };
@@ -82,6 +86,7 @@ class BoolType : public PrimitiveType
 
 	protected:
 		BoolType() : PrimitiveType("bool") {}
+		virtual ~BoolType() {}
 };
 
 class IntType : public PrimitiveType
@@ -90,6 +95,7 @@ class IntType : public PrimitiveType
 
 	protected:
 		IntType() : PrimitiveType("int") {}
+		virtual ~IntType() {}
 };
 
 class StringType : public PrimitiveType
@@ -98,6 +104,7 @@ class StringType : public PrimitiveType
 
 	protected:
 		StringType() : PrimitiveType("string") {}
+		virtual ~StringType() {}
 };
 
 class NoSuchFieldError : public runtime_error
@@ -135,6 +142,7 @@ class RecordType : public SingleType
 	protected:
 		RecordType(const string &name, const field_vector &m)
 			: str_(name), fields_(m) {}
+		virtual ~RecordType() {}
 	private:
 		string str_;
 		field_vector fields_;
@@ -153,6 +161,7 @@ class ListType : public Type
 	protected:
 		ListType(const SingleType *t)
 			: str_(t->str() + "[]"), elem_(t) {}
+		virtual ~ListType() {}
 	private:
 		string str_;
 		const SingleType *elem_;
@@ -209,6 +218,8 @@ class TypeFactory
 		}
 
 		static void print(ostream &os) {
+			if (!initialized_)
+				init();
 			for (auto it = map_.begin(); it != map_.end(); ++it) {
 				it->second->print(os);
 				os << "\n";
