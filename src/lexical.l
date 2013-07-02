@@ -49,8 +49,8 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 
  /* shared rules */
-<INITIAL,control,inline>"{"       return L_BRACE;
-<INITIAL,control,inline>"}"       return R_BRACE;
+<INITIAL,control,inline>"{"       return '{';
+<INITIAL,control,inline>"}"       return '}';
 <INITIAL,control,inline>";"       return SEMI_COLON;
 <INITIAL,control,inline>"["       return L_BRACKET;
 <INITIAL,control,inline>"]"       return R_BRACKET;

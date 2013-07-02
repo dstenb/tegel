@@ -76,7 +76,7 @@ ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
 %token RECORD "record"
 %token SEPARATOR "%%"
 %token CONTROL "%"
-%token L_BRACE "{" R_BRACE "}" SEMI_COLON ";" COMMA ","
+%token SEMI_COLON ";" COMMA ","
 %token L_BRACKET "[" R_BRACKET "]" ASSIGNMENT "="
 %token L_PAREN "(" R_PAREN ")"
 %token<string> IDENTIFIER "identifier"
@@ -147,7 +147,7 @@ header_item
     ;
 
 arg
-    : ARGUMENT type IDENTIFIER L_BRACE header_item_params R_BRACE
+    : ARGUMENT type IDENTIFIER '{' header_item_params '}'
     {
         $$ = new Argument($3, $2);
 
@@ -167,7 +167,7 @@ arg
     }
 
 record_def
-    : RECORD IDENTIFIER L_BRACE record_def_members R_BRACE
+    : RECORD IDENTIFIER '{' record_def_members '}'
     {
         const Type *t = TypeFactory::get($2);
 
@@ -344,7 +344,7 @@ primitive_constant
 	;
 
 record_constant
-    : IDENTIFIER L_BRACE record_values R_BRACE
+    : IDENTIFIER '{' record_values '}'
     {
         const Type *t = TypeFactory::get($1);
 
