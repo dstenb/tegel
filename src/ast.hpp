@@ -50,8 +50,10 @@ class Else;
 class Text;
 class InlinedExpression;
 
-/**
+/** Abstract expression base class
  *
+ * An Expression object represents a part of an expression. It has a type
+ * associated with it.
  */
 class Expression : public AST_Node
 {
@@ -91,65 +93,102 @@ class UnaryExpression : public Expression
 /**
  *
  */
-class And : public BinaryExpression
+class BinaryBoolExpression : public BinaryExpression
+{
+	public:
+		BinaryBoolExpression(Expression *lhs, Expression *rhs)
+			: BinaryExpression(lhs, rhs),
+			type_(TypeFactory::get("bool")) {
+			assert(lhs->type() == type_);
+			assert(rhs->type() == type_);
+		}
+
+		virtual void accept(AST_Visitor &) = 0;
+		virtual const Type *type() const { return type_; }
+	private:
+		const Type *type_;
+};
+
+/** And class
+ *
+ * The class only accepts left and right hand sides that are of type bool
+ */
+class And : public BinaryBoolExpression
 {
 	public:
 		And(Expression *lhs, Expression *rhs)
-			: BinaryExpression(lhs, rhs),
-			type_(TypeFactory::get("bool")) {
-			assert(lhs->type() == type_);
-			assert(rhs->type() == type_);
-		}
+			: BinaryBoolExpression(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
-		virtual const Type *type() const { return type_; }
-	private:
-		const Type *type_;
 };
 
-/**
+/** Or class
  *
+ * The class only accepts left and right hand sides that are of type bool
  */
-class Or : public BinaryExpression
+class Or : public BinaryBoolExpression
 {
 	public:
 		Or(Expression *lhs, Expression *rhs)
+			: BinaryBoolExpression(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+/**
+ *
+ */
+class BinaryIntExpression : public BinaryExpression
+{
+	public:
+		BinaryIntExpression(Expression *lhs, Expression *rhs)
 			: BinaryExpression(lhs, rhs),
-			type_(TypeFactory::get("bool")) {
+			type_(TypeFactory::get("int")) {
 			assert(lhs->type() == type_);
 			assert(rhs->type() == type_);
 		}
 
-		virtual void accept(AST_Visitor &);
+		virtual void accept(AST_Visitor &) = 0;
 		virtual const Type *type() const { return type_; }
 	private:
 		const Type *type_;
 };
 
-/**
+/** Plus class
  *
+ * Represents integer addition
  */
-class Plus : public BinaryExpression
+class Plus : public BinaryIntExpression
 {
 	public:
+		Plus(Expression *lhs, Expression *rhs)
+			: BinaryIntExpression(lhs, rhs) {}
+
 		virtual void accept(AST_Visitor &);
 };
 
-/**
+/** Minus class
  *
+ * Represents integer subtraction
  */
-class Minus : public BinaryExpression
+class Minus : public BinaryIntExpression
 {
 	public:
+		Minus(Expression *lhs, Expression *rhs)
+			: BinaryIntExpression(lhs, rhs) {}
 		virtual void accept(AST_Visitor &);
 };
 
-/**
+/** Times class
  *
+ * Represents integer multiplication
  */
-class Times : public BinaryExpression
+class Times : public BinaryIntExpression
 {
 	public:
+		Times(Expression *lhs, Expression *rhs)
+			: BinaryIntExpression(lhs, rhs) {}
+
 		virtual void accept(AST_Visitor &);
 };
 
