@@ -96,6 +96,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 </ul>
 </li>
+<li class="level1"><a href="#expression">Expressions</a><ul><li class="level2"><a href="#string_concat">String concatenation</a></li>
+<li class="level2"><a href="#string_repeat">String repetition</a></li>
+<li class="level2"><a href="#list_repeat">List repetition</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="textblock"><p>This page describes the syntax of TeGeL. </p>
@@ -211,10 +216,30 @@ Suppressing newlines</h3>
 </div><!-- fragment --><p>Generates "Hello, World".</p>
 <p>If you need to add "\\" to the end of a line, this can easiest be done by escaping it</p>
 <div class="fragment"><div class="line">{{ <span class="stringliteral">&quot;\\\\&quot;</span> }}</div>
+</div><!-- fragment --><h1><a class="anchor" id="expression"></a>
+Expressions</h1>
+<h2><a class="anchor" id="string_concat"></a>
+String concatenation</h2>
+<p>Two string expressions can be concatenated by using the <code>+</code> operand.</p>
+<div class="fragment"><div class="line"><span class="stringliteral">&quot;abc&quot;</span> + <span class="stringliteral">&quot;def&quot;</span></div>
+</div><!-- fragment --><p>Translates to</p>
+<div class="fragment"><div class="line"><span class="stringliteral">&quot;abcdef&quot;</span></div>
+</div><!-- fragment --><h2><a class="anchor" id="string_repeat"></a>
+String repetition</h2>
+<p>A string expression can be repeated by using the <code>*</code> operand with an integer expression</p>
+<div class="fragment"><div class="line"><span class="stringliteral">&quot;x&quot;</span> * 5</div>
+</div><!-- fragment --><p>Translates to</p>
+<div class="fragment"><div class="line"><span class="stringliteral">&quot;xxxxx&quot;</span></div>
+</div><!-- fragment --><h2><a class="anchor" id="list_repeat"></a>
+List repetition</h2>
+<p>A list expression can repeated by using the <code>*</code> operand with an integer expression</p>
+<div class="fragment"><div class="line">[ 1, 2, 3 ] * 2</div>
+</div><!-- fragment --><p>Translates to</p>
+<div class="fragment"><div class="line">[ 1, 2, 3, 1, 2, 3 ]</div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 2 2013 10:41:11 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 2 2013 12:30:37 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
