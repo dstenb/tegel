@@ -14,7 +14,7 @@ namespace ast {
 class AST_Node;
 class AST_Visitor;
 
-/** Abstract AST node clas
+/** Abstract AST node class
  *
  * An AST_Node object represents a node in the AST of the body section.
  *
