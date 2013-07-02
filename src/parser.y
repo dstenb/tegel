@@ -43,20 +43,21 @@ void vyyerror(const char *, ...);
 }
 
 %union {
-	char *string;
-	bool boolean;
-	int integer;
-	bool is_list;
-	const Type *type;
-	const SingleType *stype;
-	const ListType *ltype;
-	ConstantData *constant;
-	SingleConstantData *single_const;
-	PrimitiveConstantData *primitive_const;
-	RecordConstantData *record_const;
-	ListConstantData *list_const;
-	Argument *argument;
-	Param *param;
+    char *string;
+    bool boolean;
+    int integer;
+    bool is_list;
+    const Type *type;
+    const SingleType *stype;
+    const ListType *ltype;
+    ConstantData *constant;
+    SingleConstantData *single_const;
+    PrimitiveConstantData *primitive_const;
+    RecordConstantData *record_const;
+    ListConstantData *list_const;
+    Argument *argument;
+    Param *param;
+    ast::Expression *expression;
 }
 
 %token END 0 "end of file"
@@ -66,9 +67,12 @@ void vyyerror(const char *, ...);
 %token CONTROL "%"
 %token L_BRACE "{" R_BRACE "}" SEMI_COLON ";" COMMA ","
 %token L_BRACKET "[" R_BRACKET "]" ASSIGNMENT "="
+%token L_PAREN "(" R_PAREN ")"
 %token<string> IDENTIFIER "identifier"
 %token FOR "for" IN "in" ENDFOR "endfor"
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
+%token AND "and" OR "or" NOT "not"
+%token PLUS "+" MINUS "-" TIMES "*"
 %token<string> TEXT
 
 %token<boolean> BOOL "bool constant"
@@ -90,6 +94,8 @@ void vyyerror(const char *, ...);
 %type<type> type
 %type<stype> single_type
 %type<ltype> list_type
+
+%type<expression> expression
 
 %start file
 
@@ -251,8 +257,49 @@ inlined
     : { /* TODO */ }
     ;
 
+ /* TODO: precedence */
 expression
-    : { /* TODO */ }
+    : expression AND expression
+    {
+        std::cout << "And\n";
+        /* TODO: $1,2->type() == bool */
+        $$ = new ast::And($1, $3);
+    }
+    | expression OR expression
+    {
+        std::cout << "Or\n";
+        /* TODO: $1,2->type() == bool */
+        $$ = new ast::Or($1, $3);
+    }
+    | expression PLUS expression
+    {
+        /* TODO: $1,2->type() == string => string append */
+        /* TODO: $1,2->type() == int => + */
+        /* TODO: $1,2->type() == list => list append */
+    }
+    | expression MINUS expression
+    {
+        /* TODO: $1,2->type() == int => - */
+    }
+    | expression TIMES expression
+    {
+        /* TODO: $1->type() == string, 2->type() == int => string repeat */
+        /* TODO: $1->type() == int, 2->type() == string => string repeat */
+        /* TODO: $1->type() == int, 2->type() == int => * */
+    }
+    | constant
+    {
+        std::cout << "Constant\n";
+        $$ = new ast::Constant($1);
+    }
+    | IDENTIFIER
+    {
+        std::cout << "SymbolRef\n";
+    }
+    | L_PAREN expression R_PAREN
+    {
+        $$ = $2;
+    }
 
 
 statements
