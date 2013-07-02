@@ -84,7 +84,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li class="level2"><a href="#argument">Argument</a></li>
 </ul>
 </li>
-<li class="level1"><a href="#body">Body</a><ul><li class="level2"><a href="#for">For loops</a><ul><li class="level3"><a href="#enumerated">Enumerated For loops (TODO)</a></li>
+<li class="level1"><a href="#body">Body</a><ul><li class="level2"><a href="#for">For loops</a><ul><li class="level3"><a href="#foreach">For Each loops</a></li>
+<li class="level3"><a href="#enumerated">Enumerated For Each loops (TODO)</a></li>
+<li class="level3"><a href="#range">For Range loops (TODO)</a></li>
 </ul>
 </li>
 <li class="level2"><a href="#conditional">Conditional statements</a></li>
@@ -159,17 +161,32 @@ Argument</h2>
 Body</h1>
 <h2><a class="anchor" id="for"></a>
 For loops</h2>
+<h3><a class="anchor" id="foreach"></a>
+For Each loops</h3>
 <p>For(each) loops that iterate over lists are defined using the following syntax</p>
 <div class="fragment"><div class="line">% <span class="keywordflow">for</span> [identifier] in [list-expression]</div>
 <div class="line">[statements]</div>
 <div class="line">% endfor</div>
 </div><!-- fragment --><p>For example</p>
-<div class="fragment"><div class="line">% <span class="keywordflow">for</span> b in books</div>
+<div class="fragment"><div class="line">% <span class="keywordflow">for</span> b in books + [ book{<span class="stringliteral">&quot;Book 3&quot;</span>, 2009}, book{<span class="stringliteral">&quot;Book 4&quot;</span>, 2012 ]</div>
 <div class="line">b.title</div>
 <div class="line">% endfor</div>
+</div><!-- fragment --><p>Results in</p>
+<div class="fragment"><div class="line">Book 1</div>
+<div class="line">Book 2</div>
+<div class="line">Book 3</div>
+<div class="line">Book 4</div>
 </div><!-- fragment --><h3><a class="anchor" id="enumerated"></a>
-Enumerated For loops (TODO)</h3>
-<h2><a class="anchor" id="conditional"></a>
+Enumerated For Each loops (TODO)</h3>
+<div class="fragment"><div class="line">% <span class="keywordflow">for</span> [index-identifier], [value-identifier] in [list-expression]</div>
+<div class="line">[statements]</div>
+<div class="line">% endfor</div>
+</div><!-- fragment --><h3><a class="anchor" id="range"></a>
+For Range loops (TODO)</h3>
+<div class="fragment"><div class="line">% <span class="keywordflow">for</span> [identifier] in range [lower-bound] to [higher-bound]</div>
+<div class="line">[statements]</div>
+<div class="line">% endfor</div>
+</div><!-- fragment --><h2><a class="anchor" id="conditional"></a>
 Conditional statements</h2>
 <p>Conditional statements are defined using the following syntax</p>
 <div class="fragment"><div class="line">% <span class="keywordflow">if</span> [condition]</div>
@@ -197,7 +214,7 @@ Suppressing newlines</h3>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 1 2013 16:26:48 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 2 2013 10:41:11 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
