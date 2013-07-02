@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include "ast.hpp"
 #include "symbol.hpp"
 
 using namespace constant;
@@ -26,6 +27,18 @@ RecordType::field_vector record_members;
 extern int yylex();
 void yyerror(const char *);
 void vyyerror(const char *, ...);
+
+template<class T>
+ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
+   ast::Expression *rhs)
+{
+    if (lhs->type() != TypeFactory::get("bool"))
+        throw DifferentTypesError(lhs->type(), TypeFactory::get("bool"));
+    if (rhs->type() != TypeFactory::get("bool"))
+        throw DifferentTypesError(rhs->type(), TypeFactory::get("bool"));
+    return new T(lhs, rhs);
+}
+
 %}
 
 %error-verbose
@@ -38,8 +51,6 @@ void vyyerror(const char *, ...);
 
 	using namespace constant;
 	using namespace symbol;
-
-
 }
 
 %union {
@@ -97,8 +108,8 @@ void vyyerror(const char *, ...);
 
 %type<expression> expression
 
-%left AND
 %left OR
+%left AND
 
 %start file
 
@@ -267,13 +278,23 @@ inlined
 expression
     : expression AND expression
     {
-        /* TODO: $1,2->type() == bool */
-        $$ = new ast::And($1, $3);
+        try {
+            $$ = create_bool_binary<ast::And>($1, $3);
+        } catch (const DifferentTypesError &e) {
+            vyyerror("Invalid type for 'and' operator (%s)",
+                e.what());
+            YYERROR;
+        }
     }
     | expression OR expression
     {
-        /* TODO: $1,2->type() == bool */
-        $$ = new ast::Or($1, $3);
+        try {
+            $$ = create_bool_binary<ast::Or>($1, $3);
+        } catch (const DifferentTypesError &e) {
+            vyyerror("Invalid type for 'or' operator (%s)",
+                e.what());
+            YYERROR;
+        }
     }
     | expression PLUS expression
     {
