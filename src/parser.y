@@ -97,6 +97,9 @@ void vyyerror(const char *, ...);
 
 %type<expression> expression
 
+%left AND
+%left OR
+
 %start file
 
 %%
@@ -249,6 +252,9 @@ loop
     : CONTROL FOR IDENTIFIER IN expression statements CONTROL ENDFOR
     {
         std::cout << "for " << $3 << " in " << std::endl;
+
+        ast::AST_Printer p;
+        $5->accept(p);
         /* TODO */
     }
     ;
@@ -261,13 +267,11 @@ inlined
 expression
     : expression AND expression
     {
-        std::cout << "And\n";
         /* TODO: $1,2->type() == bool */
         $$ = new ast::And($1, $3);
     }
     | expression OR expression
     {
-        std::cout << "Or\n";
         /* TODO: $1,2->type() == bool */
         $$ = new ast::Or($1, $3);
     }
@@ -289,12 +293,11 @@ expression
     }
     | constant
     {
-        std::cout << "Constant\n";
         $$ = new ast::Constant($1);
     }
     | IDENTIFIER
     {
-        std::cout << "SymbolRef\n";
+        /* TODO */
     }
     | L_PAREN expression R_PAREN
     {

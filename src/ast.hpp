@@ -380,8 +380,6 @@ class AST_Printer : public AST_Visitor
 	private:
 		void binary(const string &s, BinaryExpression *e)
 		{
-			for (int i = 0; i < indent; i++)
-				cerr << " ";
 			print_ws();
 			cerr << s << "\n";
 			indent++;
@@ -392,7 +390,8 @@ class AST_Printer : public AST_Visitor
 
 		int indent = 0;
 		void print_ws() {
-
+			for (int i = 0; i < indent; i++)
+				cerr << " ";
 		}
 };
 
