@@ -86,7 +86,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <str>{UANYN}         { string_builder_append(yytext); }
 
 <body>[ \t]*"%"      { BEGIN(control); return CONTROL; }
-<body>.              { string_builder_append(yytext); BEGIN(text); }
+<body>.              { unput(*yytext); BEGIN(text); }
 
  /* rules for raw text lines */
 <text>{UANYN}*"\\\\\n" { string_builder_append(yytext);
