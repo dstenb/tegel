@@ -53,98 +53,6 @@ class InlinedExpression;
 /**
  *
  */
-class Statements : public AST_Node
-{
-	public:
-		virtual void accept(AST_Visitor &);
-};
-
-/**
- *
- */
-class Statement : public AST_Node
-{
-
-};
-
-/**
- *
- */
-class For : public Statement
-{
-	public:
-		virtual void accept(AST_Visitor &);
-};
-
-/**
- *
- */
-class If : public Statement
-{
-	public:
-		virtual void accept(AST_Visitor &);
-};
-
-/**
- *
- */
-class Elif : public Statement
-{
-	public:
-		virtual void accept(AST_Visitor &);
-};
-
-/**
- *
- */
-class Else : public Statement
-{
-	public:
-		virtual void accept(AST_Visitor &);
-};
-
-/** Raw text
- *
- * The Text class holds raw text (in UTF-8 format)
- *
- */
-class Text : public Statement
-{
-	public:
-		Text(const string &s)
-			: text_(s) {}
-
-		virtual void accept(AST_Visitor &);
-
-		string text() const { return text_; }
-	private:
-		string text_;
-};
-
-/**
- *
- */
-class InlinedExpression : public Statement
-{
-	public:
-		InlinedExpression(Expression *e) {
-
-		}
-
-		~InlinedExpression() {
-			delete  expression_;
-		}
-
-		Expression *expression() { return expression_; }
-
-		virtual void accept(AST_Visitor &);
-	private:
-		Expression *expression_;
-};
-
-/**
- *
- */
 class Expression : public AST_Node
 {
 	public:
@@ -283,6 +191,99 @@ class SymbolRef : public UnaryExpression
 	public:
 		virtual void accept(AST_Visitor &);
 };
+
+/**
+ *
+ */
+class Statements : public AST_Node
+{
+	public:
+		virtual void accept(AST_Visitor &);
+};
+
+/**
+ *
+ */
+class Statement : public AST_Node
+{
+
+};
+
+/**
+ *
+ */
+class For : public Statement
+{
+	public:
+		virtual void accept(AST_Visitor &);
+};
+
+/**
+ *
+ */
+class If : public Statement
+{
+	public:
+		virtual void accept(AST_Visitor &);
+};
+
+/**
+ *
+ */
+class Elif : public Statement
+{
+	public:
+		virtual void accept(AST_Visitor &);
+};
+
+/**
+ *
+ */
+class Else : public Statement
+{
+	public:
+		virtual void accept(AST_Visitor &);
+};
+
+/** Raw text
+ *
+ * The Text class holds raw text (in UTF-8 format)
+ *
+ */
+class Text : public Statement
+{
+	public:
+		Text(const string &s)
+			: text_(s) {}
+
+		virtual void accept(AST_Visitor &);
+
+		string text() const { return text_; }
+	private:
+		string text_;
+};
+
+/**
+ *
+ */
+class InlinedExpression : public Statement
+{
+	public:
+		InlinedExpression(Expression *e) {
+
+		}
+
+		~InlinedExpression() {
+			delete  expression_;
+		}
+
+		Expression *expression() { return expression_; }
+
+		virtual void accept(AST_Visitor &);
+	private:
+		Expression *expression_;
+};
+
 
 /**
  *
