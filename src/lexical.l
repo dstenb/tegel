@@ -44,19 +44,19 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 "arg"                return ARGUMENT;
 "record"             return RECORD;
-"="                  return ASSIGNMENT;
+"="                  return '=';
 "%%"[ \t]*\n         { BEGIN(body); return SEPARATOR; }
 
 
  /* shared rules */
 <INITIAL,control,inline>"{"       return '{';
 <INITIAL,control,inline>"}"       return '}';
-<INITIAL,control,inline>";"       return SEMI_COLON;
-<INITIAL,control,inline>"["       return L_BRACKET;
-<INITIAL,control,inline>"]"       return R_BRACKET;
-<INITIAL,control,inline>","       return COMMA;
-<INITIAL,control,inline>"("       return L_PAREN;
-<INITIAL,control,inline>")"       return R_PAREN;
+<INITIAL,control,inline>";"       return ';';
+<INITIAL,control,inline>"["       return '[';
+<INITIAL,control,inline>"]"       return ']';
+<INITIAL,control,inline>","       return ',';
+<INITIAL,control,inline>"("       return '(';
+<INITIAL,control,inline>")"       return ')';
 <INITIAL,control,inline>"+"       return '+';
 <INITIAL,control,inline>"-"       return '-';
 <INITIAL,control,inline>"*"       return '*';

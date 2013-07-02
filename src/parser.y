@@ -76,9 +76,6 @@ ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
 %token RECORD "record"
 %token SEPARATOR "%%"
 %token CONTROL "%"
-%token SEMI_COLON ";" COMMA ","
-%token L_BRACKET "[" R_BRACKET "]" ASSIGNMENT "="
-%token L_PAREN "(" R_PAREN ")"
 %token<string> IDENTIFIER "identifier"
 %token FOR "for" IN "in" ENDFOR "endfor"
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
@@ -188,7 +185,7 @@ record_def_members
     ;
 
 record_member
-    : single_type IDENTIFIER SEMI_COLON
+    : single_type IDENTIFIER ';'
     {
         const PrimitiveType *p = $1 ? $1->primitive() : nullptr;
 
@@ -209,7 +206,7 @@ record_member
 
         free($2);
     }
-    | list_type IDENTIFIER SEMI_COLON
+    | list_type IDENTIFIER ';'
     {
         vyyerror("A record can only hold primitive types", $2);
         YYERROR;
@@ -226,7 +223,7 @@ header_item_params_p
     ;
 
 param
-    : IDENTIFIER ASSIGNMENT constant SEMI_COLON
+    : IDENTIFIER '=' constant ';'
     {
         $$ = new Param($1, $3);
         free($1);
@@ -319,7 +316,7 @@ expression
     {
         /* TODO */
     }
-    | L_PAREN expression R_PAREN
+    | '(' expression ')'
     {
         $$ = $2;
     }
@@ -375,7 +372,7 @@ record_constant
     }
 
 record_values
-    : record_values COMMA primitive_constant { constant_record.push_back($3); }
+    : record_values ',' primitive_constant { constant_record.push_back($3); }
     | primitive_constant { constant_record.push_back($1); }
     ;
 
@@ -411,7 +408,7 @@ list_type
     }
 
 list_constant
-    : L_BRACKET list_values R_BRACKET
+    : '[' list_values ']'
     {
         $$ = new ListConstantData(TypeFactory::get_list(
             constant_list.front()->type()));
@@ -437,7 +434,7 @@ list_constant
     ;
 
 list_values
-    : list_values COMMA single_constant { constant_list.push_back($3); }
+    : list_values ',' single_constant { constant_list.push_back($3); }
     | single_constant { constant_list.push_back($1); }
     ;
 
