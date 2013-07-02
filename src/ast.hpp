@@ -152,6 +152,9 @@ class BinaryExpression : public Expression
 			delete lhs_;
 			delete rhs_;
 		}
+
+		Expression *lhs() { return lhs_; }
+		Expression *rhs() { return rhs_; }
 	protected:
 		Expression *lhs_;
 		Expression *rhs_;
@@ -171,7 +174,17 @@ class UnaryExpression : public Expression
 class And : public BinaryExpression
 {
 	public:
+		And(Expression *lhs, Expression *rhs)
+			: BinaryExpression(lhs, rhs),
+			type_(TypeFactory::get("bool")) {
+			assert(lhs->type() == type_);
+			assert(rhs->type() == type_);
+		}
+
 		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const { return type_; }
+	private:
+		const Type *type_;
 };
 
 /**
@@ -180,7 +193,17 @@ class And : public BinaryExpression
 class Or : public BinaryExpression
 {
 	public:
+		Or(Expression *lhs, Expression *rhs)
+			: BinaryExpression(lhs, rhs),
+			type_(TypeFactory::get("bool")) {
+			assert(lhs->type() == type_);
+			assert(rhs->type() == type_);
+		}
+
 		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const { return type_; }
+	private:
+		const Type *type_;
 };
 
 /**
@@ -222,6 +245,8 @@ class Constant : public UnaryExpression
 		~Constant() {
 			delete data_;
 		}
+
+		ConstantData *data() { return data_; }
 
 		virtual void accept(AST_Visitor &);
 		virtual const Type *type() const { return data_->type(); }
@@ -273,60 +298,89 @@ class AST_Visitor
 class AST_Printer : public AST_Visitor
 {
 	public:
-		virtual void visit(And *) {
-			cerr << "And\n";
+		virtual void visit(And *p) {
+			binary("And", p);
 		}
 
-		virtual void visit(Or *) {
-			cerr << "Or\n";
+		virtual void visit(Or *p) {
+			binary("Or", p);
 		}
 
-		virtual void visit(Plus *) {
-			cerr << "Plus\n";
+		virtual void visit(Plus *p) {
+			binary("+", p);
 		}
 
-		virtual void visit(Minus *) {
-			cerr << "Minus\n";
+		virtual void visit(Minus *p) {
+			binary("-", p);
 		}
 
-		virtual void visit(Times *) {
-			cerr << "Times\n";
+		virtual void visit(Times *p) {
+			binary("*", p);
 		}
 
-		virtual void visit(Constant *) {
-			cerr << "Constant\n";
+		virtual void visit(Constant *p) {
+			print_ws();
+			cerr << "Constant(";
+			p->data()->print(cerr);
+			cerr << ")\n";
 		}
 
-		virtual void visit(FunctionCall *) {
+		virtual void visit(FunctionCall *p) {
+			print_ws();
 			cerr << "FunctionCall\n";
 		}
 
-		virtual void visit(SymbolRef *) {
+		virtual void visit(SymbolRef *p) {
+			print_ws();
 			cerr << "SymbolRef\n";
 		}
 
-		virtual void visit(For *) {
+		virtual void visit(For *p) {
+			print_ws();
 			cerr << "For\n";
 		}
 
-		virtual void visit(If *) {
+		virtual void visit(If *p) {
+			print_ws();
 			cerr << "If\n";
 		}
 
-		virtual void visit(Elif *) {
+		virtual void visit(Elif *p) {
+			print_ws();
 			cerr << "Elif\n";
 		}
 
-		virtual void visit(Else *)  {
+		virtual void visit(Else *p)  {
+			print_ws();
 			cerr << "Else\n";
 		}
 
-		virtual void visit(Text *t) {
-			cerr << "Text('" << t->text() << "')\n";
+		virtual void visit(Text *p) {
+			print_ws();
+			cerr << "Text('" << p->text() << "')\n";
 		}
 
-		virtual void visit(InlinedExpression *) {
+		virtual void visit(InlinedExpression *p) {
+			print_ws();
 			cerr << "InlinedExpression\n";
+		}
+
+	private:
+		void binary(const string &s, BinaryExpression *e)
+		{
+			for (int i = 0; i < indent; i++)
+				cerr << " ";
+			print_ws();
+			cerr << s << "\n";
+			indent++;
+			e->lhs()->accept(*this);
+			e->rhs()->accept(*this);
+			indent--;
+		}
+
+		int indent = 0;
+		void print_ws() {
+
 		}
 };
 
