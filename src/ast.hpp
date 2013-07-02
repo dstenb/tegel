@@ -127,7 +127,19 @@ class Text : public Statement
 class InlinedExpression : public Statement
 {
 	public:
+		InlinedExpression(Expression *e) {
+
+		}
+
+		~InlinedExpression() {
+			delete  expression_;
+		}
+
+		Expression *expression() { return expression_; }
+
 		virtual void accept(AST_Visitor &);
+	private:
+		Expression *expression_;
 };
 
 /**
