@@ -68,6 +68,9 @@ ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
     ListConstantData *list_const;
     Argument *argument;
     Param *param;
+
+    ast::Statements *statements;
+    ast::Statement *statement;
     ast::Expression *expression;
 }
 
@@ -101,6 +104,14 @@ ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
 %type<type> type
 %type<stype> single_type
 %type<ltype> list_type
+
+%type<statements> statements
+
+%type<statement> statement
+%type<statement> text
+%type<statement> conditional
+%type<statement> inlined
+%type<statement> loop
 
 %type<expression> expression
 
@@ -231,24 +242,36 @@ param
     ;
 
 body_block
-    : body_block_p {}
+    : statements
+    {
+        ast::AST_Printer p;
+
+        std::cout << $1 << std::endl;
+        if ($1)
+            $1->accept(p);
+    }
     |
     ;
 
-body_block_p
-    : body_block_p body_item { }
-    | body_item { }
+statements
+    : statements statement { $$ = new ast::Statements($2, $1); }
+    | statement { $$ = new ast::Statements($1); }
     ;
 
-body_item
-    : text { }
-    | conditional { }
-    | loop { }
-    | inlined { }
+statement
+    : text { $$ = $1; }
+    | conditional { $$ = $1; }
+    | loop { $$ = $1; }
+    | inlined { $$ = $1; }
+    /* TODO: handle empty */
     ;
 
 text
-    : TEXT { std::cout << "text(" << $1 << ")\n"; }
+    : TEXT
+    {
+        $$ = new ast::Text($1);
+        free($1);
+    }
     ;
 
 conditional
@@ -320,10 +343,6 @@ expression
     {
         $$ = $2;
     }
-
-
-statements
-    : { /* TODO: combine with body_block_p && body_item */ }
 
 constant
     : single_constant { $$ = $1; }
