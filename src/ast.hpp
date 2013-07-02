@@ -231,33 +231,6 @@ class SymbolRef : public UnaryExpression
 		virtual void accept(AST_Visitor &);
 };
 
-/** Statements class
- *
- * Statements represents a list of statements. A Statements object holds a
- * pointer to the previous statements object.
- */
-class Statements : public AST_Node
-{
-	public:
-		Statements(Statement *s, Statements *p = nullptr)
-			: statement_(s), prev_(p) {}
-
-		~Statements() {
-			delete statement_;
-			if (prev_)
-				delete prev_;
-		}
-		// TODO: add destructor
-
-		virtual void accept(AST_Visitor &);
-
-		Statement *statement() { return statement_; }
-		Statements *prev() { return prev_; }
-	private:
-		Statement *statement_;
-		Statements *prev_;
-};
-
 /**
  *
  */
@@ -339,6 +312,33 @@ class InlinedExpression : public Statement
 		virtual void accept(AST_Visitor &);
 	private:
 		Expression *expression_;
+};
+
+/** Statements class
+ *
+ * Statements represents a list of statements. A Statements object holds a
+ * pointer to the previous statements object.
+ */
+class Statements : public AST_Node
+{
+	public:
+		Statements(Statement *s, Statements *p = nullptr)
+			: statement_(s), prev_(p) {}
+
+		~Statements() {
+			delete statement_;
+			if (prev_)
+				delete prev_;
+		}
+		// TODO: add destructor
+
+		virtual void accept(AST_Visitor &);
+
+		Statement *statement() { return statement_; }
+		Statements *prev() { return prev_; }
+	private:
+		Statement *statement_;
+		Statements *prev_;
 };
 
 /**
