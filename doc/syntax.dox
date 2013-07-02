@@ -167,4 +167,50 @@
   ~~~
   {{ "\\\\" }}
   ~~~
+
+  \section expression Expressions
+
+  \subsection string_concat String concatenation
+  Two string expressions can be concatenated by using the `+` operand.
+
+  ~~~
+  "abc" + "def"
+  ~~~
+
+  Translates to
+
+  ~~~
+  "abcdef"
+  ~~~
+
+
+
+  \subsection string_repeat String repetition
+  A string expression can be repeated by using the `*` operand with an integer
+  expression
+
+  ~~~
+  "x" * 5
+  ~~~
+
+  Translates to
+
+  ~~~
+  "xxxxx"
+  ~~~
+
+  \subsection list_repeat List repetition
+  A list expression can repeated by using the `*` operand with an integer
+  expression
+
+  ~~~
+  [ 1, 2, 3 ] * 2
+  ~~~
+
+  Translates to
+
+  ~~~
+  [ 1, 2, 3, 1, 2, 3 ]
+  ~~~
+
 */
