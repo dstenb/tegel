@@ -81,7 +81,7 @@ class BoolConstantData : public PrimitiveConstantData
 					TypeFactory::get("bool"))), value_(b) {}
 
 		void print(ostream &os) const {
-			os << value_;
+			os << (value_ ? "true" : "false");
 		}
 	private:
 		bool value_;
