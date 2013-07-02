@@ -231,13 +231,31 @@ class SymbolRef : public UnaryExpression
 		virtual void accept(AST_Visitor &);
 };
 
-/**
+/** Statements class
  *
+ * Statements represents a list of statements. A Statements object holds a
+ * pointer to the previous statements object.
  */
 class Statements : public AST_Node
 {
 	public:
+		Statements(Statement *s, Statements *p = nullptr)
+			: statement_(s), prev_(p) {}
+
+		~Statements() {
+			delete statement_;
+			if (prev_)
+				delete prev_;
+		}
+		// TODO: add destructor
+
 		virtual void accept(AST_Visitor &);
+
+		Statement *statement() { return statement_; }
+		Statements *prev() { return prev_; }
+	private:
+		Statement *statement_;
+		Statements *prev_;
 };
 
 /**
@@ -323,7 +341,6 @@ class InlinedExpression : public Statement
 		Expression *expression_;
 };
 
-
 /**
  *
  */
@@ -339,6 +356,8 @@ class AST_Visitor
 		virtual void visit(FunctionCall *) = 0;
 		virtual void visit(SymbolRef *) = 0;
 
+		virtual void visit(Statements *) = 0;
+
 		virtual void visit(For *) = 0;
 		virtual void visit(If *) = 0;
 		virtual void visit(Elif *) = 0;
@@ -350,6 +369,18 @@ class AST_Visitor
 class AST_Printer : public AST_Visitor
 {
 	public:
+		virtual void visit(Statements *p) {
+			print_ws();
+			cerr << "Statements\n";
+			indent++;
+
+			if (p->prev())
+				p->prev()->accept(*this);
+			p->statement()->accept(*this);
+
+			indent--;
+		}
+
 		virtual void visit(And *p) {
 			binary("And", p);
 		}
