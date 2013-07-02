@@ -25,7 +25,7 @@
   %%
   ~~~~~~~~~~~~~
 
- 
+
   \subsection record Record
   A record is declared using the following syntax
   ~~~~~~~~~~~~~
@@ -57,7 +57,7 @@
 
   Where `param-name` can be any of the following
 
-  Parameter     | Description 
+  Parameter     | Description
   ------------- | -------------
   default       | Default value for the argument
   cmd           | Command line parameters for the argument ("X" for short, "X=" for long)
@@ -78,6 +78,8 @@
 
   \subsection for For loops
 
+  \subsubsection foreach For Each loops
+
   For(each) loops that iterate over lists are defined using the following
   syntax
 
@@ -90,12 +92,36 @@
   For example
 
   ~~~
-  % for b in books
+  % for b in books + [ book{"Book 3", 2009}, book{"Book 4", 2012 ]
   b.title
   % endfor
   ~~~
 
-  \subsubsection enumerated Enumerated For loops (TODO)
+  Results in
+
+  ~~~
+  Book 1
+  Book 2
+  Book 3
+  Book 4
+  ~~~
+
+  \subsubsection enumerated Enumerated For Each loops (TODO)
+
+
+  ~~~
+  % for [index-identifier], [value-identifier] in [list-expression]
+  [statements]
+  % endfor
+  ~~~
+
+  \subsubsection range For Range loops (TODO)
+
+  ~~~
+  % for [identifier] in range [lower-bound] to [higher-bound]
+  [statements]
+  % endfor
+  ~~~
 
   \subsection conditional Conditional statements
 
