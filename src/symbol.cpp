@@ -61,6 +61,12 @@ void Argument::setup_parameters()
 	add("info", new StringConstantData(""));
 }
 
+void Variable::print(ostream &os) const
+{
+	os << "Variable(\"" << get_name() << "\", "
+		<< get_type()->str() << ")\n";
+}
+
 void SymbolTable::add(Symbol *s)
 {
 	string n = s->get_name();

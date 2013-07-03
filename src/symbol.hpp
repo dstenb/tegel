@@ -76,7 +76,11 @@ class Argument : public Symbol
 class Variable : public Symbol
 {
 	public:
+		Variable(const string &name, const Type *t)
+			: Symbol(name, t) {}
+
 		virtual bool is_constant() const { return false; }
+		virtual void print(ostream &os) const;
 };
 
 class SymTabAlreadyDefinedError : public runtime_error
@@ -102,6 +106,7 @@ class SymbolTable
 		void add(Symbol *s);
 		Symbol *lookup(const string &);
 		void print(ostream &os) const;
+		SymbolTable *parent() { return parent_; }
 	private:
 		SymbolTable *parent_;
 		map<string, Symbol *> map_;
