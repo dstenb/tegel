@@ -155,7 +155,6 @@ arg
         $$ = new Argument($3, $2);
 
         for (Param *p : param_list) {
-            // TODO: $$->set(p);
             try {
                 Param *op = $$->replace(p);
                 if (op)
@@ -281,6 +280,7 @@ loop
     }
     | for_each end_for
     {
+        /* TODO: remove loop */
         $$ = $1;
     }
     /* TODO: add enumerated for each */
