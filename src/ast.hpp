@@ -38,6 +38,7 @@ class Or;
 class Plus;
 class Minus;
 class Times;
+class StringRepeat;
 class StringConcat;
 class ListConcat;
 class Constant;
@@ -192,6 +193,26 @@ class Times : public BinaryIntExpression
 			: BinaryIntExpression(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
+};
+
+/** String repetition class
+ *
+ *
+ */
+class StringRepeat : public BinaryExpression
+{
+	public:
+		StringRepeat(Expression *string, Expression *mult)
+			: BinaryExpression(string, mult),
+			type_(TypeFactory::get("string")) {
+			assert(string->type() == type_);
+			assert(mult->type() == TypeFactory::get("int"));
+		}
+
+		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const { return type_; }
+	private:
+		const Type *type_;
 };
 
 /** String concatenation class
@@ -394,6 +415,7 @@ class AST_Visitor
 		virtual void visit(Plus *) = 0;
 		virtual void visit(Minus *) = 0;
 		virtual void visit(Times *) = 0;
+		virtual void visit(StringRepeat *) = 0;
 		virtual void visit(StringConcat *) = 0;
 		virtual void visit(ListConcat *) = 0;
 		virtual void visit(Constant *) = 0;
@@ -443,6 +465,10 @@ class AST_Printer : public AST_Visitor
 
 		virtual void visit(Times *p) {
 			binary("*", p);
+		}
+
+		virtual void visit(StringRepeat *p) {
+			binary("String*", p);
 		}
 
 		virtual void visit(StringConcat *p) {
