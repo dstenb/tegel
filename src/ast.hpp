@@ -4,6 +4,7 @@
 using namespace std;
 
 #include "constant.hpp"
+#include "symbol.hpp"
 #include "type.hpp"
 
 using namespace constant;
@@ -291,7 +292,20 @@ class FunctionCall : public UnaryExpression
 class SymbolRef : public UnaryExpression
 {
 	public:
+		SymbolRef(symbol::Symbol *s)
+			: symbol_(s) {}
+
+		~SymbolRef() {
+
+		}
+
+		symbol::Symbol *symbol() { return symbol_; }
+
 		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const { return symbol_->get_type();}
+
+	private:
+		symbol::Symbol *symbol_;
 };
 
 /**
@@ -308,7 +322,30 @@ class Statement : public AST_Node
 class For : public Statement
 {
 	public:
+		For(symbol::Symbol *sy, Expression *e,
+				symbol::SymbolTable *ft,
+				symbol::SymbolTable *st)
+			: expression_(e), statements_(nullptr),
+			for_table_(ft),
+			statements_table_(st),
+			symbol_(sy) {}
+
+		void set_statements(Statements *s) { statements_ = s; }
+
+		Expression *expression() { return expression_; }
+		Statements *statements() { return statements_; }
+
+		symbol::Symbol *variable() { return symbol_; }
+		symbol::SymbolTable *f_table() { return for_table_; }
+		symbol::SymbolTable *s_table() { return statements_table_; }
+
 		virtual void accept(AST_Visitor &);
+	private:
+		Expression *expression_;
+		Statements *statements_;
+		symbol::SymbolTable *for_table_;
+		symbol::SymbolTable *statements_table_;
+		symbol::Symbol *symbol_;
 };
 
 /**
@@ -362,9 +399,8 @@ class Text : public Statement
 class InlinedExpression : public Statement
 {
 	public:
-		InlinedExpression(Expression *e) {
-
-		}
+		InlinedExpression(Expression *e)
+			: expression_(e) {}
 
 		~InlinedExpression() {
 			delete  expression_;
@@ -493,12 +529,21 @@ class AST_Printer : public AST_Visitor
 
 		virtual void visit(SymbolRef *p) {
 			print_ws();
-			cerr << "SymbolRef\n";
+			cerr << "SymbolRef(" << p->symbol()->get_name()
+				<< ", " << p->symbol()->get_type()->str()
+				<< ", " << p->symbol() << ")\n";
 		}
 
 		virtual void visit(For *p) {
 			print_ws();
 			cerr << "For\n";
+			indent++;
+			print_ws();
+			p->variable()->print(cerr);
+			p->expression()->accept(*this);
+			if (p->statements())
+				p->statements()->accept(*this);
+			indent--;
 		}
 
 		virtual void visit(If *p) {

@@ -11,6 +11,8 @@ using namespace symbol;
 
 SymbolTable symbol_table;
 
+SymbolTable *current_table = &symbol_table;
+
 /* constant_list is used by list_constant to hold the list elements.
   This is used instead of a AST approach and is ok since only one list will be
   handled at a time (since a list can only contain primitives and records)
@@ -102,6 +104,7 @@ void vyyerror(const char *, ...);
 %type<statement> conditional
 %type<statement> inlined
 %type<statement> loop
+%type<statement> for
 
 %type<expression> expression
 
@@ -270,21 +273,54 @@ conditional
     : { /* TODO */ }
     ;
 
+ /* TODO: loop and for in dire need of cleanup */
 loop
-    : CONTROL FOR IDENTIFIER IN expression statements CONTROL ENDFOR
+    : for statements end_for
     {
-        std::cout << "for " << $3 << " in " << std::endl;
-
-        ast::AST_Printer p;
-        $5->accept(p);
-        /* TODO */
+        static_cast<ast::For *>($1)->set_statements($2);
+        $$ = $1;
     }
     ;
+
+for
+    : CONTROL FOR IDENTIFIER IN expression
+    {
+        SymbolTable *f_table;
+
+        if ($5->type()->list() == nullptr) {
+            vyyerror("Expected a list (got %s)", $5->type()->str().c_str());
+            YYERROR;
+        }
+
+        /* Create symbol table for the for loop (which will only hold the loop
+         * variable) */
+        current_table = new SymbolTable(current_table);
+
+        Variable *v = new Variable($3, $5->type()->list()->elem());
+        current_table->add(v);
+
+        f_table = current_table;
+
+        /* Create symbol table for the statements block */
+        current_table = new SymbolTable(current_table);
+
+        $$ = new ast::For(v, $5, f_table, current_table);
+
+        /* Free the identifier string */
+        free($3);
+    }
+
+end_for
+    : CONTROL ENDFOR
+    {
+        /* Go back to symbol table before the for loop */
+        current_table = current_table->parent()->parent();
+    }
 
 inlined
     : L_INLINE expression R_INLINE
     {
-        $$ = new InlinedExpression($2);
+        $$ = new ast::InlinedExpression($2);
     }
     ;
 
@@ -343,7 +379,13 @@ expression
     }
     | IDENTIFIER
     {
-        /* TODO */
+        try {
+            Symbol *s = current_table->lookup($1);
+            $$ = new ast::SymbolRef(s);
+        } catch (const SymTabNoSuchSymbolError &e) {
+            vyyerror("No such symbol: %s\n", e.what());
+            YYERROR;
+        }
     }
     | '(' expression ')'
     {
