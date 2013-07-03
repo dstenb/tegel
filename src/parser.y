@@ -389,6 +389,8 @@ expression
 
             if (s->get_type()->dot($3) != nullptr) {
                 /* TODO */
+                vyyerror("TODO IDENTIFIER '.' IDENTIFIER");
+                YYERROR;
             }
         } catch (const SymTabNoSuchSymbolError &e) {
             vyyerror("No such symbol: %s\n", e.what());
