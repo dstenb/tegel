@@ -105,6 +105,8 @@ void vyyerror(const char *, ...);
 %type<statement> inlined
 %type<statement> loop
 %type<statement> for_each
+%type<statement> if
+%type<statement> begin_if
 
 %type<expression> expression
 
@@ -268,7 +270,31 @@ text
     ;
 
 conditional
-    : CONTROL IF { }
+    : if
+    {
+
+    }
+    ;
+
+if
+    : begin_if statements
+    {
+
+    }
+    ;
+
+begin_if
+    : CONTROL IF expression
+    {
+        /* Create symbol table for the if part */
+        current_table = new SymbolTable(current_table);
+
+        /* TODO: check $3->type() == bool */
+        /* TODO: maybe convert, e.g. "" => false, "X" => true */
+
+        $$ = new ast::If($3, current_table);
+        free($3);
+    }
     ;
 
  /* TODO: loop and for_each in dire need of cleanup */
