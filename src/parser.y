@@ -104,7 +104,7 @@ void vyyerror(const char *, ...);
 %type<statement> conditional
 %type<statement> inlined
 %type<statement> loop
-%type<statement> for
+%type<statement> for_each
 
 %type<expression> expression
 
@@ -273,16 +273,16 @@ conditional
     : { /* TODO */ }
     ;
 
- /* TODO: loop and for in dire need of cleanup */
+ /* TODO: loop and for_each in dire need of cleanup */
 loop
-    : for statements end_for
+    : for_each statements end_for
     {
-        static_cast<ast::For *>($1)->set_statements($2);
+        static_cast<ast::ForEach *>($1)->set_statements($2);
         $$ = $1;
     }
     ;
 
-for
+for_each
     : CONTROL FOR IDENTIFIER IN expression
     {
         SymbolTable *f_table;
@@ -304,7 +304,7 @@ for
         /* Create symbol table for the statements block */
         current_table = new SymbolTable(current_table);
 
-        $$ = new ast::For(v, $5, f_table, current_table);
+        $$ = new ast::ForEach(v, $5, f_table, current_table);
 
         /* Free the identifier string */
         free($3);

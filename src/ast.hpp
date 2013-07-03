@@ -47,7 +47,7 @@ class FunctionCall;
 class SymbolRef;
 
 class Statement;
-class For;
+class ForEach;
 class If;
 class Elif;
 class Else;
@@ -319,10 +319,10 @@ class Statement : public AST_Node
 /**
  *
  */
-class For : public Statement
+class ForEach : public Statement
 {
 	public:
-		For(symbol::Symbol *sy, Expression *e,
+		ForEach(symbol::Symbol *sy, Expression *e,
 				symbol::SymbolTable *ft,
 				symbol::SymbolTable *st)
 			: expression_(e), statements_(nullptr),
@@ -460,7 +460,7 @@ class AST_Visitor
 
 		virtual void visit(Statements *) = 0;
 
-		virtual void visit(For *) = 0;
+		virtual void visit(ForEach *) = 0;
 		virtual void visit(If *) = 0;
 		virtual void visit(Elif *) = 0;
 		virtual void visit(Else *) = 0;
@@ -534,9 +534,9 @@ class AST_Printer : public AST_Visitor
 				<< ", " << p->symbol() << ")\n";
 		}
 
-		virtual void visit(For *p) {
+		virtual void visit(ForEach *p) {
 			print_ws();
-			cerr << "For\n";
+			cerr << "ForEach\n";
 			indent++;
 			print_ws();
 			p->variable()->print(cerr);
