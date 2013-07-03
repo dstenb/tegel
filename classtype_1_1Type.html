@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -113,41 +113,226 @@ Inheritance diagram for type::Type:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad792c355f871e0579bdc5e197ae4eed8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad792c355f871e0579bdc5e197ae4eed8"></a>
-virtual const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>str</b> () const =0</td></tr>
+<tr class="memitem:ad792c355f871e0579bdc5e197ae4eed8"><td class="memItemLeft" align="right" valign="top">virtual const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#ad792c355f871e0579bdc5e197ae4eed8">str</a> () const =0</td></tr>
 <tr class="separator:ad792c355f871e0579bdc5e197ae4eed8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af93012b31cbe374ea8e1f4f28646c651"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af93012b31cbe374ea8e1f4f28646c651"></a>
-virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>field</b> (const string &amp;) const </td></tr>
-<tr class="separator:af93012b31cbe374ea8e1f4f28646c651"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9c6c9af57d0be38e1606e51f5f28484"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9c6c9af57d0be38e1606e51f5f28484"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> (ostream &amp;os) const =0</td></tr>
+<tr class="memitem:ae985fee456c411834027102ee31c9f33"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#ae985fee456c411834027102ee31c9f33">dot</a> (const string &amp;) const </td></tr>
+<tr class="separator:ae985fee456c411834027102ee31c9f33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9c6c9af57d0be38e1606e51f5f28484"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#ae9c6c9af57d0be38e1606e51f5f28484">print</a> (ostream &amp;os) const =0</td></tr>
 <tr class="separator:ae9c6c9af57d0be38e1606e51f5f28484"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e97bb22799b7d3f61a4e855c24dd634"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e97bb22799b7d3f61a4e855c24dd634"></a>
-virtual const <a class="el" href="classtype_1_1SingleType.html">SingleType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>single</b> () const </td></tr>
+<tr class="memitem:a1e97bb22799b7d3f61a4e855c24dd634"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1SingleType.html">SingleType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a1e97bb22799b7d3f61a4e855c24dd634">single</a> () const </td></tr>
 <tr class="separator:a1e97bb22799b7d3f61a4e855c24dd634"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a524472f2a3b23cdb41ac5770380a15fa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a524472f2a3b23cdb41ac5770380a15fa"></a>
-virtual const <a class="el" href="classtype_1_1PrimitiveType.html">PrimitiveType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>primitive</b> () const </td></tr>
+<tr class="memitem:a524472f2a3b23cdb41ac5770380a15fa"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1PrimitiveType.html">PrimitiveType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a524472f2a3b23cdb41ac5770380a15fa">primitive</a> () const </td></tr>
 <tr class="separator:a524472f2a3b23cdb41ac5770380a15fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a3ee4a96fa92efda652ecb6aa314e7b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a3ee4a96fa92efda652ecb6aa314e7b"></a>
-virtual const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>record</b> () const </td></tr>
+<tr class="memitem:a5a3ee4a96fa92efda652ecb6aa314e7b"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a5a3ee4a96fa92efda652ecb6aa314e7b">record</a> () const </td></tr>
 <tr class="separator:a5a3ee4a96fa92efda652ecb6aa314e7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f94d12fdffd0585bcadc0e1b2529306"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f94d12fdffd0585bcadc0e1b2529306"></a>
-virtual const <a class="el" href="classtype_1_1ListType.html">ListType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>list</b> () const </td></tr>
+<tr class="memitem:a7f94d12fdffd0585bcadc0e1b2529306"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1ListType.html">ListType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a7f94d12fdffd0585bcadc0e1b2529306">list</a> () const </td></tr>
 <tr class="separator:a7f94d12fdffd0585bcadc0e1b2529306"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract type class</p>
 <p>A <a class="el" href="classtype_1_1Type.html">Type</a> object represents a type in the language (e.g. string).</p>
-<p>The objects contain protected constructors and destructors, and they are only created by the <a class="el" href="classtype_1_1TypeFactory.html">TypeFactory</a>. This means that each type in the language corresponds to an unique object, meaning that simple pointer comparison can be made to compare types in the language.</p>
+<p>The objects contain protected constructors and destructors, and they are only created by the friend <a class="el" href="classtype_1_1TypeFactory.html">TypeFactory</a>. This means that each type in the language corresponds to an unique object, meaning that simple pointer comparison can be made to compare types in the language.</p>
 <p>The class contains safe methods for safe upcasting, so that RTTI doesn't have to be used. </p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ae985fee456c411834027102ee31c9f33"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classtype_1_1Type.html">Type</a> * type::Type::dot </td>
+          <td>(</td>
+          <td class="paramtype">const string &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Dot action resolution</p>
+<p>Returns the resulting type when the dot action is applied to a type (e.g. field access in a record)</p>
+<dl class="section return"><dt>Returns</dt><dd>The resulting type. Returns nullptr if not applicable to the type </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classtype_1_1RecordType.html#a0d4e7e6b64e27c325266394473a392e9">type::RecordType</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7f94d12fdffd0585bcadc0e1b2529306"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classtype_1_1ListType.html">ListType</a> * type::Type::list </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Safe ListType* caster (alternative to RTTI) </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer if successful, nullptr if not </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classtype_1_1ListType.html#a9e4bcc3a871e5f4c2eedf9320be15385">type::ListType</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a524472f2a3b23cdb41ac5770380a15fa"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classtype_1_1PrimitiveType.html">PrimitiveType</a> * type::Type::primitive </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Safe PrimitiveType* caster (alternative to RTTI) </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer if successful, nullptr if not </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classtype_1_1PrimitiveType.html#a4ae3d024b9b4c149d163ddfceb7411e0">type::PrimitiveType</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae9c6c9af57d0be38e1606e51f5f28484"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void type::Type::print </td>
+          <td>(</td>
+          <td class="paramtype">ostream &amp;&#160;</td>
+          <td class="paramname"><em>os</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Prints the <a class="el" href="classtype_1_1Type.html">Type</a> </p>
+
+<p>Implemented in <a class="el" href="classtype_1_1ListType.html#aef29b997b3d6a24be96d8e75786cd178">type::ListType</a>, <a class="el" href="classtype_1_1RecordType.html#a499903b967338af1e57ace1d77e8a267">type::RecordType</a>, and <a class="el" href="classtype_1_1PrimitiveType.html#a3c258203b9370c6b762b772096f80288">type::PrimitiveType</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a5a3ee4a96fa92efda652ecb6aa314e7b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> * type::Type::record </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Safe RecordType* caster (alternative to RTTI) </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer if successful, nullptr if not </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classtype_1_1RecordType.html#aeffb7ad5d6ba88ba7f1dec7184e3eb43">type::RecordType</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a1e97bb22799b7d3f61a4e855c24dd634"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classtype_1_1SingleType.html">SingleType</a> * type::Type::single </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Safe SingleType* caster (alternative to RTTI) </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer if successful, nullptr if not </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classtype_1_1SingleType.html#a06ba816a44a836b5e3f8dfc2d57de52c">type::SingleType</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad792c355f871e0579bdc5e197ae4eed8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual const string&amp; type::Type::str </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get type representation</p>
+<dl class="section return"><dt>Returns</dt><dd>A const reference to the type string </dd></dl>
+
+<p>Implemented in <a class="el" href="classtype_1_1ListType.html#a318d3de2a102cd6515c3efabde2760bd">type::ListType</a>, <a class="el" href="classtype_1_1RecordType.html#af045af6084041e84a684174000bcce89">type::RecordType</a>, and <a class="el" href="classtype_1_1PrimitiveType.html#afafd236b64d62f869f23f2e40c9c67cb">type::PrimitiveType</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/<a class="el" href="type_8hpp_source.html">type.hpp</a></li>
 <li>src/type.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 3 2013 12:01:41 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 16:05:07 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

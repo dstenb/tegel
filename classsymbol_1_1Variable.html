@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,16 +105,19 @@ Inheritance diagram for symbol::Variable:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:adf4bdcb09155b8fd15889cabc50d8dc5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf4bdcb09155b8fd15889cabc50d8dc5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Variable</b> (const string &amp;name, const <a class="el" href="classtype_1_1Type.html">Type</a> *t)</td></tr>
+<tr class="separator:adf4bdcb09155b8fd15889cabc50d8dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca20fef7e4130cfdabd620b387f9d3b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca20fef7e4130cfdabd620b387f9d3b8"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_constant</b> () const </td></tr>
 <tr class="separator:aca20fef7e4130cfdabd620b387f9d3b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20020dac6fab757d2c79cd254b50bece"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a20020dac6fab757d2c79cd254b50bece"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> (ostream &amp;os) const </td></tr>
+<tr class="separator:a20020dac6fab757d2c79cd254b50bece"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classsymbol_1_1Symbol"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsymbol_1_1Symbol')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsymbol_1_1Symbol.html">symbol::Symbol</a></td></tr>
 <tr class="memitem:ac2279a325396c8d4ba87c2f566da1121 inherit pub_methods_classsymbol_1_1Symbol"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2279a325396c8d4ba87c2f566da1121"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Symbol</b> (const string &amp;name, const <a class="el" href="classtype_1_1Type.html">Type</a> *t)</td></tr>
 <tr class="separator:ac2279a325396c8d4ba87c2f566da1121 inherit pub_methods_classsymbol_1_1Symbol"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afac9e39a3b1663446a9cae471c1bdd5c inherit pub_methods_classsymbol_1_1Symbol"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afac9e39a3b1663446a9cae471c1bdd5c"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> (ostream &amp;os) const =0</td></tr>
-<tr class="separator:afac9e39a3b1663446a9cae471c1bdd5c inherit pub_methods_classsymbol_1_1Symbol"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49d79f365398a18ffaa7f5729d983979 inherit pub_methods_classsymbol_1_1Symbol"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a49d79f365398a18ffaa7f5729d983979"></a>
 string&#160;</td><td class="memItemRight" valign="bottom"><b>get_name</b> () const </td></tr>
 <tr class="separator:a49d79f365398a18ffaa7f5729d983979 inherit pub_methods_classsymbol_1_1Symbol"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,13 +125,14 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>get_name</b> () con
 const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>get_type</b> () const </td></tr>
 <tr class="separator:aeac1e8ff461c43c06907d3313357946f inherit pub_methods_classsymbol_1_1Symbol"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/<a class="el" href="symbol_8hpp_source.html">symbol.hpp</a></li>
+<li>src/symbol.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 3 2013 12:01:41 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 16:05:07 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

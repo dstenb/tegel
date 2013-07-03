@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -112,38 +112,59 @@ Inheritance diagram for type::SingleType:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a06ba816a44a836b5e3f8dfc2d57de52c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a06ba816a44a836b5e3f8dfc2d57de52c"></a>
-virtual const <a class="el" href="classtype_1_1SingleType.html">SingleType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>single</b> () const </td></tr>
+<tr class="memitem:a06ba816a44a836b5e3f8dfc2d57de52c"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1SingleType.html">SingleType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1SingleType.html#a06ba816a44a836b5e3f8dfc2d57de52c">single</a> () const </td></tr>
 <tr class="separator:a06ba816a44a836b5e3f8dfc2d57de52c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classtype_1_1Type"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classtype_1_1Type')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classtype_1_1Type.html">type::Type</a></td></tr>
-<tr class="memitem:ad792c355f871e0579bdc5e197ae4eed8 inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad792c355f871e0579bdc5e197ae4eed8"></a>
-virtual const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>str</b> () const =0</td></tr>
+<tr class="memitem:ad792c355f871e0579bdc5e197ae4eed8 inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top">virtual const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#ad792c355f871e0579bdc5e197ae4eed8">str</a> () const =0</td></tr>
 <tr class="separator:ad792c355f871e0579bdc5e197ae4eed8 inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af93012b31cbe374ea8e1f4f28646c651 inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af93012b31cbe374ea8e1f4f28646c651"></a>
-virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>field</b> (const string &amp;) const </td></tr>
-<tr class="separator:af93012b31cbe374ea8e1f4f28646c651 inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9c6c9af57d0be38e1606e51f5f28484 inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9c6c9af57d0be38e1606e51f5f28484"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> (ostream &amp;os) const =0</td></tr>
+<tr class="memitem:ae985fee456c411834027102ee31c9f33 inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#ae985fee456c411834027102ee31c9f33">dot</a> (const string &amp;) const </td></tr>
+<tr class="separator:ae985fee456c411834027102ee31c9f33 inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9c6c9af57d0be38e1606e51f5f28484 inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#ae9c6c9af57d0be38e1606e51f5f28484">print</a> (ostream &amp;os) const =0</td></tr>
 <tr class="separator:ae9c6c9af57d0be38e1606e51f5f28484 inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a524472f2a3b23cdb41ac5770380a15fa inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a524472f2a3b23cdb41ac5770380a15fa"></a>
-virtual const <a class="el" href="classtype_1_1PrimitiveType.html">PrimitiveType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>primitive</b> () const </td></tr>
+<tr class="memitem:a524472f2a3b23cdb41ac5770380a15fa inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1PrimitiveType.html">PrimitiveType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a524472f2a3b23cdb41ac5770380a15fa">primitive</a> () const </td></tr>
 <tr class="separator:a524472f2a3b23cdb41ac5770380a15fa inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a3ee4a96fa92efda652ecb6aa314e7b inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a3ee4a96fa92efda652ecb6aa314e7b"></a>
-virtual const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>record</b> () const </td></tr>
+<tr class="memitem:a5a3ee4a96fa92efda652ecb6aa314e7b inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a5a3ee4a96fa92efda652ecb6aa314e7b">record</a> () const </td></tr>
 <tr class="separator:a5a3ee4a96fa92efda652ecb6aa314e7b inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f94d12fdffd0585bcadc0e1b2529306 inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f94d12fdffd0585bcadc0e1b2529306"></a>
-virtual const <a class="el" href="classtype_1_1ListType.html">ListType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>list</b> () const </td></tr>
+<tr class="memitem:a7f94d12fdffd0585bcadc0e1b2529306 inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1ListType.html">ListType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a7f94d12fdffd0585bcadc0e1b2529306">list</a> () const </td></tr>
 <tr class="separator:a7f94d12fdffd0585bcadc0e1b2529306 inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A <a class="el" href="classtype_1_1SingleType.html">SingleType</a> is either a primitive or a record. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a06ba816a44a836b5e3f8dfc2d57de52c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual const <a class="el" href="classtype_1_1SingleType.html">SingleType</a>* type::SingleType::single </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Safe SingleType* caster (alternative to RTTI) </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer if successful, nullptr if not </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classtype_1_1Type.html#a1e97bb22799b7d3f61a4e855c24dd634">type::Type</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="type_8hpp_source.html">type.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 3 2013 12:01:41 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 16:05:07 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

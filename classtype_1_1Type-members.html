@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -93,18 +93,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p>This is the complete list of members for <a class="el" href="classtype_1_1Type.html">type::Type</a>, including all inherited members.</p>
 <table class="directory">
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>field</b>(const string &amp;) const  (defined in <a class="el" href="classtype_1_1Type.html">type::Type</a>)</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>list</b>() const  (defined in <a class="el" href="classtype_1_1Type.html">type::Type</a>)</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>primitive</b>() const  (defined in <a class="el" href="classtype_1_1Type.html">type::Type</a>)</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>print</b>(ostream &amp;os) const =0 (defined in <a class="el" href="classtype_1_1Type.html">type::Type</a>)</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>record</b>() const  (defined in <a class="el" href="classtype_1_1Type.html">type::Type</a>)</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>single</b>() const  (defined in <a class="el" href="classtype_1_1Type.html">type::Type</a>)</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>str</b>() const =0 (defined in <a class="el" href="classtype_1_1Type.html">type::Type</a>)</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classtype_1_1Type.html#ae985fee456c411834027102ee31c9f33">dot</a>(const string &amp;) const </td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classtype_1_1Type.html#a7f94d12fdffd0585bcadc0e1b2529306">list</a>() const </td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classtype_1_1Type.html#a524472f2a3b23cdb41ac5770380a15fa">primitive</a>() const </td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classtype_1_1Type.html#ae9c6c9af57d0be38e1606e51f5f28484">print</a>(ostream &amp;os) const =0</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classtype_1_1Type.html#a5a3ee4a96fa92efda652ecb6aa314e7b">record</a>() const </td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classtype_1_1Type.html#a1e97bb22799b7d3f61a4e855c24dd634">single</a>() const </td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classtype_1_1Type.html#ad792c355f871e0579bdc5e197ae4eed8">str</a>() const =0</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>~Type</b>() (defined in <a class="el" href="classtype_1_1Type.html">type::Type</a>)</td><td class="entry"><a class="el" href="classtype_1_1Type.html">type::Type</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 3 2013 12:01:41 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 16:05:07 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

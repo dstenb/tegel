@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -107,9 +107,18 @@ Inheritance diagram for ast::SymbolRef:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:add6a46d68ceba1e18c8da3838589283f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add6a46d68ceba1e18c8da3838589283f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SymbolRef</b> (<a class="el" href="classsymbol_1_1Symbol.html">symbol::Symbol</a> *s)</td></tr>
+<tr class="separator:add6a46d68ceba1e18c8da3838589283f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22e855d5e601fdd9acc06373b688dba0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22e855d5e601fdd9acc06373b688dba0"></a>
+<a class="el" href="classsymbol_1_1Symbol.html">symbol::Symbol</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>symbol</b> ()</td></tr>
+<tr class="separator:a22e855d5e601fdd9acc06373b688dba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa87ee1bcc93d454ac09bd4c0eeeb35d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afa87ee1bcc93d454ac09bd4c0eeeb35d"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>accept</b> (<a class="el" href="classast_1_1AST__Visitor.html">AST_Visitor</a> &amp;)</td></tr>
 <tr class="separator:afa87ee1bcc93d454ac09bd4c0eeeb35d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a812ea205992c285df6e47ef44d415954"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a812ea205992c285df6e47ef44d415954"></a>
+virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> () const </td></tr>
+<tr class="separator:a812ea205992c285df6e47ef44d415954"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="ast_8hpp_source.html">ast.hpp</a></li>
@@ -117,7 +126,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>accept</b> (<
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 3 2013 12:01:41 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 16:05:07 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
