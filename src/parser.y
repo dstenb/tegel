@@ -28,6 +28,8 @@ extern int yylex();
 void yyerror(const char *);
 void vyyerror(const char *, ...);
 
+/* TODO: move these somewhere else (ast_factories) */
+
 template<class T>
 ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
    ast::Expression *rhs)
@@ -61,6 +63,22 @@ ast::BinaryExpression *create_minus_binary(ast::Expression *lhs,
             lhs->type() == TypeFactory::get("int"))
             return new ast::Minus(lhs, rhs);
         throw InvalidTypeError("Can't apply '-' operand on " +
+            lhs->type()->str()  + " and " + rhs->type()->str());
+}
+
+ast::BinaryExpression *create_times_binary(ast::Expression *lhs,
+   ast::Expression *rhs)
+{
+        const Type *integer = TypeFactory::get("int");
+        const Type *string = TypeFactory::get("string");
+
+        if (lhs->type() == string && rhs->type() == integer)
+            return new ast::StringRepeat(lhs, rhs);
+        else if (lhs->type() == integer && rhs->type() == string)
+            return new ast::StringRepeat(rhs, lhs);
+        else if (lhs->type() == integer && lhs->type() == rhs->type())
+            return new ast::Times(lhs, rhs);
+        throw InvalidTypeError("Can't apply '*' operand on " +
             lhs->type()->str()  + " and " + rhs->type()->str());
 }
 
@@ -143,6 +161,7 @@ ast::BinaryExpression *create_minus_binary(ast::Expression *lhs,
 %left OR
 %left AND
 %left '+' '-'
+%left '*'
 
 %start file
 
@@ -355,20 +374,18 @@ expression
         try {
             $$ = create_minus_binary($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("Unknown type '%s'", $1);
+            vyyerror("%s", e.what());
             YYERROR;
         }
     }
     | expression '*' expression
     {
         try {
-            /*$$ = create_times($1, $3);*/
+            $$ = create_times_binary($1, $3);
         } catch (const InvalidTypeError &e) {
-
+            vyyerror("%s", e.what());
+            YYERROR;
         }
-        /* TODO: $1->type() == string, 2->type() == int => string repeat */
-        /* TODO: $1->type() == int, 2->type() == string => string repeat */
-        /* TODO: $1->type() == int, 2->type() == int => * */
     }
     | constant
     {
