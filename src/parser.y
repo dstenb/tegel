@@ -316,8 +316,6 @@ loop
 for_each
     : CONTROL FOR IDENTIFIER IN expression
     {
-        SymbolTable *f_table;
-
         if ($5->type()->list() == nullptr) {
             vyyerror("Expected a list (got %s)", $5->type()->str().c_str());
             YYERROR;
@@ -330,12 +328,10 @@ for_each
         Variable *v = new Variable($3, $5->type()->list()->elem());
         current_table->add(v);
 
-        f_table = current_table;
-
         /* Create symbol table for the statements block */
         current_table = new SymbolTable(current_table);
 
-        $$ = new ast::ForEach(v, $5, f_table, current_table);
+        $$ = new ast::ForEach(v, $5, current_table->parent(), current_table);
 
         /* Free the identifier string */
         free($3);
