@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "ast.hpp"
+#include "ast_factories.hpp"
 #include "symbol.hpp"
 
 using namespace constant;
@@ -28,66 +29,13 @@ extern int yylex();
 void yyerror(const char *);
 void vyyerror(const char *, ...);
 
-/* TODO: move these somewhere else (ast_factories) */
-
-template<class T>
-ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
-   ast::Expression *rhs)
-{
-    if (lhs->type() != TypeFactory::get("bool"))
-        throw DifferentTypesError(lhs->type(), TypeFactory::get("bool"));
-    if (rhs->type() != TypeFactory::get("bool"))
-        throw DifferentTypesError(rhs->type(), TypeFactory::get("bool"));
-    return new T(lhs, rhs);
-}
-
-ast::BinaryExpression *create_plus_binary(ast::Expression *lhs,
-   ast::Expression *rhs)
-{
-        if (lhs->type() == rhs->type()) {
-            if (lhs->type() == TypeFactory::get("int"))
-                return new ast::Plus(lhs, rhs);
-            else if (lhs->type() == TypeFactory::get("string"))
-                return new ast::StringConcat(lhs, rhs);
-            else if (lhs->type()->list())
-                return new ast::ListConcat(lhs, rhs);
-        }
-        throw InvalidTypeError("Can't apply '+' operand on " +
-            lhs->type()->str()  + " and " + rhs->type()->str());
-}
-
-ast::BinaryExpression *create_minus_binary(ast::Expression *lhs,
-   ast::Expression *rhs)
-{
-        if (lhs->type() == rhs->type() &&
-            lhs->type() == TypeFactory::get("int"))
-            return new ast::Minus(lhs, rhs);
-        throw InvalidTypeError("Can't apply '-' operand on " +
-            lhs->type()->str()  + " and " + rhs->type()->str());
-}
-
-ast::BinaryExpression *create_times_binary(ast::Expression *lhs,
-   ast::Expression *rhs)
-{
-        const Type *integer = TypeFactory::get("int");
-        const Type *string = TypeFactory::get("string");
-
-        if (lhs->type() == string && rhs->type() == integer)
-            return new ast::StringRepeat(lhs, rhs);
-        else if (lhs->type() == integer && rhs->type() == string)
-            return new ast::StringRepeat(rhs, lhs);
-        else if (lhs->type() == integer && lhs->type() == rhs->type())
-            return new ast::Times(lhs, rhs);
-        throw InvalidTypeError("Can't apply '*' operand on " +
-            lhs->type()->str()  + " and " + rhs->type()->str());
-}
-
 %}
 
 %error-verbose
 
 %code requires {
 	#include "ast.hpp"
+    #include "ast_factories.hpp"
 	#include "constant.hpp"
 	#include "symbol.hpp"
 	#include "type.hpp"
@@ -343,7 +291,7 @@ expression
     : expression AND expression
     {
         try {
-            $$ = create_bool_binary<ast::And>($1, $3);
+            $$ = ast_factory::BoolBinaryFactory<ast::And>::create($1, $3);
         } catch (const DifferentTypesError &e) {
             vyyerror("Invalid type for 'and' operator (%s)",
                 e.what());
@@ -353,7 +301,7 @@ expression
     | expression OR expression
     {
         try {
-            $$ = create_bool_binary<ast::Or>($1, $3);
+            $$ = ast_factory::BoolBinaryFactory<ast::Or>::create($1, $3);
         } catch (const DifferentTypesError &e) {
             vyyerror("Invalid type for 'or' operator (%s)",
                 e.what());
@@ -363,7 +311,7 @@ expression
     | expression '+' expression
     {
         try {
-            $$ = create_plus_binary($1, $3);
+            $$ = ast_factory::PlusBinaryFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
             vyyerror("%s", e.what());
             YYERROR;
@@ -372,7 +320,7 @@ expression
     | expression '-' expression
     {
         try {
-            $$ = create_minus_binary($1, $3);
+            $$ = ast_factory::MinusBinaryFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
             vyyerror("%s", e.what());
             YYERROR;
@@ -381,7 +329,7 @@ expression
     | expression '*' expression
     {
         try {
-            $$ = create_times_binary($1, $3);
+            $$ = ast_factory::TimesBinaryFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
             vyyerror("%s", e.what());
             YYERROR;
