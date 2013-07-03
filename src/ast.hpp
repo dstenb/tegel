@@ -47,6 +47,7 @@ class FunctionCall;
 class SymbolRef;
 
 class Statement;
+class Scope;
 class ForEach;
 class If;
 class Elif;
@@ -316,62 +317,90 @@ class Statement : public AST_Node
 
 };
 
-/**
+/** Scope class
  *
+ * A scope objects holds statements and an associated symbol table
  */
-class ForEach : public Statement
+class Scope : public Statement
 {
 	public:
-		ForEach(symbol::Symbol *sy, Expression *e,
-				symbol::SymbolTable *ft,
-				symbol::SymbolTable *st)
-			: expression_(e), statements_(nullptr),
-			for_table_(ft),
-			statements_table_(st),
-			symbol_(sy) {}
+		Scope(symbol::SymbolTable *t, Statements *s)
+			: table_(t), statements_(s) {}
 
 		void set_statements(Statements *s) { statements_ = s; }
 
-		Expression *expression() { return expression_; }
 		Statements *statements() { return statements_; }
 
-		symbol::Symbol *variable() { return symbol_; }
-		symbol::SymbolTable *f_table() { return for_table_; }
-		symbol::SymbolTable *s_table() { return statements_table_; }
+		symbol::SymbolTable *table() { return table_; }
+
+		virtual void accept(AST_Visitor &) = 0;
+	private:
+		symbol::SymbolTable *table_;
+		Statements *statements_;
+};
+
+/**
+ *
+ */
+class ForEach : public Scope
+{
+	public:
+		ForEach(symbol::Variable *sy, Expression *e,
+				symbol::SymbolTable *ft,
+				symbol::SymbolTable *t)
+			: Scope(t, nullptr), expression_(e), for_table_(ft),
+			variable_(sy) {}
+
+		Expression *expression() { return expression_; }
+		symbol::Symbol *variable() { return variable_; }
 
 		virtual void accept(AST_Visitor &);
 	private:
 		Expression *expression_;
-		Statements *statements_;
 		symbol::SymbolTable *for_table_;
-		symbol::SymbolTable *statements_table_;
-		symbol::Symbol *symbol_;
+		symbol::Variable *variable_;
 };
 
 /**
  *
  */
-class If : public Statement
+class If : public Scope
 {
 	public:
+		If(Expression *e, symbol::SymbolTable *t)
+			: Scope(t, nullptr), expression_(e) {}
+
+		Expression *expression() { return expression_; }
+
 		virtual void accept(AST_Visitor &);
+	private:
+		Expression *expression_;
 };
 
 /**
  *
  */
-class Elif : public Statement
+class Elif : public Scope
 {
 	public:
+		Elif(Expression *e, symbol::SymbolTable *t)
+			: Scope(t, nullptr), expression_(e) {}
+
+		Expression *expression() { return expression_; }
+
 		virtual void accept(AST_Visitor &);
+	private:
+		Expression *expression_;
 };
 
 /**
  *
  */
-class Else : public Statement
+class Else : public Scope
 {
 	public:
+		Else(symbol::SymbolTable *t) : Scope(t, nullptr) {}
+
 		virtual void accept(AST_Visitor &);
 };
 
@@ -546,9 +575,14 @@ class AST_Printer : public AST_Visitor
 			indent--;
 		}
 
-		virtual void visit(If *) {
+		virtual void visit(If *p) {
 			print_ws();
 			cerr << "If\n";
+			indent++;
+			p->expression()->accept(*this);
+			if (p->statements())
+				p->statements()->accept(*this);
+			indent--;
 		}
 
 		virtual void visit(Elif *) {
