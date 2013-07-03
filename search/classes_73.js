@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['scope',['Scope',['../classast_1_1Scope.html',1,'ast']]],
   ['singleconstantdata',['SingleConstantData',['../classconstant_1_1SingleConstantData.html',1,'constant']]],
   ['singletype',['SingleType',['../classtype_1_1SingleType.html',1,'type']]],
   ['statement',['Statement',['../classast_1_1Statement.html',1,'ast']]],

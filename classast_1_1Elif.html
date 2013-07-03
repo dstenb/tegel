@@ -99,6 +99,7 @@ Inheritance diagram for ast::Elif:</div>
  <div class="center">
   <img src="classast_1_1Elif.png" usemap="#ast::Elif_map" alt=""/>
   <map id="ast::Elif_map" name="ast::Elif_map">
+<area href="classast_1_1Scope.html" alt="ast::Scope" shape="rect" coords="0,112,95,136"/>
 <area href="classast_1_1Statement.html" alt="ast::Statement" shape="rect" coords="0,56,95,80"/>
 <area href="classast_1_1AST__Node.html" alt="ast::AST_Node" shape="rect" coords="0,0,95,24"/>
 </map>
@@ -106,9 +107,28 @@ Inheritance diagram for ast::Elif:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ad785ff5d2142f3db13271cb804af47d0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad785ff5d2142f3db13271cb804af47d0"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Elif</b> (<a class="el" href="classast_1_1Expression.html">Expression</a> *e, <a class="el" href="classsymbol_1_1SymbolTable.html">symbol::SymbolTable</a> *t)</td></tr>
+<tr class="separator:ad785ff5d2142f3db13271cb804af47d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcb2d9e13d578a60b9be050b019fae57"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcb2d9e13d578a60b9be050b019fae57"></a>
+<a class="el" href="classast_1_1Expression.html">Expression</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>expression</b> ()</td></tr>
+<tr class="separator:afcb2d9e13d578a60b9be050b019fae57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f5db6eead86c9fde22e1d9bc7721cb2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f5db6eead86c9fde22e1d9bc7721cb2"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>accept</b> (<a class="el" href="classast_1_1AST__Visitor.html">AST_Visitor</a> &amp;)</td></tr>
 <tr class="separator:a6f5db6eead86c9fde22e1d9bc7721cb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classast_1_1Scope"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classast_1_1Scope')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classast_1_1Scope.html">ast::Scope</a></td></tr>
+<tr class="memitem:abdea09fcd7ecffc0946cbe98fb13da12 inherit pub_methods_classast_1_1Scope"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abdea09fcd7ecffc0946cbe98fb13da12"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Scope</b> (<a class="el" href="classsymbol_1_1SymbolTable.html">symbol::SymbolTable</a> *t, <a class="el" href="classast_1_1Statements.html">Statements</a> *s)</td></tr>
+<tr class="separator:abdea09fcd7ecffc0946cbe98fb13da12 inherit pub_methods_classast_1_1Scope"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bf4b43d24c820bcb4f42b25304eaf7c inherit pub_methods_classast_1_1Scope"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2bf4b43d24c820bcb4f42b25304eaf7c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_statements</b> (<a class="el" href="classast_1_1Statements.html">Statements</a> *s)</td></tr>
+<tr class="separator:a2bf4b43d24c820bcb4f42b25304eaf7c inherit pub_methods_classast_1_1Scope"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac353825892a0481c04146f18acf14974 inherit pub_methods_classast_1_1Scope"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac353825892a0481c04146f18acf14974"></a>
+<a class="el" href="classast_1_1Statements.html">Statements</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>statements</b> ()</td></tr>
+<tr class="separator:ac353825892a0481c04146f18acf14974 inherit pub_methods_classast_1_1Scope"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a269b47f21646ad4ac3e5011a672d6cf2 inherit pub_methods_classast_1_1Scope"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a269b47f21646ad4ac3e5011a672d6cf2"></a>
+<a class="el" href="classsymbol_1_1SymbolTable.html">symbol::SymbolTable</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>table</b> ()</td></tr>
+<tr class="separator:a269b47f21646ad4ac3e5011a672d6cf2 inherit pub_methods_classast_1_1Scope"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="ast_8hpp_source.html">ast.hpp</a></li>
@@ -116,7 +136,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>accept</b> (<
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 3 2013 16:05:07 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 17:02:53 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

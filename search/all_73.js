@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['scope',['Scope',['../classast_1_1Scope.html',1,'ast']]],
   ['single',['single',['../classtype_1_1Type.html#a1e97bb22799b7d3f61a4e855c24dd634',1,'type::Type::single()'],['../classtype_1_1SingleType.html#a06ba816a44a836b5e3f8dfc2d57de52c',1,'type::SingleType::single()']]],
   ['singleconstantdata',['SingleConstantData',['../classconstant_1_1SingleConstantData.html',1,'constant']]],
   ['singletype',['SingleType',['../classtype_1_1SingleType.html',1,'type']]],
