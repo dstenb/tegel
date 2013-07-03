@@ -27,9 +27,9 @@ class ListType;
  * A Type object represents a type in the language (e.g. string).
  *
  * The objects contain protected constructors and destructors, and they are
- * only created by the TypeFactory. This means that each type in the language
- * corresponds to an unique object, meaning that simple pointer comparison can
- * be made to compare types in the language.
+ * only created by the friend TypeFactory. This means that each type in the
+ * language corresponds to an unique object, meaning that simple pointer
+ * comparison can be made to compare types in the language.
  *
  * The class contains safe methods for safe upcasting, so that RTTI doesn't
  * have to be used.
@@ -37,18 +37,43 @@ class ListType;
 class Type
 {
 	public:
+		/** Get type representation
+		 *
+		 * @return A const reference to the type string
+		 */
 		virtual const string &str() const = 0;
 
-		// TODO: rename to something more suitable (dot?)
-		virtual const Type *field(const string &) const {
-			return nullptr;
-		}
+		/** Dot action resolution
+		 *
+		 * Returns the resulting type when the dot action is applied to
+		 * a type (e.g. field access in a record)
+		 *
+		 * @return The resulting type. Returns nullptr if not
+		 * applicable to the type
+		 */
+		virtual const Type *dot(const string &) const;
 
+		/** Prints the Type */
 		virtual void print(ostream &os) const = 0;
 
+		/** Safe SingleType* caster (alternative to RTTI)
+		 * @return Pointer if successful, nullptr if not
+		 */
 		virtual const SingleType *single() const;
+
+		/** Safe PrimitiveType* caster (alternative to RTTI)
+		 * @return Pointer if successful, nullptr if not
+		 */
 		virtual const PrimitiveType *primitive() const;
+
+		/** Safe RecordType* caster (alternative to RTTI)
+		 * @return Pointer if successful, nullptr if not
+		 */
 		virtual const RecordType *record() const;
+
+		/** Safe ListType* caster (alternative to RTTI)
+		 * @return Pointer if successful, nullptr if not
+		 */
 		virtual const ListType *list() const;
 	protected:
 		virtual ~Type() {}
@@ -128,8 +153,7 @@ class RecordType : public SingleType
 		typedef vector<RecordField> field_vector;
 		typedef field_vector::const_iterator iterator;
 
-		virtual const PrimitiveType *field(const string &) const;
-		virtual const PrimitiveType *field(int) const;
+		virtual const PrimitiveType *dot(const string &) const;
 		virtual const string &str() const { return str_; }
 		virtual void print(ostream &os) const;
 
