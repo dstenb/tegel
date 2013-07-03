@@ -54,6 +54,16 @@ ast::BinaryExpression *create_plus_binary(ast::Expression *lhs,
             lhs->type()->str()  + " and " + rhs->type()->str());
 }
 
+ast::BinaryExpression *create_minus_binary(ast::Expression *lhs,
+   ast::Expression *rhs)
+{
+        if (lhs->type() == rhs->type() &&
+            lhs->type() == TypeFactory::get("int"))
+            return new ast::Minus(lhs, rhs);
+        throw InvalidTypeError("Can't apply '-' operand on " +
+            lhs->type()->str()  + " and " + rhs->type()->str());
+}
+
 %}
 
 %error-verbose
@@ -132,6 +142,7 @@ ast::BinaryExpression *create_plus_binary(ast::Expression *lhs,
 
 %left OR
 %left AND
+%left '+' '-'
 
 %start file
 
@@ -342,7 +353,7 @@ expression
     | expression '-' expression
     {
         try {
-            /*$$ = create_minus($1, $3);*/
+            $$ = create_minus_binary($1, $3);
         } catch (const InvalidTypeError &e) {
             vyyerror("Unknown type '%s'", $1);
             YYERROR;
