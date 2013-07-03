@@ -9,8 +9,6 @@
 using namespace constant;
 using namespace symbol;
 
-// TODO: fix Single/Scalar/Primtive things
-
 SymbolTable symbol_table;
 
 /* constant_list is used by list_constant to hold the list elements.
@@ -74,6 +72,7 @@ void vyyerror(const char *, ...);
 %token FOR "for" IN "in" ENDFOR "endfor"
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
 %token AND "and" OR "or" NOT "not"
+%token L_INLINE "{{" R_INLINE "}}"
 %token<string> TEXT
 
 %token<boolean> BOOL "bool constant"
@@ -283,10 +282,13 @@ loop
     ;
 
 inlined
-    : { /* TODO */ }
+    : L_INLINE expression R_INLINE
+    {
+        $$ = new InlinedExpression($2);
+    }
     ;
 
- /* TODO: precedence */
+ /* TODO: handle function call */
 expression
     : expression AND expression
     {
