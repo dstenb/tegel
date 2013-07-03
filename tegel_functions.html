@@ -78,21 +78,57 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Functions </div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="toc"><h3>Table of Contents</h3>
+<ul><li class="level1"><a href="#string">String Functions</a><ul><li class="level2"><a href="#case">Case</a><ul><li class="level3"><a href="#upper">Upper Case</a></li>
+<li class="level3"><a href="#lower">Lower Case</a></li>
+<li class="level3"><a href="#title">Title Case</a></li>
+</ul>
+</li>
+<li class="level2"><a href="#align">Alignment</a></li>
+</ul>
+</li>
+<li class="level1"><a href="#list">List Functions</a><ul><li class="level2"><a href="#sorting">Sorting</a><ul><li class="level3"><a href="#sort_string">List of strings</a></li>
+<li class="level3"><a href="#sort_integer">List of integers</a></li>
+<li class="level3"><a href="#sort_record">List of records</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="textblock"><p>Använda funktionsöverlagring eller inte?</p>
-<table class="doxtable">
-<tr>
-<th>Prototype </th><th>Description</th></tr>
-<tr>
-<td>string[] sort_strings(string[] list, bool ascending) </td><td>A </td></tr>
-<tr>
-<td>int[] sort_ints(int[] list, bool ascending) </td><td>B </td></tr>
-<tr>
-<td>int[] sort_records([record][] list, string field, bool ascending) </td><td>C </td></tr>
-</table>
-</div></div><!-- contents -->
+<h1><a class="anchor" id="string"></a>
+String Functions</h1>
+<h2><a class="anchor" id="case"></a>
+Case</h2>
+<h3><a class="anchor" id="upper"></a>
+Upper Case</h3>
+<div class="fragment"><div class="line"><span class="keywordtype">string</span> upper(<span class="keywordtype">string</span>)</div>
+</div><!-- fragment --><h3><a class="anchor" id="lower"></a>
+Lower Case</h3>
+<div class="fragment"><div class="line"><span class="keywordtype">string</span> lower(<span class="keywordtype">string</span>)</div>
+</div><!-- fragment --><h3><a class="anchor" id="title"></a>
+Title Case</h3>
+<div class="fragment"><div class="line"><span class="keywordtype">string</span> title(<span class="keywordtype">string</span>)</div>
+</div><!-- fragment --><h2><a class="anchor" id="align"></a>
+Alignment</h2>
+<h1><a class="anchor" id="list"></a>
+List Functions</h1>
+<h2><a class="anchor" id="sorting"></a>
+Sorting</h2>
+<h3><a class="anchor" id="sort_string"></a>
+List of strings</h3>
+<div class="fragment"><div class="line"><span class="keywordtype">string</span>[] string_sort(<span class="keywordtype">string</span>[])</div>
+</div><!-- fragment --><h3><a class="anchor" id="sort_integer"></a>
+List of integers</h3>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span>[] int_sort(<span class="keywordtype">int</span>[])</div>
+</div><!-- fragment --><h3><a class="anchor" id="sort_record"></a>
+List of records</h3>
+<div class="fragment"><div class="line">[record_type][] record_sort([record_type][], <span class="keywordtype">string</span>)</div>
+</div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 3 2013 10:52:28 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 12:01:40 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
