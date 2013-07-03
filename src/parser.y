@@ -39,6 +39,21 @@ ast::BinaryExpression *create_bool_binary(ast::Expression *lhs,
     return new T(lhs, rhs);
 }
 
+ast::BinaryExpression *create_plus_binary(ast::Expression *lhs,
+   ast::Expression *rhs)
+{
+        if (lhs->type() == rhs->type()) {
+            if (lhs->type() == TypeFactory::get("int"))
+                return new ast::Plus(lhs, rhs);
+            else if (lhs->type() == TypeFactory::get("string"))
+                return new ast::StringConcat(lhs, rhs);
+            else if (lhs->type()->list())
+                return new ast::ListConcat(lhs, rhs);
+        }
+        throw InvalidTypeError("Can't apply '+' operand on " +
+            lhs->type()->str()  + " and " + rhs->type()->str());
+}
+
 %}
 
 %error-verbose
@@ -317,16 +332,29 @@ expression
     }
     | expression '+' expression
     {
-        /* TODO: $1,2->type() == string => string append */
-        /* TODO: $1,2->type() == int => + */
-        /* TODO: $1,2->type() == list => list append */
+        try {
+            $$ = create_plus_binary($1, $3);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
     }
     | expression '-' expression
     {
-        /* TODO: $1,2->type() == int => - */
+        try {
+            /*$$ = create_minus($1, $3);*/
+        } catch (const InvalidTypeError &e) {
+            vyyerror("Unknown type '%s'", $1);
+            YYERROR;
+        }
     }
     | expression '*' expression
     {
+        try {
+            /*$$ = create_times($1, $3);*/
+        } catch (const InvalidTypeError &e) {
+
+        }
         /* TODO: $1->type() == string, 2->type() == int => string repeat */
         /* TODO: $1->type() == int, 2->type() == string => string repeat */
         /* TODO: $1->type() == int, 2->type() == int => * */

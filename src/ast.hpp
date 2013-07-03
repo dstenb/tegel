@@ -38,6 +38,8 @@ class Or;
 class Plus;
 class Minus;
 class Times;
+class StringConcat;
+class ListConcat;
 class Constant;
 class FunctionCall;
 class SymbolRef;
@@ -190,6 +192,46 @@ class Times : public BinaryIntExpression
 			: BinaryIntExpression(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
+};
+
+/** String concatenation class
+ *
+ *
+ */
+class StringConcat : public BinaryExpression
+{
+	public:
+		StringConcat(Expression *lhs, Expression *rhs)
+			: BinaryExpression(lhs, rhs),
+			type_(TypeFactory::get("string")) {
+			assert(lhs->type() == type_);
+			assert(rhs->type() == type_);
+		}
+
+		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const { return type_; }
+	private:
+		const Type *type_;
+};
+
+/** List concatenation class
+ *
+ *
+ */
+class ListConcat : public BinaryExpression
+{
+	public:
+		ListConcat(Expression *lhs, Expression *rhs)
+			: BinaryExpression(lhs, rhs),
+			type_(lhs->type()) {
+			assert(lhs->type() == rhs->type());
+			assert(lhs->type()->list() != nullptr);
+		}
+
+		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const { return type_; }
+	private:
+		const Type *type_;
 };
 
 /**
@@ -352,6 +394,8 @@ class AST_Visitor
 		virtual void visit(Plus *) = 0;
 		virtual void visit(Minus *) = 0;
 		virtual void visit(Times *) = 0;
+		virtual void visit(StringConcat *) = 0;
+		virtual void visit(ListConcat *) = 0;
 		virtual void visit(Constant *) = 0;
 		virtual void visit(FunctionCall *) = 0;
 		virtual void visit(SymbolRef *) = 0;
@@ -399,6 +443,14 @@ class AST_Printer : public AST_Visitor
 
 		virtual void visit(Times *p) {
 			binary("*", p);
+		}
+
+		virtual void visit(StringConcat *p) {
+			binary("String+", p);
+		}
+
+		virtual void visit(ListConcat *p) {
+			binary("List+", p);
 		}
 
 		virtual void visit(Constant *p) {
