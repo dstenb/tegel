@@ -522,7 +522,7 @@ class AST_Printer : public AST_Visitor
 			cerr << ")\n";
 		}
 
-		virtual void visit(FunctionCall *p) {
+		virtual void visit(FunctionCall *) {
 			print_ws();
 			cerr << "FunctionCall\n";
 		}
@@ -546,17 +546,17 @@ class AST_Printer : public AST_Visitor
 			indent--;
 		}
 
-		virtual void visit(If *p) {
+		virtual void visit(If *) {
 			print_ws();
 			cerr << "If\n";
 		}
 
-		virtual void visit(Elif *p) {
+		virtual void visit(Elif *) {
 			print_ws();
 			cerr << "Elif\n";
 		}
 
-		virtual void visit(Else *p)  {
+		virtual void visit(Else *)  {
 			print_ws();
 			cerr << "Else\n";
 		}
@@ -569,6 +569,9 @@ class AST_Printer : public AST_Visitor
 		virtual void visit(InlinedExpression *p) {
 			print_ws();
 			cerr << "InlinedExpression\n";
+			indent++;
+			p->expression()->accept(*this);
+			indent--;
 		}
 
 	private:

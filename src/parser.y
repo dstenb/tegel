@@ -258,7 +258,6 @@ statement
     | conditional { $$ = $1; }
     | loop { $$ = $1; }
     | inlined { $$ = $1; }
-    /* TODO: handle empty */
     ;
 
 text
@@ -270,7 +269,7 @@ text
     ;
 
 conditional
-    : { /* TODO */ }
+    : CONTROL IF { }
     ;
 
  /* TODO: loop and for_each in dire need of cleanup */
@@ -280,6 +279,12 @@ loop
         static_cast<ast::ForEach *>($1)->set_statements($2);
         $$ = $1;
     }
+    | for_each end_for
+    {
+        $$ = $1;
+    }
+    /* TODO: add enumerated for each */
+    /* TODO: add for with range */
     ;
 
 for_each

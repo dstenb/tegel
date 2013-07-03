@@ -82,7 +82,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <str>"\\t"           { string_builder_append("\t"); }
 <str>"\\\""          { string_builder_append("\""); }
 <str>"\\\\"          { string_builder_append("\\"); }
-<str>"\\".           { vyyerror("unknown escape sequence \%s", yytext);
+<str>"\\".           { vyyerror("unknown escape sequence %c%s", '\\', yytext);
                        yyterminate(); }
 <str>{UANYN}         { string_builder_append(yytext); }
 
