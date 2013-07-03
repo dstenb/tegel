@@ -93,15 +93,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">ast::Or Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="ast_8hpp_source.html">ast.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for ast::Or:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classast_1_1Or.png" usemap="#ast::Or_map" alt=""/>
   <map id="ast::Or_map" name="ast::Or_map">
-<area href="classast_1_1BinaryExpression.html" alt="ast::BinaryExpression" shape="rect" coords="0,112,133,136"/>
-<area href="classast_1_1Expression.html" alt="ast::Expression" shape="rect" coords="0,56,133,80"/>
-<area href="classast_1_1AST__Node.html" alt="ast::AST_Node" shape="rect" coords="0,0,133,24"/>
+<area href="classast_1_1BinaryBoolExpression.html" alt="ast::BinaryBoolExpression" shape="rect" coords="0,168,158,192"/>
+<area href="classast_1_1BinaryExpression.html" alt="ast::BinaryExpression" shape="rect" coords="0,112,158,136"/>
+<area href="classast_1_1Expression.html" alt="ast::Expression" shape="rect" coords="0,56,158,80"/>
+<area href="classast_1_1AST__Node.html" alt="ast::AST_Node" shape="rect" coords="0,0,158,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -113,9 +116,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a51cda0bf7526287a030dc7524a544866"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51cda0bf7526287a030dc7524a544866"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>accept</b> (<a class="el" href="classast_1_1AST__Visitor.html">AST_Visitor</a> &amp;)</td></tr>
 <tr class="separator:a51cda0bf7526287a030dc7524a544866"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4c70f4a2d317db657554539070eb279"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4c70f4a2d317db657554539070eb279"></a>
+<tr class="inherit_header pub_methods_classast_1_1BinaryBoolExpression"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classast_1_1BinaryBoolExpression')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classast_1_1BinaryBoolExpression.html">ast::BinaryBoolExpression</a></td></tr>
+<tr class="memitem:a5e6a2f27be1e12bcb2206f5289f2f0c8 inherit pub_methods_classast_1_1BinaryBoolExpression"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e6a2f27be1e12bcb2206f5289f2f0c8"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BinaryBoolExpression</b> (<a class="el" href="classast_1_1Expression.html">Expression</a> *lhs, <a class="el" href="classast_1_1Expression.html">Expression</a> *rhs)</td></tr>
+<tr class="separator:a5e6a2f27be1e12bcb2206f5289f2f0c8 inherit pub_methods_classast_1_1BinaryBoolExpression"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69bba46497ec8140627ccc914f8793c5 inherit pub_methods_classast_1_1BinaryBoolExpression"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69bba46497ec8140627ccc914f8793c5"></a>
 virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> () const </td></tr>
-<tr class="separator:af4c70f4a2d317db657554539070eb279"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a69bba46497ec8140627ccc914f8793c5 inherit pub_methods_classast_1_1BinaryBoolExpression"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classast_1_1BinaryExpression"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classast_1_1BinaryExpression')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classast_1_1BinaryExpression.html">ast::BinaryExpression</a></td></tr>
 <tr class="memitem:a943b57e358bfcc06cade21c4596acf65 inherit pub_methods_classast_1_1BinaryExpression"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a943b57e358bfcc06cade21c4596acf65"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BinaryExpression</b> (<a class="el" href="classast_1_1Expression.html">Expression</a> *lhs, <a class="el" href="classast_1_1Expression.html">Expression</a> *rhs)</td></tr>
@@ -137,13 +144,16 @@ Additional Inherited Members</h2></td></tr>
 <a class="el" href="classast_1_1Expression.html">Expression</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>rhs_</b></td></tr>
 <tr class="separator:ad13abc49d83a720c203d61de929383b3 inherit pro_attribs_classast_1_1BinaryExpression"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classast_1_1Or.html">Or</a> class</p>
+<p>The class only accepts left and right hand sides that are of type bool </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="ast_8hpp_source.html">ast.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 2 2013 12:30:37 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 10:52:28 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

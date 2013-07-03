@@ -93,23 +93,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">ast::Expression Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="ast_8hpp_source.html">ast.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for ast::Expression:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classast_1_1Expression.png" usemap="#ast::Expression_map" alt=""/>
   <map id="ast::Expression_map" name="ast::Expression_map">
-<area href="classast_1_1AST__Node.html" alt="ast::AST_Node" shape="rect" coords="143,0,276,24"/>
-<area href="classast_1_1BinaryExpression.html" alt="ast::BinaryExpression" shape="rect" coords="0,112,133,136"/>
-<area href="classast_1_1UnaryExpression.html" alt="ast::UnaryExpression" shape="rect" coords="286,112,419,136"/>
-<area href="classast_1_1And.html" alt="ast::And" shape="rect" coords="143,168,276,192"/>
-<area href="classast_1_1Minus.html" alt="ast::Minus" shape="rect" coords="143,224,276,248"/>
-<area href="classast_1_1Or.html" alt="ast::Or" shape="rect" coords="143,280,276,304"/>
-<area href="classast_1_1Plus.html" alt="ast::Plus" shape="rect" coords="143,336,276,360"/>
-<area href="classast_1_1Times.html" alt="ast::Times" shape="rect" coords="143,392,276,416"/>
-<area href="classast_1_1Constant.html" alt="ast::Constant" shape="rect" coords="429,168,562,192"/>
-<area href="classast_1_1FunctionCall.html" alt="ast::FunctionCall" shape="rect" coords="429,224,562,248"/>
-<area href="classast_1_1SymbolRef.html" alt="ast::SymbolRef" shape="rect" coords="429,280,562,304"/>
+<area href="classast_1_1AST__Node.html" alt="ast::AST_Node" shape="rect" coords="882,0,1040,24"/>
+<area href="classast_1_1BinaryExpression.html" alt="ast::BinaryExpression" shape="rect" coords="588,112,746,136"/>
+<area href="classast_1_1UnaryExpression.html" alt="ast::UnaryExpression" shape="rect" coords="1176,112,1334,136"/>
+<area href="classast_1_1BinaryBoolExpression.html" alt="ast::BinaryBoolExpression" shape="rect" coords="84,168,242,192"/>
+<area href="classast_1_1BinaryIntExpression.html" alt="ast::BinaryIntExpression" shape="rect" coords="504,168,662,192"/>
+<area href="classast_1_1ListConcat.html" alt="ast::ListConcat" shape="rect" coords="672,168,830,192"/>
+<area href="classast_1_1StringConcat.html" alt="ast::StringConcat" shape="rect" coords="840,168,998,192"/>
+<area href="classast_1_1Constant.html" alt="ast::Constant" shape="rect" coords="1008,168,1166,192"/>
+<area href="classast_1_1FunctionCall.html" alt="ast::FunctionCall" shape="rect" coords="1176,168,1334,192"/>
+<area href="classast_1_1SymbolRef.html" alt="ast::SymbolRef" shape="rect" coords="1344,168,1502,192"/>
+<area href="classast_1_1And.html" alt="ast::And" shape="rect" coords="0,224,158,248"/>
+<area href="classast_1_1Or.html" alt="ast::Or" shape="rect" coords="168,224,326,248"/>
+<area href="classast_1_1Minus.html" alt="ast::Minus" shape="rect" coords="336,224,494,248"/>
+<area href="classast_1_1Plus.html" alt="ast::Plus" shape="rect" coords="504,224,662,248"/>
+<area href="classast_1_1Times.html" alt="ast::Times" shape="rect" coords="672,224,830,248"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -123,13 +129,16 @@ virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>accept</b> (<a class="el" href="classast_1_1AST__Visitor.html">AST_Visitor</a> &amp;)=0</td></tr>
 <tr class="separator:a037a4aad27853ff87cb128d900a105be inherit pub_methods_classast_1_1AST__Node"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Abstract expression base class</p>
+<p>An <a class="el" href="classast_1_1Expression.html">Expression</a> object represents a part of an expression. It has a type associated with it. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="ast_8hpp_source.html">ast.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 2 2013 12:30:37 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 3 2013 10:52:28 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
