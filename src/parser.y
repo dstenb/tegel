@@ -377,6 +377,21 @@ expression
     {
         $$ = new ast::Constant($1);
     }
+    | IDENTIFIER '.' IDENTIFIER
+    {
+        try {
+            Symbol *s = current_table->lookup($1);
+
+            if (s->get_type()->dot($3) != nullptr) {
+                /* TODO */
+            }
+        } catch (const SymTabNoSuchSymbolError &e) {
+            vyyerror("No such symbol: %s\n", e.what());
+            YYERROR;
+        }
+
+        free($1);
+    }
     | IDENTIFIER
     {
         try {
@@ -386,6 +401,8 @@ expression
             vyyerror("No such symbol: %s\n", e.what());
             YYERROR;
         }
+
+        free($1);
     }
     | '(' expression ')'
     {
