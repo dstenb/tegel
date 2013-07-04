@@ -34,6 +34,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 %x body
 %x control
 %x inline
+%x pre_inline
 %x str
 %x text
 
@@ -77,7 +78,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <str><<EOF>>         { yyerror("syntax error, unmatched '\"'"); yyterminate(); }
 <str>"\""            { yylval.string = string_builder; string_builder = NULL;
                        BEGIN(str_caller);
-		       return STRING; }
+                       return STRING; }
 <str>"\\n"           { string_builder_append("\n"); }
 <str>"\\t"           { string_builder_append("\t"); }
 <str>"\\\""          { string_builder_append("\""); }
@@ -90,19 +91,30 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <body>(.|\n)         { unput(*yytext); BEGIN(text); }
 
  /* rules for raw text lines */
-<text>{UANYN}*"\\\\\n" { string_builder_append(yytext);
+<text>"{{"             {
+                         if (string_builder) {
+                            BEGIN(pre_inline);
+                            yylval.string = string_builder;
+                            string_builder = NULL;
+                            return TEXT;
+                         } else {
+                            BEGIN(inline);
+                            return L_INLINE;
+                         }
+                       }
+<text>"\\\\\n"         { string_builder_append(yytext);
                          yylval.string = string_builder;
                          string_builder = NULL;
                          yylval.string[strlen(yylval.string) - 3] = '\0';
                          BEGIN(body);
                          return TEXT; }
-<text>{UANYN}*"\n"     { string_builder_append(yytext);
+<text>"\n"             { string_builder_append(yytext);
                          yylval.string = string_builder;
                          string_builder = NULL;
                          BEGIN(body);
                          return TEXT; }
- /* TODO: add support for inlining ({{ }}), the above rules will have to be
-  * rewritten for single characters, and string_builder should be rewritten in
+<text>{UANYN}          { string_builder_append(yytext); }
+ /* TODO: string_builder should be rewritten in
   * a way that is more suitable for adding single characters */
 
  /* control section (i.e. "% <control>") */
@@ -121,6 +133,15 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
                            BEGIN(str); }
 <control>{IDENTIFIER}     { yylval.string = strdup(yytext); return IDENTIFIER; }
 <control>{IDENTIFIER}"[]" { yylval.string = strdup(yytext); return LIST; }
+
+ /* pre_inline is used as a way to return a TEXT token before L_INLINE */
+<pre_inline>(.|\n)        { unput(*yytext); BEGIN(inline); return L_INLINE; }
+
+<inline>[ \t]*            // Eat up all whitespace
+<inline>"}}"              { BEGIN(text); return R_INLINE; }
+<inline>"\n"              { vyyerror("Newline is not allowed in inlined "
+                            "expressions", '\\', yytext);
+                            yyterminate(); }
 
 %%
 
