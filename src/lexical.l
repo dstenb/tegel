@@ -142,7 +142,8 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <inline>"\n"              { vyyerror("Newline is not allowed in inlined "
                             "expressions", '\\', yytext);
                             yyterminate(); }
-
+<inline>"\""              { str_caller = inline; string_builder_append("");
+                            BEGIN(str); }
 %%
 
 void string_builder_append(const char *s)
