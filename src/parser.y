@@ -250,6 +250,8 @@ body_block
         std::cout << $1 << std::endl;
         if ($1)
             $1->accept(p);
+
+        assert(current_table == &symbol_table);
     }
     |
     ;
@@ -290,7 +292,8 @@ conditional
     {
         $$ = new ast::Conditional((ast::If *)$1, (ast::Elif *)$2, nullptr);
     }
-    | if elifs else end_if {
+    | if elifs else end_if
+    {
         $$ = new ast::Conditional((ast::If *)$1, (ast::Elif *)$2,
             (ast::Else *)$3);
     }
@@ -305,11 +308,8 @@ if
         static_cast<ast::If *>($$)->set_expression($2);
         static_cast<ast::If *>($$)->set_statements($3);
 
-        ast::AST_Printer p;
-        cerr << "IF\n";
-        $$->accept(p);
-
-        /* TODO: current_table->parent() */
+        /* Return the the surrounding block's symbol table */
+        current_table = current_table->parent();
     }
     ;
 
@@ -325,12 +325,13 @@ if_start
 else
     : else_start statements
     {
+        /* TODO: check expression->type() == bool */
+        /* TODO: maybe convert (e.g. "" => false, "fewaew" => true) */
         $$ = $1;
         static_cast<ast::Else *>($$)->set_statements($2);
 
-        ast::AST_Printer p;
-        cerr << "ELSE\n";
-        $$->accept(p);
+        /* Return the the surrounding block's symbol table */
+        current_table = current_table->parent();
     }
 
 else_start
@@ -344,19 +345,22 @@ elifs
     : elif elifs
     {
         $$ = $1;
-        static_cast<ast::Elif *>($1)->n = static_cast<ast::Elif *>($2);
+        static_cast<ast::Elif *>($1)->set_next(static_cast<ast::Elif *>($2));
     }
-    | elif { $$ = $1; }
+    | elif
+    {
+        $$ = $1;
+    }
 
 elif
-    : elif_start expression statements {
+    : elif_start expression statements
+    {
         $$ = $1;
         static_cast<ast::Elif *>($$)->set_expression($2);
         static_cast<ast::Elif *>($$)->set_statements($3);
 
-        ast::AST_Printer p;
-        cerr << "ELIF\n";
-        $$->accept(p);
+        /* Return the the surrounding block's symbol table */
+        current_table = current_table->parent();
     }
 
 elif_start

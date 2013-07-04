@@ -329,7 +329,10 @@ class Conditional : public Statement
 
 		virtual void accept(AST_Visitor &);
 
-		/* TODO */
+		If *if_node() { return if_; }
+		Elif *elif_nodes() { return elifs_; }
+		Else *else_node() { return else_; }
+	private:
 		If *if_;
 		Elif *elifs_;
 		Else *else_;
@@ -407,15 +410,15 @@ class Elif : public Scope
 			: Scope(t, nullptr), expression_(e) {}
 
 		void set_expression(Expression *e) { expression_ = e; }
+		void set_next(Elif *n) { next_ = n; }
 
 		Expression *expression() { return expression_; }
-
-		/* TODO */
-		Elif *n = nullptr;
+		Elif *next() { return next_; }
 
 		virtual void accept(AST_Visitor &);
 	private:
 		Expression *expression_;
+		Elif *next_;
 };
 
 /**
@@ -526,7 +529,6 @@ class AST_Visitor
 class AST_Printer : public AST_Visitor
 {
 	public:
-		int i = 0;
 		virtual void visit(Statements *p) {
 			print_ws();
 			cerr << "Statements\n";
@@ -594,11 +596,11 @@ class AST_Printer : public AST_Visitor
 			print_ws();
 			cerr << "Conditional\n";
 			indent++;
-			p->if_->accept(*this);
-			if (p->elifs_)
-				p->elifs_->accept(*this);
-			if (p->else_)
-				p->else_->accept(*this);
+			p->if_node()->accept(*this);
+			if (p->elif_nodes())
+				p->elif_nodes()->accept(*this);
+			if (p->else_node())
+				p->else_node()->accept(*this);
 			indent--;
 		}
 
@@ -616,7 +618,7 @@ class AST_Printer : public AST_Visitor
 
 		virtual void visit(If *p) {
 			print_ws();
-			cerr << "If\n";
+			cerr << "If(" << p->table() << ")\n";
 			indent++;
 			p->expression()->accept(*this);
 			if (p->statements())
@@ -626,19 +628,19 @@ class AST_Printer : public AST_Visitor
 
 		virtual void visit(Elif *p) {
 			print_ws();
-			cerr << "Elif\n";
+			cerr << "Elif(" << p->table() << ")\n";
 			indent++;
 			p->expression()->accept(*this);
 			if (p->statements())
 				p->statements()->accept(*this);
-			if (p->n)
-				p->n->accept(*this);
+			if (p->next())
+				p->next()->accept(*this);
 			indent--;
 		}
 
 		virtual void visit(Else *p)  {
 			print_ws();
-			cerr << "Else\n";
+			cerr << "Else(" << p->table() << ")\n";
 			indent++;
 			if (p->statements())
 				p->statements()->accept(*this);
