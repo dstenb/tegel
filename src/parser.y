@@ -129,7 +129,12 @@ file
     {
         symbol_table.print(std::cout);
     }
-    ;
+
+/***************************************************************************
+ *
+ * Header related productions
+ *
+ ***************************************************************************/
 
 header_block
     : header_block_p { }
@@ -240,8 +245,79 @@ param
         $$ = new Param($1, $3);
         free($1);
     }
+
+record_constant
+    : IDENTIFIER '{' record_values '}'
+    {
+        const Type *t = TypeFactory::get($1);
+
+        if (t == nullptr) {
+            vyyerror("Unknown type '%s'", $1);
+            YYERROR;
+        }
+
+        const RecordType *p = t->record();
+
+        if (p == nullptr) {
+            vyyerror("Expected a record (got '%s')", t->str().c_str());
+        }
+
+        try {
+            validate_field_types(p, constant_record);
+        } catch (const UnevenNoOfFieldsException &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        } catch (const DifferentTypesError &e) {
+            vyyerror("Invalid type for field  (%s)", e.what()); // TODO improve
+            YYERROR;
+        }
+
+        $$ = new RecordConstantData(p, constant_record);
+
+        constant_record.clear();
+    }
+
+record_values
+    : record_values ',' primitive_constant { constant_record.push_back($3); }
+    | primitive_constant { constant_record.push_back($1); }
     ;
 
+type
+    : single_type { $$ = $1; }
+    | list_type { $$ = $1; }
+
+single_type
+    : IDENTIFIER
+    {
+        const Type *t = TypeFactory::get($1);
+
+        $$ = t ? t->single() : nullptr;
+
+        if ($$ == nullptr) {
+            vyyerror("Unknown type '%s'", $1);
+            YYERROR;
+        }
+    }
+    ;
+
+list_type
+    : LIST
+    {
+        const Type *t = TypeFactory::get($1);
+
+        $$ = t ? t->list() : nullptr;
+
+        if ($$ == nullptr) {
+            vyyerror("Unknown type '%s'", $1);
+            YYERROR;
+        }
+    }
+
+/***************************************************************************
+ *
+ * Body related productions
+ *
+ **************************************************************************/
 body_block
     : statements
     {
@@ -528,72 +604,6 @@ primitive_constant
 	| STRING { $$ = new StringConstantData($1); }
 	;
 
-record_constant
-    : IDENTIFIER '{' record_values '}'
-    {
-        const Type *t = TypeFactory::get($1);
-
-        if (t == nullptr) {
-            vyyerror("Unknown type '%s'", $1);
-            YYERROR;
-        }
-
-        const RecordType *p = t->record();
-
-        if (p == nullptr) {
-            vyyerror("Expected a record (got '%s')", t->str().c_str());
-        }
-
-        try {
-            validate_field_types(p, constant_record);
-        } catch (const UnevenNoOfFieldsException &e) {
-            vyyerror("%s", e.what());
-            YYERROR;
-        } catch (const DifferentTypesError &e) {
-            vyyerror("Invalid type for field  (%s)", e.what()); // TODO improve
-            YYERROR;
-        }
-
-        $$ = new RecordConstantData(p, constant_record);
-
-        constant_record.clear();
-    }
-
-record_values
-    : record_values ',' primitive_constant { constant_record.push_back($3); }
-    | primitive_constant { constant_record.push_back($1); }
-    ;
-
-type
-    : single_type { $$ = $1; }
-    | list_type { $$ = $1; }
-
-single_type
-    : IDENTIFIER
-    {
-        const Type *t = TypeFactory::get($1);
-
-        $$ = t ? t->single() : nullptr;
-
-        if ($$ == nullptr) {
-            vyyerror("Unknown type '%s'", $1);
-            YYERROR;
-        }
-    }
-    ;
-
-list_type
-    : LIST
-    {
-        const Type *t = TypeFactory::get($1);
-
-        $$ = t ? t->list() : nullptr;
-
-        if ($$ == nullptr) {
-            vyyerror("Unknown type '%s'", $1);
-            YYERROR;
-        }
-    }
 
 list_constant
     : '[' list_values ']'
