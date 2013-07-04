@@ -647,13 +647,12 @@ list
     : '[' list_values ']'
     {
         $$ = new
-            ast::List(TypeFactory::get_list($2->expression_->type()->single()));
-        $$->elems_ = $2;
+            ast::List(TypeFactory::get_list($2->expression->type()->single()));
+        $$->set_elements($2);
     }
     | list_type
     {
         $$ = new ast::List($1);
-        $$->elems_ = nullptr;
     }
     ;
 
@@ -666,10 +665,10 @@ list_values
             YYERROR;
         }
 
-        if ($1->type() != $3->expression_->type()) {
+        if ($1->type() != $3->expression->type()) {
             vyyerror("A list can only hold items of same type (Got %s and %s)",
                 $1->type()->str().c_str(),
-                $3->expression_->type()->str().c_str());
+                $3->expression->type()->str().c_str());
             YYERROR;
         }
 
@@ -683,7 +682,7 @@ list_values
             YYERROR;
         }
 
-        $$ = new ast::ListElem($1, nullptr);
+        $$ = new ast::ListElem($1);
     }
     ;
 

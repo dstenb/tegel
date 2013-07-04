@@ -315,15 +315,19 @@ class SymbolRef : public UnaryExpression
 /**
  *
  */
-class ListElem
+struct ListElem
 {
-	public:
-		ListElem(Expression *e, ListElem *n)
-			: expression_(e), next_(n) {}
+		ListElem(Expression *e, ListElem *n = nullptr)
+			: expression(e), next(n) {}
 
-		/* TODO */
-		Expression *expression_;
-		ListElem *next_;
+		~ListElem() {
+			delete expression;
+			if (next)
+				delete next;
+		}
+
+		Expression *expression;
+		ListElem *next;
 };
 
 /**
@@ -332,20 +336,23 @@ class ListElem
 class List : public UnaryExpression
 {
 	public:
-		List(const ListType *t) : type_(t) {}
+		List(const ListType *t)
+			: type_(t), elems_(nullptr) {}
 
 		~List() {
-			/* TODO */
+			if (elems_)
+				delete elems_;
 		}
 
-		/* TODO */
-		ListElem *elems_;
+		void set_elements(ListElem *e) { elems_ = e; }
+		ListElem *elements() { return elems_; }
 
 		virtual void accept(AST_Visitor &);
 		virtual const ListType *type() const { return type_;}
 
 	private:
 		const ListType *type_;
+		ListElem *elems_;
 };
 
 /**
@@ -636,10 +643,10 @@ class AST_Printer : public AST_Visitor
 			print_ws();
 			cerr << "List " << p->type()->str() << "\n";
 			indent++;
-			ListElem *e = p->elems_;
+			ListElem *e = p->elements();
 			while (e) {
-				e->expression_->accept(*this);
-				e = e->next_;
+				e->expression->accept(*this);
+				e = e->next;
 			}
 			indent--;
 		}
