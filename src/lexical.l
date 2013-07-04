@@ -131,8 +131,11 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <control>endif            return ENDIF;
 <control>"\""             { str_caller = control; string_builder_append("");
                            BEGIN(str); }
-<control>{IDENTIFIER}     { yylval.string = strdup(yytext); return IDENTIFIER; }
-<control>{IDENTIFIER}"[]" { yylval.string = strdup(yytext); return LIST; }
+
+<control,inline>{IDENTIFIER}     { yylval.string = strdup(yytext);
+                                   return IDENTIFIER; }
+<control,inline>{IDENTIFIER}"[]" { yylval.string = strdup(yytext);
+                                   return LIST; }
 
  /* pre_inline is used as a way to return a TEXT token before L_INLINE */
 <pre_inline>(.|\n)        { unput(*yytext); BEGIN(inline); return L_INLINE; }
