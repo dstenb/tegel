@@ -45,6 +45,8 @@ class ListConcat;
 class Constant;
 class FunctionCall;
 class SymbolRef;
+class List;
+class ListElem;
 
 class Statement;
 class Conditional;
@@ -313,6 +315,42 @@ class SymbolRef : public UnaryExpression
 /**
  *
  */
+class ListElem
+{
+	public:
+		ListElem(Expression *e, ListElem *n)
+			: expression_(e), next_(n) {}
+
+		/* TODO */
+		Expression *expression_;
+		ListElem *next_;
+};
+
+/**
+ *
+ */
+class List : public UnaryExpression
+{
+	public:
+		List(const ListType *t) : type_(t) {}
+
+		~List() {
+			/* TODO */
+		}
+
+		/* TODO */
+		ListElem *elems_;
+
+		virtual void accept(AST_Visitor &);
+		virtual const ListType *type() const { return type_;}
+
+	private:
+		const ListType *type_;
+};
+
+/**
+ *
+ */
 class Statement : public AST_Node
 {
 
@@ -514,6 +552,7 @@ class AST_Visitor
 		virtual void visit(Constant *) = 0;
 		virtual void visit(FunctionCall *) = 0;
 		virtual void visit(SymbolRef *) = 0;
+		virtual void visit(List *) = 0;
 
 		virtual void visit(Statements *) = 0;
 
@@ -591,6 +630,18 @@ class AST_Printer : public AST_Visitor
 			cerr << "SymbolRef(" << p->symbol()->get_name()
 				<< ", " << p->symbol()->get_type()->str()
 				<< ", " << p->symbol() << ")\n";
+		}
+
+		virtual void visit(List *p) {
+			print_ws();
+			cerr << "List " << p->type()->str() << "\n";
+			indent++;
+			ListElem *e = p->elems_;
+			while (e) {
+				e->expression_->accept(*this);
+				e = e->next_;
+			}
+			indent--;
 		}
 
 		virtual void visit(Conditional *p) {
