@@ -63,6 +63,11 @@ void vyyerror(const char *, ...);
     ast::Statements *statements;
     ast::Statement *statement;
     ast::Expression *expression;
+
+    ast::Scope *scope;
+    ast::If *if_node;
+    ast::Elif *elif_node;
+    ast::Else *else_node;
 }
 
 %token END 0 "end of file"
@@ -103,15 +108,10 @@ void vyyerror(const char *, ...);
 %type<statement> conditional
 %type<statement> control
 %type<statement> inlined
-%type<statement> loop
-%type<statement> for_each
-%type<statement> if
-%type<statement> if_start
-%type<statement> elif_start
-%type<statement> else_start
-%type<statement> else
-%type<statement> elifs
-%type<statement> elif
+%type<scope> loop for_each
+%type<if_node> if if_start
+%type<elif_node> elif_start elifs elif
+%type<else_node> else_start else
 
 %type<expression> expression
 
@@ -282,20 +282,19 @@ control
 conditional
     : if end_if
     {
-        $$ = new ast::Conditional((ast::If *)$1, nullptr, nullptr);
+        $$ = new ast::Conditional($1, nullptr, nullptr);
     }
     | if else end_if
     {
-        $$ = new ast::Conditional((ast::If *)$1, nullptr, (ast::Else *)$2);
+        $$ = new ast::Conditional($1, nullptr, $2);
     }
     | if elifs end_if
     {
-        $$ = new ast::Conditional((ast::If *)$1, (ast::Elif *)$2, nullptr);
+        $$ = new ast::Conditional($1, $2, nullptr);
     }
     | if elifs else end_if
     {
-        $$ = new ast::Conditional((ast::If *)$1, (ast::Elif *)$2,
-            (ast::Else *)$3);
+        $$ = new ast::Conditional($1, $2, $3);
     }
     ;
 
@@ -305,8 +304,8 @@ if
         /* TODO: check expression->type() == bool */
         /* TODO: maybe convert (e.g. "" => false, "fewaew" => true) */
         $$ = $1;
-        static_cast<ast::If *>($$)->set_expression($2);
-        static_cast<ast::If *>($$)->set_statements($3);
+        $$->set_expression($2);
+        $$->set_statements($3);
 
         /* Return the the surrounding block's symbol table */
         current_table = current_table->parent();
@@ -328,7 +327,7 @@ else
         /* TODO: check expression->type() == bool */
         /* TODO: maybe convert (e.g. "" => false, "fewaew" => true) */
         $$ = $1;
-        static_cast<ast::Else *>($$)->set_statements($2);
+        $$->set_statements($2);
 
         /* Return the the surrounding block's symbol table */
         current_table = current_table->parent();
@@ -345,7 +344,7 @@ elifs
     : elif elifs
     {
         $$ = $1;
-        static_cast<ast::Elif *>($1)->set_next(static_cast<ast::Elif *>($2));
+        $1->set_next($2);
     }
     | elif
     {
@@ -356,8 +355,8 @@ elif
     : elif_start expression statements
     {
         $$ = $1;
-        static_cast<ast::Elif *>($$)->set_expression($2);
-        static_cast<ast::Elif *>($$)->set_statements($3);
+        $$->set_expression($2);
+        $$->set_statements($3);
 
         /* Return the the surrounding block's symbol table */
         current_table = current_table->parent();
@@ -377,8 +376,8 @@ end_if
 loop
     : for_each statements end_for
     {
-        static_cast<ast::ForEach *>($1)->set_statements($2);
         $$ = $1;
+        $$->set_statements($2);
     }
     | for_each end_for
     {
