@@ -257,7 +257,7 @@ body_block
     ;
 
 statements
-    : statements statement { $$ = new ast::Statements($2, $1); }
+    : statement statements { $$ = new ast::Statements($1, $2); }
     | statement { $$ = new ast::Statements($1); }
     ;
 

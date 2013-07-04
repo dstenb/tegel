@@ -473,28 +473,28 @@ class InlinedExpression : public Statement
 /** Statements class
  *
  * Statements represents a list of statements. A Statements object holds a
- * pointer to the previous statements object.
+ * pointer to the next statements object.
  */
 class Statements : public AST_Node
 {
 	public:
 		Statements(Statement *s, Statements *p = nullptr)
-			: statement_(s), prev_(p) {}
+			: statement_(s), next_(p) {}
 
 		~Statements() {
 			delete statement_;
-			if (prev_)
-				delete prev_;
+			if (next_)
+				delete next_;
 		}
 		// TODO: add destructor
 
 		virtual void accept(AST_Visitor &);
 
 		Statement *statement() { return statement_; }
-		Statements *prev() { return prev_; }
+		Statements *next() { return next_; }
 	private:
 		Statement *statement_;
-		Statements *prev_;
+		Statements *next_;
 };
 
 /**
@@ -534,9 +534,10 @@ class AST_Printer : public AST_Visitor
 			cerr << "Statements\n";
 			indent++;
 
-			if (p->prev())
-				p->prev()->accept(*this);
 			p->statement()->accept(*this);
+
+			if (p->next())
+				p->next()->accept(*this);
 
 			indent--;
 		}
