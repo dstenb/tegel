@@ -68,6 +68,9 @@ void vyyerror(const char *, ...);
     ast::If *if_node;
     ast::Elif *elif_node;
     ast::Else *else_node;
+
+    ast::List *list;
+    ast::ListElem *list_elem;
 }
 
 %token END 0 "end of file"
@@ -110,6 +113,9 @@ void vyyerror(const char *, ...);
 %type<else_node> else_start else
 
 %type<expression> expression
+
+%type<list> list
+%type<list_elem> list_values
 
 %left OR
 %left AND
@@ -580,9 +586,13 @@ expression
             YYERROR;
         }
     }
-    | constant
+    | single_constant
     {
         $$ = new ast::Constant($1);
+    }
+    | list
+    {
+        $$ = $1;
     }
     | IDENTIFIER '.' IDENTIFIER
     {
@@ -632,5 +642,49 @@ primitive_constant
 	| INT { $$ = new IntConstantData($1); }
 	| STRING { $$ = new StringConstantData($1); }
 	;
+
+list
+    : '[' list_values ']'
+    {
+        $$ = new
+            ast::List(TypeFactory::get_list($2->expression_->type()->single()));
+        $$->elems_ = $2;
+    }
+    | list_type
+    {
+        $$ = new ast::List($1);
+        $$->elems_ = nullptr;
+    }
+    ;
+
+list_values
+    : expression ',' list_values
+    {
+        if ($1->type()->list()) {
+            vyyerror("A list can only hold primitives/records (Got %s)",
+                $1->type()->str().c_str());
+            YYERROR;
+        }
+
+        if ($1->type() != $3->expression_->type()) {
+            vyyerror("A list can only hold items of same type (Got %s and %s)",
+                $1->type()->str().c_str(),
+                $3->expression_->type()->str().c_str());
+            YYERROR;
+        }
+
+        $$ = new ast::ListElem($1, $3);
+    }
+    | expression
+    {
+        if ($1->type()->list()) {
+            vyyerror("A list can only hold primitives/records (Got %s)",
+                $1->type()->str().c_str());
+            YYERROR;
+        }
+
+        $$ = new ast::ListElem($1, nullptr);
+    }
+    ;
 
 %%
