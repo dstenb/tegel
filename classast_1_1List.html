@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.3.1"/>
-<title>TeGeL: ast::SymbolRef Class Reference</title>
+<title>TeGeL: ast::List Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -82,23 +82,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>ast</b></li><li class="navelem"><a class="el" href="classast_1_1SymbolRef.html">SymbolRef</a></li>  </ul>
+<li class="navelem"><b>ast</b></li><li class="navelem"><a class="el" href="classast_1_1List.html">List</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classast_1_1SymbolRef-members.html">List of all members</a>  </div>
+<a href="classast_1_1List-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ast::SymbolRef Class Reference</div>  </div>
+<div class="title">ast::List Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Inheritance diagram for ast::SymbolRef:</div>
+Inheritance diagram for ast::List:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="classast_1_1SymbolRef.png" usemap="#ast::SymbolRef_map" alt=""/>
-  <map id="ast::SymbolRef_map" name="ast::SymbolRef_map">
+  <img src="classast_1_1List.png" usemap="#ast::List_map" alt=""/>
+  <map id="ast::List_map" name="ast::List_map">
 <area href="classast_1_1UnaryExpression.html" alt="ast::UnaryExpression" shape="rect" coords="0,112,130,136"/>
 <area href="classast_1_1Expression.html" alt="ast::Expression" shape="rect" coords="0,56,130,80"/>
 <area href="classast_1_1AST__Node.html" alt="ast::AST_Node" shape="rect" coords="0,0,130,24"/>
@@ -107,18 +107,21 @@ Inheritance diagram for ast::SymbolRef:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:add6a46d68ceba1e18c8da3838589283f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add6a46d68ceba1e18c8da3838589283f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SymbolRef</b> (<a class="el" href="classsymbol_1_1Symbol.html">symbol::Symbol</a> *s)</td></tr>
-<tr class="separator:add6a46d68ceba1e18c8da3838589283f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22e855d5e601fdd9acc06373b688dba0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22e855d5e601fdd9acc06373b688dba0"></a>
-<a class="el" href="classsymbol_1_1Symbol.html">symbol::Symbol</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>symbol</b> ()</td></tr>
-<tr class="separator:a22e855d5e601fdd9acc06373b688dba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa87ee1bcc93d454ac09bd4c0eeeb35d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afa87ee1bcc93d454ac09bd4c0eeeb35d"></a>
+<tr class="memitem:a7350580aa781167916d923b548d138ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7350580aa781167916d923b548d138ee"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>List</b> (const <a class="el" href="classtype_1_1ListType.html">ListType</a> *t)</td></tr>
+<tr class="separator:a7350580aa781167916d923b548d138ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75715ab2c4074b0b1cbc44319c042cc8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75715ab2c4074b0b1cbc44319c042cc8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_elements</b> (<a class="el" href="structast_1_1ListElem.html">ListElem</a> *e)</td></tr>
+<tr class="separator:a75715ab2c4074b0b1cbc44319c042cc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a786149dc028fc0fd8c99035806368705"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a786149dc028fc0fd8c99035806368705"></a>
+<a class="el" href="structast_1_1ListElem.html">ListElem</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>elements</b> ()</td></tr>
+<tr class="separator:a786149dc028fc0fd8c99035806368705"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cf7f435173b8a33f113b33e7b107931"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3cf7f435173b8a33f113b33e7b107931"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>accept</b> (<a class="el" href="classast_1_1AST__Visitor.html">AST_Visitor</a> &amp;)</td></tr>
-<tr class="separator:afa87ee1bcc93d454ac09bd4c0eeeb35d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a812ea205992c285df6e47ef44d415954"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a812ea205992c285df6e47ef44d415954"></a>
-virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> () const </td></tr>
-<tr class="separator:a812ea205992c285df6e47ef44d415954"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a3cf7f435173b8a33f113b33e7b107931"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a706a5e243146f83f0608fe304d95aa8c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a706a5e243146f83f0608fe304d95aa8c"></a>
+virtual const <a class="el" href="classtype_1_1ListType.html">ListType</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> () const </td></tr>
+<tr class="separator:a706a5e243146f83f0608fe304d95aa8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="ast_8hpp_source.html">ast.hpp</a></li>
@@ -126,7 +129,7 @@ virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jul 4 2013 22:13:43 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jul 4 2013 22:13:44 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
