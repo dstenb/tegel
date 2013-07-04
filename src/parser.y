@@ -103,11 +103,7 @@ void vyyerror(const char *, ...);
 
 %type<statements> statements
 
-%type<statement> statement
-%type<statement> text
-%type<statement> conditional
-%type<statement> control
-%type<statement> inlined
+%type<statement> statement text conditional control inlined
 %type<scope> loop for_each
 %type<if_node> if if_start
 %type<elif_node> elif_start elifs elif
