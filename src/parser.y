@@ -13,10 +13,10 @@ SymbolTable symbol_table;
 
 SymbolTable *current_table = &symbol_table;
 
-/* constant_list is used by list_constant to hold the list elements.
-  This is used instead of a AST approach and is ok since only one list will be
-  handled at a time (since a list can only contain primitives and records)
-  same reasoning for constant_record */
+/* constant_list is used by the constant_list grammar rule to hold the list
+  elements. This is used instead of a AST approach and is ok since only one
+  list will be handled at a time (since a list can only contain primitives and
+  records) same reasoning for constant_record */
 std::vector<SingleConstantData *> constant_list;
 std::vector<PrimitiveConstantData *> constant_record;
 
@@ -91,7 +91,7 @@ void vyyerror(const char *, ...);
 %type<single_const> single_constant
 %type<primitive_const> primitive_constant
 %type<record_const> record_constant
-%type<list_const> list_constant
+%type<list_const> constant_list
 
 %type<argument> arg
 
@@ -308,6 +308,39 @@ list_type
             YYERROR;
         }
     }
+
+constant_list
+    : '[' constant_list_values ']'
+    {
+        $$ = new ListConstantData(TypeFactory::get_list(
+            constant_list.front()->type()));
+
+        try {
+            for (SingleConstantData *d : constant_list)
+                $$->add(d);
+        } catch (const InvalidTypeError &e) {
+            yyerror(e.what());
+            YYERROR;
+        } catch (const DifferentTypesError &e) {
+            vyyerror("A list can only hold items of same type (%s)",
+                e.what());
+            YYERROR;
+        }
+
+        constant_list.clear();
+    }
+    | list_type
+    {
+        $$ = new ListConstantData($1);
+    }
+    ;
+
+constant_list_values
+    : constant_list_values ',' single_constant { constant_list.push_back($3); }
+    | single_constant { constant_list.push_back($1); }
+    ;
+
+
 
 /***************************************************************************
  *
@@ -587,7 +620,7 @@ expression
 
 constant
     : single_constant { $$ = $1; }
-    | list_constant { $$ = $1; }
+    | constant_list { $$ = $1; }
     ;
 
 single_constant
@@ -599,37 +632,5 @@ primitive_constant
 	| INT { $$ = new IntConstantData($1); }
 	| STRING { $$ = new StringConstantData($1); }
 	;
-
-
-list_constant
-    : '[' list_values ']'
-    {
-        $$ = new ListConstantData(TypeFactory::get_list(
-            constant_list.front()->type()));
-
-        try {
-            for (SingleConstantData *d : constant_list)
-                $$->add(d);
-        } catch (const InvalidTypeError &e) {
-            yyerror(e.what());
-            YYERROR;
-        } catch (const DifferentTypesError &e) {
-            vyyerror("A list can only hold items of same type (%s)",
-                e.what());
-            YYERROR;
-        }
-
-        constant_list.clear();
-    }
-    | list_type
-    {
-        $$ = new ListConstantData($1);
-    }
-    ;
-
-list_values
-    : list_values ',' single_constant { constant_list.push_back($3); }
-    | single_constant { constant_list.push_back($1); }
-    ;
 
 %%
