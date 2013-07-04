@@ -91,15 +91,16 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
  /* rules for raw text lines */
 <text>{UANYN}*"\\\\\n" { string_builder_append(yytext);
-                         yylval.string = string_builder; string_builder = NULL;
-			 yylval.string[strlen(yylval.string) - 3] = '\0';
-		         printf("yylval.string = '%s'\n", yylval.string);
-			 BEGIN(body); return TEXT;
-			}
+                         yylval.string = string_builder;
+                         string_builder = NULL;
+                         yylval.string[strlen(yylval.string) - 3] = '\0';
+                         BEGIN(body);
+                         return TEXT; }
 <text>{UANYN}*"\n"     { string_builder_append(yytext);
-                         yylval.string = string_builder; string_builder = NULL;
-			 printf("yylval.string = '%s'\n", yylval.string);
-			 BEGIN(body); return TEXT; }
+                         yylval.string = string_builder;
+                         string_builder = NULL;
+                         BEGIN(body);
+                         return TEXT; }
  /* TODO: add support for inlining ({{ }}), the above rules will have to be
   * rewritten for single characters, and string_builder should be rewritten in
   * a way that is more suitable for adding single characters */
@@ -108,7 +109,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
  /* TODO: add support for continuing the control sequence on the following
   * lines (suggestion: use '\') */
 <control>[ \t]*           // Eat up all whitespace
-<control>\n               { BEGIN(body); printf("Closing\n"); }
+<control>\n               { BEGIN(body); }
 <control>for              return FOR;
 <control>in               return IN;
 <control>endfor           return ENDFOR;
