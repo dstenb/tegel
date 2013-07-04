@@ -69,7 +69,6 @@ void vyyerror(const char *, ...);
 %token ARGUMENT "argument"
 %token RECORD "record"
 %token SEPARATOR "%%"
-%token CONTROL "%"
 %token<string> IDENTIFIER "identifier"
 %token FOR "for" IN "in" ENDFOR "endfor"
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
@@ -102,11 +101,17 @@ void vyyerror(const char *, ...);
 %type<statement> statement
 %type<statement> text
 %type<statement> conditional
+%type<statement> control
 %type<statement> inlined
 %type<statement> loop
 %type<statement> for_each
 %type<statement> if
-%type<statement> begin_if
+%type<statement> if_start
+%type<statement> elif_start
+%type<statement> else_start
+%type<statement> else
+%type<statement> elifs
+%type<statement> elif
 
 %type<expression> expression
 
@@ -256,8 +261,7 @@ statements
 
 statement
     : text { $$ = $1; }
-    | conditional { $$ = $1; }
-    | loop { $$ = $1; }
+    | control { $$ = $1; }
     | inlined { $$ = $1; }
     ;
 
@@ -269,33 +273,101 @@ text
     }
     ;
 
-conditional
-    : if
-    {
+control
+    : conditional { $$ = $1; }
+    | loop { $$ = $1; }
 
+conditional
+    : if end_if
+    {
+        $$ = new ast::Conditional((ast::If *)$1, nullptr, nullptr);
+    }
+    | if else end_if
+    {
+        $$ = new ast::Conditional((ast::If *)$1, nullptr, (ast::Else *)$2);
+    }
+    | if elifs end_if
+    {
+        $$ = new ast::Conditional((ast::If *)$1, (ast::Elif *)$2, nullptr);
+    }
+    | if elifs else end_if {
+        $$ = new ast::Conditional((ast::If *)$1, (ast::Elif *)$2,
+            (ast::Else *)$3);
     }
     ;
 
 if
-    : begin_if statements
+    : if_start expression statements
     {
+        /* TODO: check expression->type() == bool */
+        /* TODO: maybe convert (e.g. "" => false, "fewaew" => true) */
+        $$ = $1;
+        static_cast<ast::If *>($$)->set_expression($2);
+        static_cast<ast::If *>($$)->set_statements($3);
 
+        ast::AST_Printer p;
+        cerr << "IF\n";
+        $$->accept(p);
+
+        /* TODO: current_table->parent() */
     }
     ;
 
-begin_if
-    : CONTROL IF expression
+if_start
+    : IF
     {
         /* Create symbol table for the if part */
         current_table = new SymbolTable(current_table);
 
-        /* TODO: check $3->type() == bool */
-        /* TODO: maybe convert, e.g. "" => false, "X" => true */
-
-        $$ = new ast::If($3, current_table);
-        free($3);
+        $$ = new ast::If(nullptr, current_table);
     }
-    ;
+
+else
+    : else_start statements
+    {
+        $$ = $1;
+        static_cast<ast::Else *>($$)->set_statements($2);
+
+        ast::AST_Printer p;
+        cerr << "ELSE\n";
+        $$->accept(p);
+    }
+
+else_start
+    : ELSE
+    {
+        current_table = new SymbolTable(current_table);
+        $$ = new ast::Else(current_table);
+    }
+
+elifs
+    : elif elifs
+    {
+        $$ = $1;
+        static_cast<ast::Elif *>($1)->n = static_cast<ast::Elif *>($2);
+    }
+    | elif { $$ = $1; }
+
+elif
+    : elif_start expression statements {
+        $$ = $1;
+        static_cast<ast::Elif *>($$)->set_expression($2);
+        static_cast<ast::Elif *>($$)->set_statements($3);
+
+        ast::AST_Printer p;
+        cerr << "ELIF\n";
+        $$->accept(p);
+    }
+
+elif_start
+    : ELIF
+    {
+        current_table = new SymbolTable(current_table);
+        $$ = new ast::Elif(nullptr, current_table);
+    }
+
+end_if
+    : ENDIF { }
 
  /* TODO: loop and for_each in dire need of cleanup */
 loop
@@ -314,10 +386,10 @@ loop
     ;
 
 for_each
-    : CONTROL FOR IDENTIFIER IN expression
+    : FOR IDENTIFIER IN expression
     {
-        if ($5->type()->list() == nullptr) {
-            vyyerror("Expected a list (got %s)", $5->type()->str().c_str());
+        if ($4->type()->list() == nullptr) {
+            vyyerror("Expected a list (got %s)", $4->type()->str().c_str());
             YYERROR;
         }
 
@@ -325,20 +397,20 @@ for_each
          * variable) */
         current_table = new SymbolTable(current_table);
 
-        Variable *v = new Variable($3, $5->type()->list()->elem());
+        Variable *v = new Variable($2, $4->type()->list()->elem());
         current_table->add(v);
 
         /* Create symbol table for the statements block */
         current_table = new SymbolTable(current_table);
 
-        $$ = new ast::ForEach(v, $5, current_table->parent(), current_table);
+        $$ = new ast::ForEach(v, $4, current_table->parent(), current_table);
 
         /* Free the identifier string */
-        free($3);
+        free($2);
     }
 
 end_for
-    : CONTROL ENDFOR
+    : ENDFOR
     {
         /* Go back to symbol table before the for loop */
         current_table = current_table->parent()->parent();

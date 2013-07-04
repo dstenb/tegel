@@ -47,6 +47,7 @@ class FunctionCall;
 class SymbolRef;
 
 class Statement;
+class Conditional;
 class Scope;
 class ForEach;
 class If;
@@ -317,6 +318,23 @@ class Statement : public AST_Node
 
 };
 
+/**
+ *
+ */
+class Conditional : public Statement
+{
+	public:
+		Conditional(If *if_node, Elif *elif_nodes, Else *else_node)
+			: if_(if_node), elifs_(elif_nodes), else_(else_node) {}
+
+		virtual void accept(AST_Visitor &);
+
+		/* TODO */
+		If *if_;
+		Elif *elifs_;
+		Else *else_;
+};
+
 /** Scope class
  *
  * A scope objects holds statements and an associated symbol table
@@ -370,6 +388,8 @@ class If : public Scope
 		If(Expression *e, symbol::SymbolTable *t)
 			: Scope(t, nullptr), expression_(e) {}
 
+		void set_expression(Expression *e) { expression_ = e; }
+
 		Expression *expression() { return expression_; }
 
 		virtual void accept(AST_Visitor &);
@@ -386,7 +406,12 @@ class Elif : public Scope
 		Elif(Expression *e, symbol::SymbolTable *t)
 			: Scope(t, nullptr), expression_(e) {}
 
+		void set_expression(Expression *e) { expression_ = e; }
+
 		Expression *expression() { return expression_; }
+
+		/* TODO */
+		Elif *n = nullptr;
 
 		virtual void accept(AST_Visitor &);
 	private:
@@ -489,6 +514,7 @@ class AST_Visitor
 
 		virtual void visit(Statements *) = 0;
 
+		virtual void visit(Conditional *) = 0;
 		virtual void visit(ForEach *) = 0;
 		virtual void visit(If *) = 0;
 		virtual void visit(Elif *) = 0;
@@ -500,6 +526,7 @@ class AST_Visitor
 class AST_Printer : public AST_Visitor
 {
 	public:
+		int i = 0;
 		virtual void visit(Statements *p) {
 			print_ws();
 			cerr << "Statements\n";
@@ -563,6 +590,18 @@ class AST_Printer : public AST_Visitor
 				<< ", " << p->symbol() << ")\n";
 		}
 
+		virtual void visit(Conditional *p) {
+			print_ws();
+			cerr << "Conditional\n";
+			indent++;
+			p->if_->accept(*this);
+			if (p->elifs_)
+				p->elifs_->accept(*this);
+			if (p->else_)
+				p->else_->accept(*this);
+			indent--;
+		}
+
 		virtual void visit(ForEach *p) {
 			print_ws();
 			cerr << "ForEach\n";
@@ -585,14 +624,29 @@ class AST_Printer : public AST_Visitor
 			indent--;
 		}
 
-		virtual void visit(Elif *) {
+		virtual void visit(Elif *p) {
 			print_ws();
 			cerr << "Elif\n";
+			indent++;
+			p->expression()->accept(*this);
+			if (p->statements())
+				p->statements()->accept(*this);
+			if (p->n)
+				p->n->accept(*this);
+			indent--;
 		}
 
-		virtual void visit(Else *)  {
+		virtual void visit(Else *p)  {
 			print_ws();
 			cerr << "Else\n";
+			indent++;
+			if (p->statements())
+				p->statements()->accept(*this);
+			else {
+				print_ws();
+				cerr << "No statement";
+			}
+			indent--;
 		}
 
 		virtual void visit(Text *p) {
