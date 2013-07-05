@@ -358,7 +358,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;            <span class="keywordflow">return</span> method_.return_type();</div>
 <div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        }</div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <span class="comment">/* TODO: expression() */</span></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <a class="code" href="classast_1_1Expression.html">Expression</a> *expression() { <span class="keywordflow">return</span> expression_; }</div>
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        <a class="code" href="classtype_1_1TypeMethod.html">TypeMethod</a> method() { <span class="keywordflow">return</span> method_; }</div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        <a class="code" href="structast_1_1ExpressionList.html">ExpressionList</a> *arguments() { <span class="keywordflow">return</span> args_; }</div>
 <div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <span class="keyword">private</span>:</div>
@@ -626,133 +626,130 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1MethodCall.html">MethodCall</a> *p) {</div>
 <div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;            print_ws();</div>
 <div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;MethodCall(&quot;</span> &lt;&lt; p-&gt;method().name() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;            <span class="comment">/* TODO */</span></div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            <span class="comment">// p-&gt;function()-&gt;print(cerr);</span></div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;            <span class="comment">// cerr &lt;&lt; &quot;)\n&quot;;</span></div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;            <span class="comment">// indent++;</span></div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;            <span class="comment">// for (auto e = p-&gt;arguments(); e != nullptr;</span></div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;            <span class="comment">//      e = e-&gt;next) {</span></div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;            <span class="comment">//  e-&gt;expression-&gt;accept(*this);</span></div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;            <span class="comment">// }</span></div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;            <span class="comment">// indent--;</span></div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;        }</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1SymbolRef.html">SymbolRef</a> *p) {</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;SymbolRef(&quot;</span> &lt;&lt; p-&gt;symbol()-&gt;get_name()</div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;                &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; p-&gt;symbol()-&gt;get_type()-&gt;<a class="code" href="classtype_1_1Type.html#ad792c355f871e0579bdc5e197ae4eed8">str</a>()</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;                &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; p-&gt;symbol() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;        }</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1List.html">List</a> *p) {</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;List &quot;</span> &lt;&lt; p-&gt;type()-&gt;<a class="code" href="classtype_1_1ListType.html#a318d3de2a102cd6515c3efabde2760bd">str</a>() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;            indent++;</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> e = p-&gt;elements(); e != <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                    e = e-&gt;next) {</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;                e-&gt;expression-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;            }</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;            indent--;</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;        }</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1Conditional.html">Conditional</a> *p) {</div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;Conditional\n&quot;</span>;</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;            indent++;</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;            p-&gt;if_node()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;            <span class="keywordflow">if</span> (p-&gt;elif_nodes())</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;                p-&gt;elif_nodes()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;            <span class="keywordflow">if</span> (p-&gt;else_node())</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;                p-&gt;else_node()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;            indent--;</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;        }</div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1ForEach.html">ForEach</a> *p) {</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;            indent++;</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> e = p-&gt;arguments(); e != <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;                    e = e-&gt;next)</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                e-&gt;expression-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;            indent--;</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;        }</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1SymbolRef.html">SymbolRef</a> *p) {</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;SymbolRef(&quot;</span> &lt;&lt; p-&gt;symbol()-&gt;get_name()</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; p-&gt;symbol()-&gt;get_type()-&gt;<a class="code" href="classtype_1_1Type.html#ad792c355f871e0579bdc5e197ae4eed8">str</a>()</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;                &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; p-&gt;symbol() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;        }</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1List.html">List</a> *p) {</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;List &quot;</span> &lt;&lt; p-&gt;type()-&gt;<a class="code" href="classtype_1_1ListType.html#a318d3de2a102cd6515c3efabde2760bd">str</a>() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;            indent++;</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> e = p-&gt;elements(); e != <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                    e = e-&gt;next) {</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;                e-&gt;expression-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;            }</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;            indent--;</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;        }</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1Conditional.html">Conditional</a> *p) {</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;Conditional\n&quot;</span>;</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;            indent++;</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;            p-&gt;if_node()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;            <span class="keywordflow">if</span> (p-&gt;elif_nodes())</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;                p-&gt;elif_nodes()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;            <span class="keywordflow">if</span> (p-&gt;else_node())</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;                p-&gt;else_node()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;            indent--;</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;        }</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1ForEach.html">ForEach</a> *p) {</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;ForEach\n&quot;</span>;</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;            indent++;</div>
 <div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;ForEach\n&quot;</span>;</div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;            indent++;</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            p-&gt;variable()-&gt;print(cerr);</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;            cerr &lt;&lt;<span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;            <span class="keywordflow">if</span> (p-&gt;statements())</div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;                p-&gt;statements()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;            indent--;</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;        }</div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;</div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1If.html">If</a> *p) {</div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;If(&quot;</span> &lt;&lt; p-&gt;table() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;            indent++;</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;            <span class="keywordflow">if</span> (p-&gt;statements())</div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;                p-&gt;statements()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;            indent--;</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;        }</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1Elif.html">Elif</a> *p) {</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;Elif(&quot;</span> &lt;&lt; p-&gt;table() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;            indent++;</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;            <span class="keywordflow">if</span> (p-&gt;statements())</div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;                p-&gt;statements()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;            <span class="keywordflow">if</span> (p-&gt;next())</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;                p-&gt;next()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;            indent--;</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;        }</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1Else.html">Else</a> *p)  {</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;Else(&quot;</span> &lt;&lt; p-&gt;table() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;            indent++;</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;            <span class="keywordflow">if</span> (p-&gt;statements())</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;                p-&gt;statements()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;                print_ws();</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;                cerr &lt;&lt; <span class="stringliteral">&quot;No statement&quot;</span>;</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;            }</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;            indent--;</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;        }</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;</div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1Text.html">Text</a> *p) {</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;Text(&#39;&quot;</span> &lt;&lt; p-&gt;text() &lt;&lt; <span class="stringliteral">&quot;&#39;)\n&quot;</span>;</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;        }</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1InlinedExpression.html">InlinedExpression</a> *p) {</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;InlinedExpression\n&quot;</span>;</div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;            indent++;</div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;            indent--;</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;        }</div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;</div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;        <span class="keywordtype">void</span> binary(<span class="keyword">const</span> <span class="keywordtype">string</span> &amp;s, <a class="code" href="classast_1_1BinaryExpression.html">BinaryExpression</a> *e)</div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;        {</div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;            print_ws();</div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;            cerr &lt;&lt; s &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;            indent++;</div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;            e-&gt;lhs()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;            e-&gt;rhs()-&gt;accept(*<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;            indent--;</div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;        }</div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;        <span class="keywordtype">int</span> indent = 0;</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;        <span class="keywordtype">void</span> print_ws() {</div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; indent; i++)</div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;                cerr &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;        }</div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;};</div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;}</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;            p-&gt;variable()-&gt;print(cerr);</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;            cerr &lt;&lt;<span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            <span class="keywordflow">if</span> (p-&gt;statements())</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                p-&gt;statements()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;            indent--;</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;        }</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1If.html">If</a> *p) {</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;If(&quot;</span> &lt;&lt; p-&gt;table() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;            indent++;</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;            <span class="keywordflow">if</span> (p-&gt;statements())</div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;                p-&gt;statements()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;            indent--;</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;        }</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1Elif.html">Elif</a> *p) {</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;Elif(&quot;</span> &lt;&lt; p-&gt;table() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;            indent++;</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;            <span class="keywordflow">if</span> (p-&gt;statements())</div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;                p-&gt;statements()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;            <span class="keywordflow">if</span> (p-&gt;next())</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;                p-&gt;next()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;            indent--;</div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;        }</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1Else.html">Else</a> *p)  {</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;Else(&quot;</span> &lt;&lt; p-&gt;table() &lt;&lt; <span class="stringliteral">&quot;)\n&quot;</span>;</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;            indent++;</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;            <span class="keywordflow">if</span> (p-&gt;statements())</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;                p-&gt;statements()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;            <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;                print_ws();</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;                cerr &lt;&lt; <span class="stringliteral">&quot;No statement&quot;</span>;</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            }</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;            indent--;</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;        }</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1Text.html">Text</a> *p) {</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;Text(&#39;&quot;</span> &lt;&lt; p-&gt;text() &lt;&lt; <span class="stringliteral">&quot;&#39;)\n&quot;</span>;</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;        }</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> visit(<a class="code" href="classast_1_1InlinedExpression.html">InlinedExpression</a> *p) {</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;            cerr &lt;&lt; <span class="stringliteral">&quot;InlinedExpression\n&quot;</span>;</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;            indent++;</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;            p-&gt;expression()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;            indent--;</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;        }</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;        <span class="keywordtype">void</span> binary(<span class="keyword">const</span> <span class="keywordtype">string</span> &amp;s, <a class="code" href="classast_1_1BinaryExpression.html">BinaryExpression</a> *e)</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        {</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;            print_ws();</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;            cerr &lt;&lt; s &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;            indent++;</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;            e-&gt;lhs()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;            e-&gt;rhs()-&gt;accept(*<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;            indent--;</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;        }</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;        <span class="keywordtype">int</span> indent = 0;</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;        <span class="keywordtype">void</span> print_ws() {</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; indent; i++)</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;                cerr &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;        }</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;};</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;}</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jul 5 2013 17:08:15 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jul 5 2013 23:06:27 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
