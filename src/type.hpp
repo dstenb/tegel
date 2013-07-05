@@ -46,6 +46,13 @@ class TypeMethod
 		vector<const Type *> params_;
 };
 
+class NoSuchMethodError : public runtime_error
+{
+	public:
+		NoSuchMethodError(const string &t, const string &m)
+			: runtime_error(t +  " has no method named " + m) {}
+};
+
 /** Abstract type class
  *
  * A Type object represents a type in the language (e.g. string). A type acts
@@ -104,6 +111,18 @@ class Type
 		 */
 		virtual const ListType *list() const;
 
+		/** Lookup a method
+		 *
+		 * @return The TypeMethod class if found, throws if not found
+		 * @throw NoSuchMethodError
+		 */
+		TypeMethod lookup(const string &s) const {
+			auto it = methods_.find(s);
+
+			if (it == methods_.end())
+				throw NoSuchMethodError(str(), s);
+			return it->second;
+		}
 		/** Print the list of methods defined for the type
 		 * TODO: move to .cpp
 		 */
