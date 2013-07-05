@@ -14,6 +14,8 @@ using namespace std;
 using namespace constant;
 using namespace type;
 
+/* TODO: remove Function */
+
 namespace symbol {
 
 class Param

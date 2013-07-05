@@ -43,7 +43,7 @@ class StringRepeat;
 class StringConcat;
 class ListConcat;
 class Constant;
-class FunctionCall;
+class MethodCall;
 class SymbolRef;
 class List;
 class ExpressionList;
@@ -324,21 +324,24 @@ struct ExpressionList
 /**
  *
  */
-class FunctionCall : public UnaryExpression
+class MethodCall : public UnaryExpression
 {
 	public:
-		FunctionCall(symbol::Function *f, ExpressionList *a)
-			: function_(f), args_(a) {}
+		MethodCall(Expression *e, const TypeMethod &m,
+				ExpressionList *a)
+			: expression_(e), method_(m), args_(a) {}
 
 		virtual void accept(AST_Visitor &);
 		virtual const Type *type() const {
-			return function_->get_type();
+			return method_.return_type();
 		}
 
-		symbol::Function *function() { return function_; }
+		/* TODO: expression() */
+		TypeMethod method() { return method_; }
 		ExpressionList *arguments() { return args_; }
 	private:
-		symbol::Function *function_;
+		Expression *expression_;
+		TypeMethod method_;
 		ExpressionList *args_;
 };
 
@@ -569,7 +572,7 @@ class AST_Visitor
 		virtual void visit(StringConcat *) = 0;
 		virtual void visit(ListConcat *) = 0;
 		virtual void visit(Constant *) = 0;
-		virtual void visit(FunctionCall *) = 0;
+		virtual void visit(MethodCall *) = 0;
 		virtual void visit(SymbolRef *) = 0;
 		virtual void visit(List *) = 0;
 
@@ -639,17 +642,18 @@ class AST_Printer : public AST_Visitor
 			cerr << ")\n";
 		}
 
-		virtual void visit(FunctionCall *p) {
+		virtual void visit(MethodCall *p) {
 			print_ws();
-			cerr << "FunctionCall(";
-			p->function()->print(cerr);
-			cerr << ")\n";
-			indent++;
-			for (auto e = p->arguments(); e != nullptr;
-					e = e->next) {
-				e->expression->accept(*this);
-			}
-			indent--;
+			cerr << "MethodCall(" << p->method().name() << ")\n";
+			/* TODO */
+			// p->function()->print(cerr);
+			// cerr << ")\n";
+			// indent++;
+			// for (auto e = p->arguments(); e != nullptr;
+			// 		e = e->next) {
+			// 	e->expression->accept(*this);
+			// }
+			// indent--;
 		}
 
 		virtual void visit(SymbolRef *p) {
@@ -688,6 +692,7 @@ class AST_Printer : public AST_Visitor
 			indent++;
 			print_ws();
 			p->variable()->print(cerr);
+			cerr <<"\n";
 			p->expression()->accept(*this);
 			if (p->statements())
 				p->statements()->accept(*this);
