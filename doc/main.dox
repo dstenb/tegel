@@ -24,6 +24,7 @@
 
   \section getting_started Getting Started
 
+  - [Types](@ref tegel_types)
   - [Syntax](@ref syntax)
   - [Example](@ref example)
   - [Design](@ref design)

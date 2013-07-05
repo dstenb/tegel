@@ -1,0 +1,46 @@
+/*! \page tegel_types Types
+  \tableofcontents
+
+  \section predefined Predefined types
+
+  \subsection primitive Primitives
+
+  \subsubsection bool bool
+
+  Method             | Description
+  -------------      | -------------
+  `string b.str()`   | Returns a string representation of `b`
+
+  \subsubsection int int
+
+  Method             | Description
+  -------------      | -------------
+  `string i.str()`   | Returns a string representation of `i`
+
+  \subsubsection string string
+
+  Method             | Description
+  -------------      | -------------
+  `string s.upper()` | Returns a upper case version of `s`
+  `string s.lower()` | Returns a lower case version of `s`
+  `string s.title()` | Returns a title case version of `s`
+
+  \subsection list List of primitives
+
+  \subsubsection bool_list bool[]
+
+  \subsubsection int_list int[]
+
+  \subsubsection string_list string[]
+
+  Method                        | Description
+  -------------                 | -------------
+  `string s.join(string del)`   | Returns a string containing all elements in `s`delimited by `del`
+  `string s.sort((bool asc)`    | Returns a sorted version of `s`. Sorted ascending if `del` is true, else descending.
+
+  \subsection Records
+
+  A record is a collection of primitive data types. Custom records can be
+  defined in the header of a .tgl file (see TODO).
+
+*/
