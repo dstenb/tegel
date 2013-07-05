@@ -336,7 +336,7 @@ class FunctionCall : public UnaryExpression
 		}
 
 		symbol::Function *function() { return function_; }
-		ExpressionList *args() { return args_; }
+		ExpressionList *arguments() { return args_; }
 	private:
 		symbol::Function *function_;
 		ExpressionList *args_;
@@ -639,9 +639,17 @@ class AST_Printer : public AST_Visitor
 			cerr << ")\n";
 		}
 
-		virtual void visit(FunctionCall *) {
+		virtual void visit(FunctionCall *p) {
 			print_ws();
-			cerr << "FunctionCall\n";
+			cerr << "FunctionCall(";
+			p->function()->print(cerr);
+			cerr << ")\n";
+			indent++;
+			for (auto e = p->arguments(); e != nullptr;
+					e = e->next) {
+				e->expression->accept(*this);
+			}
+			indent--;
 		}
 
 		virtual void visit(SymbolRef *p) {
@@ -655,10 +663,9 @@ class AST_Printer : public AST_Visitor
 			print_ws();
 			cerr << "List " << p->type()->str() << "\n";
 			indent++;
-			ExpressionList *e = p->elements();
-			while (e) {
+			for (auto e = p->elements(); e != nullptr;
+					e = e->next) {
 				e->expression->accept(*this);
-				e = e->next;
 			}
 			indent--;
 		}
