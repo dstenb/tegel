@@ -46,7 +46,7 @@ class Constant;
 class FunctionCall;
 class SymbolRef;
 class List;
-class ListElem;
+class ExpressionList;
 
 class Statement;
 class Conditional;
@@ -284,15 +284,6 @@ class Constant : public UnaryExpression
 /**
  *
  */
-class FunctionCall : public UnaryExpression
-{
-	public:
-		virtual void accept(AST_Visitor &);
-};
-
-/**
- *
- */
 class SymbolRef : public UnaryExpression
 {
 	public:
@@ -315,19 +306,40 @@ class SymbolRef : public UnaryExpression
 /**
  *
  */
-struct ListElem
+struct ExpressionList
 {
-		ListElem(Expression *e, ListElem *n = nullptr)
+		ExpressionList(Expression *e, ExpressionList *n = nullptr)
 			: expression(e), next(n) {}
 
-		~ListElem() {
+		~ExpressionList() {
 			delete expression;
 			if (next)
 				delete next;
 		}
 
 		Expression *expression;
-		ListElem *next;
+		ExpressionList *next;
+};
+
+/**
+ *
+ */
+class FunctionCall : public UnaryExpression
+{
+	public:
+		FunctionCall(symbol::Function *f, ExpressionList *a)
+			: function_(f), args_(a) {}
+
+		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const {
+			return function_->get_type();
+		}
+
+		symbol::Function *function() { return function_; }
+		ExpressionList *args() { return args_; }
+	private:
+		symbol::Function *function_;
+		ExpressionList *args_;
 };
 
 /**
@@ -344,15 +356,15 @@ class List : public UnaryExpression
 				delete elems_;
 		}
 
-		void set_elements(ListElem *e) { elems_ = e; }
-		ListElem *elements() { return elems_; }
+		void set_elements(ExpressionList *e) { elems_ = e; }
+		ExpressionList *elements() { return elems_; }
 
 		virtual void accept(AST_Visitor &);
 		virtual const ListType *type() const { return type_;}
 
 	private:
 		const ListType *type_;
-		ListElem *elems_;
+		ExpressionList *elems_;
 };
 
 /**
@@ -643,7 +655,7 @@ class AST_Printer : public AST_Visitor
 			print_ws();
 			cerr << "List " << p->type()->str() << "\n";
 			indent++;
-			ListElem *e = p->elements();
+			ExpressionList *e = p->elements();
 			while (e) {
 				e->expression->accept(*this);
 				e = e->next;
