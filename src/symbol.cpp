@@ -38,12 +38,12 @@ const Param *Argument::get(const string &s) const
 void Argument::print(ostream &os) const
 {
 	os << "Argument(\"" << get_name() << "\", "
-		<< get_type()->str() << ")\n";
+		<< get_type()->str() << ")";
 	for (auto it = params_.begin(); it != params_.end(); ++it) {
+		os << "\n";
 		Param *p = it->second;
 		os << "\t";
 		p->print(os);
-		os << "\n";
 	}
 }
 
@@ -64,7 +64,22 @@ void Argument::setup_parameters()
 void Variable::print(ostream &os) const
 {
 	os << "Variable(\"" << get_name() << "\", "
-		<< get_type()->str() << ")\n";
+		<< get_type()->str() << ")";
+}
+
+void Function::print(ostream &os) const
+{
+	os << "Function(" << get_type()->str() << " " << get_name() << "(";
+
+	auto it = params_.begin();
+
+	while (it != params_.end()) {
+		os << (*it)->str();
+		if (++it != params_.end())
+			os << ", ";
+	}
+
+	os << "))";
 }
 
 void SymbolTable::add(Symbol *s)
@@ -95,6 +110,16 @@ void SymbolTable::print(ostream &os) const
 		it->second->print(os);
 		os << endl;
 	}
+}
+
+void add_default_functions(SymbolTable &st)
+{
+	vector<const Type *> str_param = { TypeFactory::get("string") };
+
+	/* String functions */
+	st.add(new Function("upper", TypeFactory::get("string"), str_param));
+	st.add(new Function("lower", TypeFactory::get("string"), str_param));
+	st.add(new Function("title", TypeFactory::get("string"), str_param));
 }
 
 }

@@ -9,9 +9,8 @@
 using namespace constant;
 using namespace symbol;
 
-SymbolTable symbol_table;
-
-SymbolTable *current_table = &symbol_table;
+SymbolTable *root_table;
+SymbolTable *current_table;
 
 /* constant_list is used by the constant_list grammar rule to hold the list
   elements. This is used instead of a AST approach and is ok since only one
@@ -129,7 +128,7 @@ void vyyerror(const char *, ...);
 file
     : header_block SEPARATOR body_block
     {
-        symbol_table.print(std::cout);
+        root_table->print(std::cout);
     }
 
 /***************************************************************************
@@ -153,10 +152,12 @@ header_item
     {
         // TODO: add to argument vector
         try {
-            symbol_table.add($1);
+            root_table->add($1);
         } catch(const SymTabAlreadyDefinedError &e) {
-            vyyerror("Argument %s is already defined",
-                $1->get_name().c_str());
+            stringstream sstr;
+            root_table->lookup($1->get_name())->print(sstr);
+            vyyerror("%s is already defined (as %s)\n",
+                $1->get_name().c_str(), sstr.str().c_str());
             YYERROR;
         }
     }
@@ -362,7 +363,7 @@ body_block
         if ($1)
             $1->accept(p);
 
-        assert(current_table == &symbol_table);
+        assert(current_table == root_table);
     }
     |
     ;
@@ -687,3 +688,11 @@ list_values
     ;
 
 %%
+
+void setup_symbol_table()
+{
+    root_table = new SymbolTable;
+    current_table = root_table;
+
+    add_default_functions(*root_table);
+}

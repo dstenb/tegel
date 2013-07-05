@@ -83,6 +83,21 @@ class Variable : public Symbol
 		virtual void print(ostream &os) const;
 };
 
+class Function : public Symbol
+{
+	public:
+		Function(const string &name, const Type *rt,
+				const vector<const Type *> &params)
+			: Symbol(name, rt), params_(params) {}
+
+		virtual bool is_constant() const { return true; }
+		virtual void print(ostream &os) const;
+
+		vector<const Type *> parameters() { return params_; }
+	private:
+		vector<const Type *> params_;
+};
+
 class SymTabAlreadyDefinedError : public runtime_error
 {
 	public:
@@ -111,6 +126,8 @@ class SymbolTable
 		SymbolTable *parent_;
 		map<string, Symbol *> map_;
 };
+
+void add_default_functions(SymbolTable &);
 
 }
 
