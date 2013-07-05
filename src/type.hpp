@@ -17,14 +17,40 @@ namespace type {
 
 class TypeFactory;
 
+class Type;
 class SingleType;
 class PrimitiveType;
 class RecordType;
 class ListType;
 
+/** Type Method class
+ *
+ * A TypeMethod object represents a method prototype for a type. It has a
+ * defined name, return type and a vector of parameter (types)
+ */
+class TypeMethod
+{
+	public:
+		TypeMethod(const string &name, const Type *rt,
+				vector<const Type *> &params)
+			: name_(name), return_(rt), params_(params) {}
+
+		TypeMethod() {}
+
+		string name() const { return name_; }
+		const Type *return_type() const { return return_; }
+		vector<const Type *> parameters() const { return params_; }
+	private:
+		string name_;
+		const Type *return_;
+		vector<const Type *> params_;
+};
+
 /** Abstract type class
  *
- * A Type object represents a type in the language (e.g. string).
+ * A Type object represents a type in the language (e.g. string). A type acts
+ * similarly to an object in a OO language, i.e. they have a set of associated
+ * methods that is callable
  *
  * The objects contain protected constructors and destructors, and they are
  * only created by the friend TypeFactory. This means that each type in the
@@ -36,6 +62,8 @@ class ListType;
  */
 class Type
 {
+	friend class TypeFactory;
+
 	public:
 		/** Get type representation
 		 *
@@ -75,8 +103,33 @@ class Type
 		 * @return Pointer if successful, nullptr if not
 		 */
 		virtual const ListType *list() const;
+
+		/** Print the list of methods defined for the type
+		 * TODO: move to .cpp
+		 */
+		void print_methods(ostream &os) {
+			for (auto it = methods_.begin(); it != methods_.end();
+					++it) {
+				const TypeMethod &m = it->second;
+
+				os << "\t" << m.return_type()->str() << " "
+					<< m.name() << "(";
+				for (const Type *t : m.parameters())
+					os << t->str() << ", ";
+				os << ")\n";
+			}
+		}
 	protected:
 		virtual ~Type() {}
+
+		void add_method(const TypeMethod &tm) {
+			/* TODO */
+			methods_[tm.name()] = tm;
+		}
+
+
+	private:
+		map<string, TypeMethod> methods_;
 };
 
 /**
@@ -223,7 +276,8 @@ class TypeFactory
 				throw TypeAlreadyDefined(it->second);
 			}
 
-			add_list(t);
+			auto l = add_list(t);
+			setup_record_list_methods(l);
 		}
 
 		static const Type *get(const string &s) {
@@ -247,24 +301,23 @@ class TypeFactory
 			for (auto it = map_.begin(); it != map_.end(); ++it) {
 				it->second->print(os);
 				os << "\n";
+				it->second->print_methods(os);
 			}
 		}
 	private:
 		static void init() {
 			initialized_ = true;
-
-			add_primitive(new BoolType);
-			add_primitive(new IntType);
-			add_primitive(new StringType);
+			setup_primitives();
 		}
 
-		static void add_list(const SingleType *s) {
+		static ListType *add_list(const SingleType *s) {
 			ListType *t = new ListType(s);
 
 			auto it = map_.find(t->str());
 
 			if (it == map_.end()) {
 				map_[t->str()] = t;
+				return t;
 			} else {
 				delete t;
 				throw TypeAlreadyDefined(it->second);
@@ -274,7 +327,50 @@ class TypeFactory
 		static void add_primitive(PrimitiveType *p)
 		{
 			map_[p->str()] = p;
-			add_list(p);
+		}
+
+		static void setup_primitives() {
+			auto b = new BoolType;
+			auto i = new IntType;
+			auto s = new StringType;
+
+			map_[b->str()] = b;
+			map_[i->str()] = i;
+			map_[s->str()] = s;
+
+			auto bl = add_list(b);
+			auto il = add_list(i);
+			auto sl = add_list(s);
+
+			vector<const Type *> e_v = { };
+			vector<const Type *> b_v = { b };
+			vector<const Type *> s_v = { s };
+
+			/* bool methods */
+			b->add_method(TypeMethod("str", s, e_v));
+
+			/* int methods */
+			i->add_method(TypeMethod("str", s, e_v));
+
+			/* string methods */
+			s->add_method(TypeMethod("lower", s, e_v));
+			s->add_method(TypeMethod("upper", s, e_v));
+			s->add_method(TypeMethod("title", s, e_v));
+
+			/* int[] methods */
+			il->add_method(TypeMethod("sort", il, b_v));
+
+			/* string[] methods */
+			sl->add_method(TypeMethod("sort", sl, b_v));
+		}
+
+		static void setup_record_list_methods(ListType *t) {
+			vector<const Type *> sb_v = { get("string"),
+				get("bool") };
+			vector<const Type *> s_v = { get("string") };
+
+			t->add_method(TypeMethod("join", get("string"), s_v));
+			t->add_method(TypeMethod("sort", t, sb_v));
 		}
 
 		static map<string, Type *> map_;
