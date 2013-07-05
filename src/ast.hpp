@@ -336,7 +336,7 @@ class MethodCall : public UnaryExpression
 			return method_.return_type();
 		}
 
-		/* TODO: expression() */
+		Expression *expression() { return expression_; }
 		TypeMethod method() { return method_; }
 		ExpressionList *arguments() { return args_; }
 	private:
@@ -645,15 +645,12 @@ class AST_Printer : public AST_Visitor
 		virtual void visit(MethodCall *p) {
 			print_ws();
 			cerr << "MethodCall(" << p->method().name() << ")\n";
-			/* TODO */
-			// p->function()->print(cerr);
-			// cerr << ")\n";
-			// indent++;
-			// for (auto e = p->arguments(); e != nullptr;
-			// 		e = e->next) {
-			// 	e->expression->accept(*this);
-			// }
-			// indent--;
+			indent++;
+			p->expression()->accept(*this);
+			for (auto e = p->arguments(); e != nullptr;
+					e = e->next)
+				e->expression->accept(*this);
+			indent--;
 		}
 
 		virtual void visit(SymbolRef *p) {
