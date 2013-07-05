@@ -37,6 +37,10 @@ class ParamException : public runtime_error
 		ParamException(const string &what) : runtime_error(what) {}
 };
 
+class Argument;
+class Variable;
+class Function;
+
 class Symbol
 {
 	public:
@@ -45,6 +49,10 @@ class Symbol
 
 		virtual bool is_constant() const = 0;
 		virtual void print(ostream &os) const = 0;
+
+		virtual Argument *argument() { return nullptr; }
+		virtual Variable *variable() { return nullptr; }
+		virtual Function *function() { return nullptr; }
 
 		string get_name() const { return name_; }
 		const Type *get_type() const { return type_; }
@@ -63,6 +71,7 @@ class Argument : public Symbol
 
 		virtual bool is_constant() const { return true; }
 		virtual void print(ostream &os) const;
+		virtual Argument *argument() { return this; }
 
 		Param *replace(Param *p);
 		const Param *get(const string &s) const;
@@ -81,6 +90,7 @@ class Variable : public Symbol
 
 		virtual bool is_constant() const { return false; }
 		virtual void print(ostream &os) const;
+		virtual Variable *variable() { return this; }
 };
 
 class Function : public Symbol
@@ -92,6 +102,7 @@ class Function : public Symbol
 
 		virtual bool is_constant() const { return true; }
 		virtual void print(ostream &os) const;
+		virtual Function *function() { return this; }
 
 		vector<const Type *> parameters() { return params_; }
 	private:
