@@ -89,7 +89,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li class="level3"><a href="#string_list">string[]</a></li>
 </ul>
 </li>
-<li class="level2"><a href="#Records"></a></li>
+<li class="level2"><a href="#records">Records</a><ul><li class="level3"><a href="#record_lists">List of records</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -112,7 +114,11 @@ int</h3>
 <tr>
 <th>Method </th><th>Description</th></tr>
 <tr>
+<td><code>int[] i.downto(int d)</code> </td><td>Returns a list of ints going from <code>i</code> down to <code>u</code> </td></tr>
+<tr>
 <td><code>string i.str()</code> </td><td>Returns a string representation of <code>i</code> </td></tr>
+<tr>
+<td><code>int[] i.upto(int u)</code> </td><td>Returns a list of ints going from <code>i</code> up to <code>u</code> </td></tr>
 </table>
 <h3><a class="anchor" id="string"></a>
 string</h3>
@@ -130,8 +136,22 @@ string</h3>
 List of primitives</h2>
 <h3><a class="anchor" id="bool_list"></a>
 bool[]</h3>
+<table class="doxtable">
+<tr>
+<th>Method </th><th>Description</th></tr>
+<tr>
+<td><code>int b.size()</code> </td><td>Returns the size of the list </td></tr>
+</table>
 <h3><a class="anchor" id="int_list"></a>
 int[]</h3>
+<table class="doxtable">
+<tr>
+<th>Method </th><th>Description</th></tr>
+<tr>
+<td><code>int i.size()</code> </td><td>Returns the size of the list </td></tr>
+<tr>
+<td><code>int[] i.sort(bool asc)</code> </td><td>Returns a sorted version of <code>i</code>. Sorted ascending if <code>asc</code> is true, else descending. </td></tr>
+</table>
 <h3><a class="anchor" id="string_list"></a>
 string[]</h3>
 <table class="doxtable">
@@ -140,15 +160,28 @@ string[]</h3>
 <tr>
 <td><code>string s.join(string del)</code> </td><td>Returns a string containing all elements in <code>s</code>delimited by <code>del</code> </td></tr>
 <tr>
-<td><code>string s.sort((bool asc)</code> </td><td>Returns a sorted version of <code>s</code>. Sorted ascending if <code>del</code> is true, else descending. </td></tr>
+<td><code>int s.size()</code> </td><td>Returns the size of the list </td></tr>
+<tr>
+<td><code>string[] s.sort(bool asc)</code> </td><td>Returns a sorted version of <code>s</code>. Sorted ascending if <code>asc</code> is true, else descending. </td></tr>
 </table>
-<h2><a class="anchor" id="Records"></a>
+<h2><a class="anchor" id="records"></a>
 Records</h2>
-<p>A record is a collection of primitive data types. Custom records can be defined in the header of a .tgl file (see TODO). </p>
+<p>A record is a collection of primitive data types. Custom records can be defined in the header of a .tgl file (see TODO).</p>
+<h3><a class="anchor" id="record_lists"></a>
+List of records</h3>
+<p>A list of records of type <code>rec</code> can simply be defined as <code>rec[]</code>. A <code>rec[]</code> variable called <code>r</code> has the following methods defined</p>
+<table class="doxtable">
+<tr>
+<th>Method </th><th>Description</th></tr>
+<tr>
+<td><code>int r.size()</code> </td><td>Returns the size of the list </td></tr>
+<tr>
+<td><code>rec[] r.sort(string field, bool asc)</code></td><td>Returns a sorted version of <code>r</code>, sorted by the <code>field</code> field. Sorted ascending if <code>asc</code> is true, else descending. </td></tr>
+</table>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jul 5 2013 23:08:39 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Jul 6 2013 00:28:41 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

@@ -92,7 +92,7 @@ File</h1>
 <div class="line">    <span class="keywordtype">int</span> year;</div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line"><span class="keywordtype">string</span> caption {</div>
+<div class="line">arg <span class="keywordtype">string</span> caption {</div>
 <div class="line">   info = <span class="stringliteral">&quot;Caption&quot;</span>;</div>
 <div class="line">  cmd = [ <span class="stringliteral">&quot;c&quot;</span>, <span class="stringliteral">&quot;caption=&quot;</span> ];</div>
 <div class="line">  <span class="keywordflow">default</span> = <span class="stringliteral">&quot;Books&quot;</span>;</div>
@@ -115,8 +115,8 @@ File</h1>
 <div class="line">        \hline {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
 <div class="line">        % endif</div>
 <div class="line"></div>
-<div class="line">        % <span class="keywordflow">for</span> b in books</div>
-<div class="line">        {{ b.name }} &amp; {{ b.year }} {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
+<div class="line">        % <span class="keywordflow">for</span> b in books.sort(<span class="stringliteral">&quot;title&quot;</span>, <span class="keyword">true</span>)</div>
+<div class="line">        {{ b.title }} &amp; {{ b.year }} {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
 <div class="line">        % endfor</div>
 <div class="line">    \end{tabular}</div>
 <div class="line">\end{table}</div>
@@ -131,7 +131,7 @@ Running the generated script</h1>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jul 5 2013 23:08:39 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Jul 6 2013 00:28:41 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
