@@ -365,23 +365,31 @@ class TypeFactory
 
 			vector<const Type *> e_v = { };
 			vector<const Type *> b_v = { b };
+			vector<const Type *> i_v = { i };
 			vector<const Type *> s_v = { s };
 
 			/* bool methods */
 			b->add_method(TypeMethod("str", s, e_v));
 
 			/* int methods */
+			i->add_method(TypeMethod("downto", il, i_v));
 			i->add_method(TypeMethod("str", s, e_v));
+			i->add_method(TypeMethod("upto", il, i_v));
 
 			/* string methods */
 			s->add_method(TypeMethod("lower", s, e_v));
 			s->add_method(TypeMethod("upper", s, e_v));
 			s->add_method(TypeMethod("title", s, e_v));
 
+			/* bool[] methods */
+			bl->add_method(TypeMethod("size", i, e_v));
+
 			/* int[] methods */
+			il->add_method(TypeMethod("size", i, e_v));
 			il->add_method(TypeMethod("sort", il, b_v));
 
 			/* string[] methods */
+			sl->add_method(TypeMethod("size", i, e_v));
 			sl->add_method(TypeMethod("sort", sl, b_v));
 		}
 
