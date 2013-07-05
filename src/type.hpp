@@ -5,6 +5,7 @@
 #include <cassert>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -34,12 +35,12 @@ class TypeMethod
 		TypeMethod(const string &name, const Type *rt,
 				vector<const Type *> &params)
 			: name_(name), return_(rt), params_(params) {}
-
 		TypeMethod() {}
 
 		string name() const { return name_; }
 		const Type *return_type() const { return return_; }
 		vector<const Type *> parameters() const { return params_; }
+		size_t no_of_parameters() const { return params_.size(); }
 	private:
 		string name_;
 		const Type *return_;
@@ -52,6 +53,28 @@ class NoSuchMethodError : public runtime_error
 		NoSuchMethodError(const string &t, const string &m)
 			: runtime_error(t +  " has no method named " + m) {}
 };
+
+class WrongNumberOfArgumentsError : public runtime_error
+{
+	public:
+		WrongNumberOfArgumentsError(size_t g, size_t e)
+			: runtime_error("wrong number of arguments (got " +
+					to_string(g) + + ", expected "+
+					to_string(e) + ")") {}
+};
+
+class WrongArgumentSignatureError : public runtime_error
+{
+	public:
+		WrongArgumentSignatureError(const string &g, const string &e)
+			: runtime_error("wrong argument signature (got [" + g
+					+ "], expected [" + e + "])") {}
+};
+
+/** Convert a vector of types to a comma delimited string
+ *
+ */
+string types_to_str(const vector<const Type *> &);
 
 /** Abstract type class
  *
@@ -116,37 +139,17 @@ class Type
 		 * @return The TypeMethod class if found, throws if not found
 		 * @throw NoSuchMethodError
 		 */
-		TypeMethod lookup(const string &s) const {
-			auto it = methods_.find(s);
+		TypeMethod lookup(const string &,
+				const vector<const Type *> &) const;
 
-			if (it == methods_.end())
-				throw NoSuchMethodError(str(), s);
-			return it->second;
-		}
 		/** Print the list of methods defined for the type
-		 * TODO: move to .cpp
+		 *
 		 */
-		void print_methods(ostream &os) {
-			for (auto it = methods_.begin(); it != methods_.end();
-					++it) {
-				const TypeMethod &m = it->second;
-
-				os << "\t" << m.return_type()->str() << " "
-					<< m.name() << "(";
-				for (const Type *t : m.parameters())
-					os << t->str() << ", ";
-				os << ")\n";
-			}
-		}
+		void print_methods(ostream &os) const;
 	protected:
 		virtual ~Type() {}
 
-		void add_method(const TypeMethod &tm) {
-			/* TODO */
-			methods_[tm.name()] = tm;
-		}
-
-
+		void add_method(const TypeMethod &tm);
 	private:
 		map<string, TypeMethod> methods_;
 };
@@ -160,7 +163,6 @@ class SingleType : public Type
 		virtual const SingleType *single() const { return this; }
 	protected:
 		virtual ~SingleType() {}
-
 };
 
 class PrimitiveType : public SingleType

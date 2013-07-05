@@ -30,6 +30,38 @@ const ListType *Type::list() const
 	return nullptr;
 }
 
+void Type::add_method(const TypeMethod &tm)
+{
+	methods_[tm.name()] = tm;
+}
+
+TypeMethod Type::lookup(const string &s, const vector<const Type *> &p) const
+{
+	auto it = methods_.find(s);
+
+	if (it == methods_.end())
+		throw NoSuchMethodError(str(), s);
+	if (p.size() != it->second.no_of_parameters())
+		throw WrongNumberOfArgumentsError(p.size(),
+				it->second.no_of_parameters());
+	if (p != it->second.parameters())
+		throw WrongArgumentSignatureError(types_to_str(p),
+				types_to_str(it->second.parameters()));
+	return it->second;
+}
+
+void Type::print_methods(ostream &os) const
+{
+	for (auto it = methods_.begin(); it != methods_.end();
+			++it) {
+		const TypeMethod &m = it->second;
+
+		os << "\t" << m.return_type()->str() << " "
+			<< m.name() << "(" <<
+			types_to_str(m.parameters()) << ")\n";
+	}
+}
+
 void PrimitiveType::print(ostream &os) const
 {
 	os << "PrimitiveType(" << str() << ")";
@@ -68,6 +100,20 @@ RecordType::iterator RecordType::end() const
 void ListType::print(ostream &os) const
 {
 	os << "ListType(" << str() << ")";
+}
+
+string types_to_str(const vector<const Type *> &v)
+{
+	auto it = v.begin();
+	stringstream sstr;
+
+	while (it != v.end()) {
+		sstr << (*it)->str();
+		if (++it != v.end())
+			sstr << ", ";
+	}
+
+	return sstr.str();
 }
 
 }
