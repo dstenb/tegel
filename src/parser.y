@@ -602,12 +602,18 @@ expression
     | expression '.' IDENTIFIER '(' expression_list ')'
     {
         try {
-            TypeMethod m = $1->type()->lookup($3);
-
-            /* TODO: validate args */
-
+            vector<const Type *> arg_types;
+            for (auto p = $5; p != nullptr; p = p->next)
+                arg_types.push_back(p->expression->type());
+            TypeMethod m = $1->type()->lookup($3, arg_types);
             $$ = new ast::MethodCall($1, m, $5);
         } catch (const NoSuchMethodError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        } catch (const WrongNumberOfArgumentsError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        } catch (const WrongArgumentSignatureError &e) {
             vyyerror("%s", e.what());
             YYERROR;
         }
