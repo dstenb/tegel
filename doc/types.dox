@@ -13,9 +13,11 @@
 
   \subsubsection int int
 
-  Method             | Description
-  -------------      | -------------
-  `string i.str()`   | Returns a string representation of `i`
+  Method                  | Description
+  -------------           | -------------
+  `int[] i.downto(int d)` | Returns a list of ints going from `i` down to `u`
+  `string i.str()`        | Returns a string representation of `i`
+  `int[] i.upto(int u)`   | Returns a list of ints going from `i` up to `u`
 
   \subsubsection string string
 
@@ -29,18 +31,38 @@
 
   \subsubsection bool_list bool[]
 
+  Method             | Description
+  -------------      | -------------
+  `int b.size()`     | Returns the size of the list
+
   \subsubsection int_list int[]
+
+  Method                   | Description
+  -------------            | -------------
+  `int i.size()`           | Returns the size of the list
+  `int[] i.sort(bool asc)` | Returns a sorted version of `i`. Sorted ascending if `asc` is true, else descending.
 
   \subsubsection string_list string[]
 
   Method                        | Description
   -------------                 | -------------
   `string s.join(string del)`   | Returns a string containing all elements in `s`delimited by `del`
-  `string s.sort((bool asc)`    | Returns a sorted version of `s`. Sorted ascending if `del` is true, else descending.
+  `int s.size()`                | Returns the size of the list
+  `string[] s.sort(bool asc)`   | Returns a sorted version of `s`. Sorted ascending if `asc` is true, else descending.
 
-  \subsection Records
+  \subsection records Records
 
   A record is a collection of primitive data types. Custom records can be
   defined in the header of a .tgl file (see TODO).
+
+  \subsubsection record_lists List of records
+
+  A list of records of type `rec` can simply be defined as `rec[]`. A `rec[]`
+  variable called `r` has the following methods defined
+
+  Method                                | Description
+  -------------                         | -------------
+  `int r.size()`                        | Returns the size of the list
+  `rec[] r.sort(string field, bool asc)`| Returns a sorted version of `r`, sorted by the `field` field. Sorted ascending if `asc` is true, else descending.
 
 */

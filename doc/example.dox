@@ -9,7 +9,7 @@
       int year;
   }
 
-  string caption {
+  arg string caption {
   	info = "Caption";
 	cmd = [ "c", "caption=" ];
 	default = "Books";
@@ -32,8 +32,8 @@
           \hline {{ "\\" }}
           % endif
 
-          % for b in books
-          {{ b.name }} & {{ b.year }} {{ "\\" }}
+          % for b in books.sort("title", true)
+          {{ b.title }} & {{ b.year }} {{ "\\" }}
           % endfor
       \end{tabular}
   \end{table}
