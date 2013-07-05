@@ -114,12 +114,13 @@ void vyyerror(const char *, ...);
 %type<expression> expression
 
 %type<list> list
-%type<expression_list> list_values
+%type<expression_list> expression_list list_values
 
 %left OR
 %left AND
 %left '+' '-'
 %left '*'
+%left '.'
 
 %start file
 
@@ -538,7 +539,6 @@ inlined
     }
     ;
 
- /* TODO: handle function call */
 expression
     : expression AND expression
     {
@@ -595,22 +595,13 @@ expression
     {
         $$ = $1;
     }
-    | IDENTIFIER '.' IDENTIFIER
+    | expression '.' IDENTIFIER
     {
-        try {
-            Symbol *s = current_table->lookup($1);
 
-            if (s->get_type()->dot($3) != nullptr) {
-                /* TODO */
-                vyyerror("TODO IDENTIFIER '.' IDENTIFIER");
-                YYERROR;
-            }
-        } catch (const SymTabNoSuchSymbolError &e) {
-            vyyerror("No such symbol: %s\n", e.what());
-            YYERROR;
-        }
+    }
+    | expression '.' IDENTIFIER '(' expression_list ')'
+    {
 
-        free($1);
     }
     | IDENTIFIER
     {
@@ -684,6 +675,21 @@ list_values
         }
 
         $$ = new ast::ExpressionList($1);
+    }
+    ;
+
+expression_list
+    : expression ',' expression_list
+    {
+        $$ = new ast::ExpressionList($1, $3);
+    }
+    | expression
+    {
+        $$ = new ast::ExpressionList($1);
+    }
+    |
+    {
+        $$ = nullptr;
     }
     ;
 
