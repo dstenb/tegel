@@ -69,7 +69,7 @@ void vyyerror(const char *, ...);
     ast::Else *else_node;
 
     ast::List *list;
-    ast::ListElem *list_elem;
+    ast::ExpressionList *expression_list;
 }
 
 %token END 0 "end of file"
@@ -114,7 +114,7 @@ void vyyerror(const char *, ...);
 %type<expression> expression
 
 %type<list> list
-%type<list_elem> list_values
+%type<expression_list> list_values
 
 %left OR
 %left AND
@@ -673,7 +673,7 @@ list_values
             YYERROR;
         }
 
-        $$ = new ast::ListElem($1, $3);
+        $$ = new ast::ExpressionList($1, $3);
     }
     | expression
     {
@@ -683,7 +683,7 @@ list_values
             YYERROR;
         }
 
-        $$ = new ast::ListElem($1);
+        $$ = new ast::ExpressionList($1);
     }
     ;
 
