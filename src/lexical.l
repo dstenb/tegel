@@ -122,6 +122,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
   * lines (suggestion: use '\') */
 <control>[ \t]*           // Eat up all whitespace
 <control>\n               { BEGIN(body); }
+<control>"\\"[ \t]*\n     /* Continue the control flow on the next line */
 <control>for              return FOR;
 <control>in               return IN;
 <control>endfor           return ENDFOR;
