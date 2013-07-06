@@ -383,6 +383,7 @@ class TypeFactory
 			i->add_method(TypeMethod("upto", il, i_v));
 
 			/* string methods */
+			s->add_method(TypeMethod("length", i, e_v));
 			s->add_method(TypeMethod("lower", s, e_v));
 			s->add_method(TypeMethod("upper", s, e_v));
 			s->add_method(TypeMethod("title", s, e_v));

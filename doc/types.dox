@@ -23,9 +23,10 @@
 
   Method             | Description
   -------------      | -------------
-  `string s.upper()` | Returns a upper case version of `s`
+  `int s.length()`   | Returns the length of `s`
   `string s.lower()` | Returns a lower case version of `s`
   `string s.title()` | Returns a title case version of `s`
+  `string s.upper()` | Returns a upper case version of `s`
 
   \subsection list List of primitives
 
