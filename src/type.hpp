@@ -102,7 +102,7 @@ class Type
 		 *
 		 * @return A const reference to the type string
 		 */
-		virtual const string &str() const = 0;
+		virtual string str() const = 0;
 
 		/** Dot action resolution
 		 *
@@ -173,7 +173,7 @@ class PrimitiveType : public SingleType
 {
 	public:
 		virtual void print(ostream &os) const;
-		virtual const string &str() const { return str_; }
+		virtual string str() const { return str_; }
 
 		virtual const PrimitiveType *primitive() const { return this; }
 	protected:
@@ -232,7 +232,7 @@ class RecordType : public SingleType
 		typedef field_vector::const_iterator iterator;
 
 		virtual const PrimitiveType *dot(const string &) const;
-		virtual const string &str() const { return str_; }
+		virtual string str() const { return str_; }
 		virtual void print(ostream &os) const;
 
 		iterator begin() const;
@@ -256,7 +256,7 @@ class ListType : public Type
 
 	public:
 		virtual const SingleType *elem() const { return elem_; }
-		virtual const string &str() const { return str_; }
+		virtual string str() const { return str_; }
 		virtual void print(ostream &os) const;
 
 		virtual const ListType *list() const { return this; }
