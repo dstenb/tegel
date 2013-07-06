@@ -24,11 +24,18 @@ class Param
 		Param(const string &id, ConstantData *data)
 			: id_(id), data_(data) {}
 
+		~Param() {
+			delete data_;
+		}
+
 		string get_id() const { return id_; }
 		const ConstantData *get() const { return data_; }
 		const Type *type() const { return data_->type(); }
 		void print(ostream &os);
 	private:
+		Param(const Param &) = delete;
+		Param &operator=(const Param &) = delete;
+
 		string id_;
 		ConstantData *data_;
 };
@@ -59,6 +66,9 @@ class Symbol
 		string get_name() const { return name_; }
 		const Type *get_type() const { return type_; }
 	private:
+		Symbol(const Symbol &) = delete;
+		Symbol &operator=(const Symbol &) = delete;
+
 		string name_;
 		const Type *type_;
 };
@@ -67,7 +77,7 @@ class Argument : public Symbol
 {
 	public:
 		Argument(const string &name, const Type *t)
-			: Symbol(name, t) {
+			: Symbol(name, t), params_() {
 			setup_parameters();
 		}
 
@@ -78,6 +88,9 @@ class Argument : public Symbol
 		Param *replace(Param *p);
 		const Param *get(const string &s) const;
 	private:
+		Argument(const Argument &) = delete;
+		Argument &operator=(const Argument &) = delete;
+
 		void add(const string &id, ConstantData *data);
 		void setup_parameters();
 
@@ -93,6 +106,9 @@ class Variable : public Symbol
 		virtual bool is_constant() const { return false; }
 		virtual void print(ostream &os) const;
 		virtual Variable *variable() { return this; }
+	private:
+		Variable(const Variable &) = delete;
+		Variable &operator=(const Variable &) = delete;
 };
 
 class Function : public Symbol
@@ -108,6 +124,9 @@ class Function : public Symbol
 
 		vector<const Type *> parameters() { return params_; }
 	private:
+		Function(const Function &) = delete;
+		Function &operator=(const Function &) = delete;
+
 		vector<const Type *> params_;
 };
 
@@ -129,13 +148,21 @@ class SymbolTable
 {
 	public:
 		SymbolTable(SymbolTable *parent = nullptr)
-			: parent_(parent) {}
+			: parent_(parent), map_() {}
+
+		/* TODO */
+		~SymbolTable() {
+
+		}
 
 		void add(Symbol *s);
 		Symbol *lookup(const string &);
 		void print(ostream &os) const;
 		SymbolTable *parent() { return parent_; }
 	private:
+		SymbolTable(const SymbolTable &) = delete;
+		SymbolTable &operator=(const SymbolTable &) = delete;
+
 		SymbolTable *parent_;
 		map<string, Symbol *> map_;
 };

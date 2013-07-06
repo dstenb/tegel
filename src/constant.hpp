@@ -45,7 +45,9 @@ class PrimitiveConstantData : public SingleConstantData
 	protected:
 		PrimitiveConstantData(const PrimitiveType *t)
 			: SingleConstantData(), type_(t) {}
-
+		PrimitiveConstantData(const PrimitiveConstantData &) = default;
+		PrimitiveConstantData &operator=(const
+				PrimitiveConstantData &) = default;
 	private:
 		const PrimitiveType *type_;
 };
@@ -53,8 +55,10 @@ class PrimitiveConstantData : public SingleConstantData
 class ListConstantData : public ConstantData
 {
 	public:
-		ListConstantData(const ListType *t) : type_(t) {}
-
+		ListConstantData(const ListType *t) : type_(t), data_() {}
+		ListConstantData(const ListConstantData &) = default;
+		ListConstantData &operator=(const
+				ListConstantData &) = default;
 
 		~ListConstantData() {
 			for (auto it = data_.begin();
@@ -129,7 +133,7 @@ class RecordConstantData : public SingleConstantData
 {
 	public:
 		RecordConstantData(const RecordType *t)
-			: SingleConstantData(), type_(t) {
+			: SingleConstantData(), type_(t), values_() {
 			for (auto it = t->begin(); it != t->end(); ++it) {
 				RecordField f = (*it);
 				values_.push_back(
@@ -141,6 +145,10 @@ class RecordConstantData : public SingleConstantData
 		RecordConstantData(const RecordType *t,
 				vector<PrimitiveConstantData *> &v)
 			: SingleConstantData(), type_(t), values_(v) {}
+
+		RecordConstantData(const RecordConstantData &) = default;
+		RecordConstantData &operator=(const
+				RecordConstantData &) = default;
 
 		~RecordConstantData() {
 			for (auto it = values_.begin();

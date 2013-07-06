@@ -88,6 +88,9 @@ class BinaryExpression : public Expression
 	protected:
 		Expression *lhs_;
 		Expression *rhs_;
+	private:
+		BinaryExpression(const BinaryExpression &) = delete;
+		BinaryExpression &operator=(const BinaryExpression &) = delete;
 };
 
 /**
@@ -114,6 +117,9 @@ class BinaryBoolExpression : public BinaryExpression
 		virtual void accept(AST_Visitor &) = 0;
 		virtual const Type *type() const { return type_; }
 	private:
+		BinaryBoolExpression(const BinaryBoolExpression &) = delete;
+		BinaryBoolExpression &operator=(
+				const BinaryBoolExpression &) = delete;
 		const Type *type_;
 };
 
@@ -159,6 +165,10 @@ class BinaryIntExpression : public BinaryExpression
 		virtual void accept(AST_Visitor &) = 0;
 		virtual const Type *type() const { return type_; }
 	private:
+		BinaryIntExpression(const BinaryIntExpression &) = delete;
+		BinaryIntExpression &operator=(
+				const BinaryIntExpression &) = delete;
+
 		const Type *type_;
 };
 
@@ -217,6 +227,9 @@ class StringRepeat : public BinaryExpression
 		virtual void accept(AST_Visitor &);
 		virtual const Type *type() const { return type_; }
 	private:
+		StringRepeat(const StringRepeat &) = delete;
+		StringRepeat &operator=(const StringRepeat &) = delete;
+
 		const Type *type_;
 };
 
@@ -237,6 +250,9 @@ class StringConcat : public BinaryExpression
 		virtual void accept(AST_Visitor &);
 		virtual const Type *type() const { return type_; }
 	private:
+		StringConcat(const StringConcat &) = delete;
+		StringConcat &operator=(const StringConcat &) = delete;
+
 		const Type *type_;
 };
 
@@ -257,6 +273,9 @@ class ListConcat : public BinaryExpression
 		virtual void accept(AST_Visitor &);
 		virtual const Type *type() const { return type_; }
 	private:
+		ListConcat(const ListConcat &) = delete;
+		ListConcat &operator=(const ListConcat &) = delete;
+
 		const Type *type_;
 };
 
@@ -278,6 +297,9 @@ class Constant : public UnaryExpression
 		virtual void accept(AST_Visitor &);
 		virtual const Type *type() const { return data_->type(); }
 	private:
+		Constant(const Constant &) = delete;
+		Constant &operator=(const Constant &) = delete;
+
 		ConstantData *data_;
 };
 
@@ -298,8 +320,10 @@ class SymbolRef : public UnaryExpression
 
 		virtual void accept(AST_Visitor &);
 		virtual const Type *type() const { return symbol_->get_type();}
-
 	private:
+		SymbolRef(const SymbolRef &) = delete;
+		SymbolRef &operator=(const SymbolRef &) = delete;
+
 		symbol::Symbol *symbol_;
 };
 
@@ -308,6 +332,7 @@ class SymbolRef : public UnaryExpression
  */
 struct ExpressionList
 {
+	public:
 		ExpressionList(Expression *e, ExpressionList *n = nullptr)
 			: expression(e), next(n) {}
 
@@ -319,6 +344,9 @@ struct ExpressionList
 
 		Expression *expression;
 		ExpressionList *next;
+	private:
+		ExpressionList(const ExpressionList &) = delete;
+		ExpressionList &operator=(const ExpressionList &) = delete;
 };
 
 /**
@@ -340,6 +368,9 @@ class MethodCall : public UnaryExpression
 		TypeMethod method() { return method_; }
 		ExpressionList *arguments() { return args_; }
 	private:
+		MethodCall(const MethodCall &) = delete;
+		MethodCall &operator=(const MethodCall &) = delete;
+
 		Expression *expression_;
 		TypeMethod method_;
 		ExpressionList *args_;
@@ -364,8 +395,10 @@ class List : public UnaryExpression
 
 		virtual void accept(AST_Visitor &);
 		virtual const ListType *type() const { return type_;}
-
 	private:
+		List(const List &) = delete;
+		List &operator=(const List &) = delete;
+
 		const ListType *type_;
 		ExpressionList *elems_;
 };
@@ -393,6 +426,9 @@ class Conditional : public Statement
 		Elif *elif_nodes() { return elifs_; }
 		Else *else_node() { return else_; }
 	private:
+		Conditional(const Conditional &) = delete;
+		Conditional &operator=(const Conditional &) = delete;
+
 		If *if_;
 		Elif *elifs_;
 		Else *else_;
@@ -416,6 +452,9 @@ class Scope : public Statement
 
 		virtual void accept(AST_Visitor &) = 0;
 	private:
+		Scope(const Scope &) = delete;
+		Scope &operator=(const Scope &) = delete;
+
 		symbol::SymbolTable *table_;
 		Statements *statements_;
 };
@@ -437,6 +476,9 @@ class ForEach : public Scope
 
 		virtual void accept(AST_Visitor &);
 	private:
+		ForEach(const ForEach &) = delete;
+		ForEach &operator=(const ForEach &) = delete;
+
 		Expression *expression_;
 		symbol::SymbolTable *for_table_;
 		symbol::Variable *variable_;
@@ -457,6 +499,9 @@ class If : public Scope
 
 		virtual void accept(AST_Visitor &);
 	private:
+		If(const If &) = delete;
+		If &operator=(const If &) = delete;
+
 		Expression *expression_;
 };
 
@@ -467,7 +512,7 @@ class Elif : public Scope
 {
 	public:
 		Elif(Expression *e, symbol::SymbolTable *t)
-			: Scope(t, nullptr), expression_(e) {}
+			: Scope(t, nullptr), expression_(e), next_() {}
 
 		void set_expression(Expression *e) { expression_ = e; }
 		void set_next(Elif *n) { next_ = n; }
@@ -477,6 +522,9 @@ class Elif : public Scope
 
 		virtual void accept(AST_Visitor &);
 	private:
+		Elif(const Elif &) = delete;
+		Elif &operator=(const Elif &) = delete;
+
 		Expression *expression_;
 		Elif *next_;
 };
@@ -527,6 +575,10 @@ class InlinedExpression : public Statement
 
 		virtual void accept(AST_Visitor &);
 	private:
+		InlinedExpression(const InlinedExpression &) = delete;
+		InlinedExpression &operator=(
+				const InlinedExpression &) = delete;
+
 		Expression *expression_;
 };
 
@@ -553,6 +605,9 @@ class Statements : public AST_Node
 		Statement *statement() { return statement_; }
 		Statements *next() { return next_; }
 	private:
+		Statements(const Statements &) = delete;
+		Statements &operator=(const Statements &) = delete;
+
 		Statement *statement_;
 		Statements *next_;
 };

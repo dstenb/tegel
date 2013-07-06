@@ -35,7 +35,10 @@ class TypeMethod
 		TypeMethod(const string &name, const Type *rt,
 				vector<const Type *> &params)
 			: name_(name), return_(rt), params_(params) {}
-		TypeMethod() {}
+		TypeMethod()
+			: name_(""), return_(nullptr), params_() {}
+		TypeMethod(const TypeMethod &) = default;
+		TypeMethod &operator=(const TypeMethod &) = default;
 
 		string name() const { return name_; }
 		const Type *return_type() const { return return_; }
@@ -147,6 +150,7 @@ class Type
 		 */
 		void print_methods(ostream &os) const;
 	protected:
+		Type() : methods_() {}
 		virtual ~Type() {}
 
 		void add_method(const TypeMethod &tm);
@@ -259,6 +263,8 @@ class ListType : public Type
 	protected:
 		ListType(const SingleType *t)
 			: str_(t->str() + "[]"), elem_(t) {}
+		ListType(const ListType &) = default;
+		ListType &operator=(const ListType &) = default;
 		virtual ~ListType() {}
 	private:
 		string str_;
