@@ -7,19 +7,34 @@ namespace ast_factory {
 
 using namespace ast;
 
+struct BoolUnaryFactory
+{
+	static Expression *create(Expression *e)
+	{
+		if (e->type() == TypeFactory::get("bool"))
+			return e;
+		else if (e->type() == TypeFactory::get("int")) {
+			auto zero = new IntConstantData(0);
+			return new Not(new Equals(e, new Constant(zero)));
+		} else if (e->type() == TypeFactory::get("string")) {
+			auto empty = new StringConstantData("");
+			return new Not(new StringEquals(e,
+						new Constant(empty)));
+		} else {
+			throw InvalidTypeError(e->type()->str() +
+					" can't be converted to bool");
+		}
+	}
+};
+
 template<class T>
 struct BoolBinaryFactory
 {
 
 	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
-		if (lhs->type() != TypeFactory::get("bool"))
-			throw DifferentTypesError(lhs->type(),
-					TypeFactory::get("bool"));
-		if (rhs->type() != TypeFactory::get("bool"))
-			throw DifferentTypesError(rhs->type(),
-					TypeFactory::get("bool"));
-		return new T(lhs, rhs);
+		return new T(BoolUnaryFactory::create(lhs),
+				BoolUnaryFactory::create(rhs));
 	}
 };
 

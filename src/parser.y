@@ -120,6 +120,7 @@ void vyyerror(const char *, ...);
 %left OR
 %left AND
 %left EQ NEQ
+%left NOT
 %left '<' '>' LE GE
 %left '+' '-'
 %left '*'
@@ -547,9 +548,8 @@ expression
     {
         try {
             $$ = ast_factory::BoolBinaryFactory<ast::And>::create($1, $3);
-        } catch (const DifferentTypesError &e) {
-            vyyerror("Invalid type for 'and' operator (%s)",
-                e.what());
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
             YYERROR;
         }
     }
@@ -557,9 +557,17 @@ expression
     {
         try {
             $$ = ast_factory::BoolBinaryFactory<ast::Or>::create($1, $3);
-        } catch (const DifferentTypesError &e) {
-            vyyerror("Invalid type for 'or' operator (%s)",
-                e.what());
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
+    }
+    | NOT expression
+    {
+        try {
+            $$ = new ast::Not(ast_factory::BoolUnaryFactory::create($2));
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
             YYERROR;
         }
     }
