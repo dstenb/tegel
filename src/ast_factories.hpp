@@ -83,9 +83,9 @@ struct LessThanFactory
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::LT(lhs, rhs);
+				return new ast::LessThan(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringLT(lhs, rhs);
+				return new ast::StringLessThan(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '<' operand on " +
 				lhs->type()->str()  + " and " +
@@ -100,9 +100,9 @@ struct LessThanOrEqualFactory
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::LE(lhs, rhs);
+				return new ast::LessThanOrEqual(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringLE(lhs, rhs);
+				return new ast::StringLessThanOrEqual(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '<=' operand on " +
 				lhs->type()->str()  + " and " +
@@ -117,9 +117,9 @@ struct GreaterThanFactory
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::GT(lhs, rhs);
+				return new ast::GreaterThan(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringGT(lhs, rhs);
+				return new ast::StringGreaterThan(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '>' operand on " +
 				lhs->type()->str()  + " and " +
@@ -134,9 +134,9 @@ struct GreaterThanOrEqualFactory
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::LT(lhs, rhs);
+				return new ast::LessThan(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringLT(lhs, rhs);
+				return new ast::StringLessThan(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '>=' operand on " +
 				lhs->type()->str()  + " and " +

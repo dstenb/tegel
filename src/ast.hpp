@@ -36,18 +36,18 @@ class BinaryExpression;
 class UnaryExpression;
 class And;
 class Or;
-class LT;
-class LE;
-class GT;
-class GE;
+class LessThan;
+class LessThanOrEqual;
+class GreaterThan;
+class GreaterThanOrEqual;
 class Equals;
 class Plus;
 class Minus;
 class Times;
-class StringLT;
-class StringLE;
-class StringGT;
-class StringGE;
+class StringLessThan;
+class StringLessThanOrEqual;
+class StringGreaterThan;
+class StringGreaterThanOrEqual;
 class StringEquals;
 class StringRepeat;
 class StringConcat;
@@ -178,37 +178,37 @@ class IntCompare : public BinaryExpression
 		const Type *type_;
 };
 
-class LT : public IntCompare
+class LessThan : public IntCompare
 {
 	public:
-		LT(Expression *lhs, Expression *rhs)
+		LessThan(Expression *lhs, Expression *rhs)
 			: IntCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
 };
 
-class LE : public IntCompare
+class LessThanOrEqual : public IntCompare
 {
 	public:
-		LE(Expression *lhs, Expression *rhs)
+		LessThanOrEqual(Expression *lhs, Expression *rhs)
 			: IntCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
 };
 
-class GT : public IntCompare
+class GreaterThan : public IntCompare
 {
 	public:
-		GT(Expression *lhs, Expression *rhs)
+		GreaterThan(Expression *lhs, Expression *rhs)
 			: IntCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
 };
 
-class GE : public IntCompare
+class GreaterThanOrEqual : public IntCompare
 {
 	public:
-		GE(Expression *lhs, Expression *rhs)
+		GreaterThanOrEqual(Expression *lhs, Expression *rhs)
 			: IntCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
@@ -294,37 +294,37 @@ class StringCompare : public BinaryExpression
 		const Type *type_;
 };
 
-class StringLT : public StringCompare
+class StringLessThan : public StringCompare
 {
 	public:
-		StringLT(Expression *lhs, Expression *rhs)
+		StringLessThan(Expression *lhs, Expression *rhs)
 			: StringCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
 };
 
-class StringLE : public StringCompare
+class StringLessThanOrEqual : public StringCompare
 {
 	public:
-		StringLE(Expression *lhs, Expression *rhs)
+		StringLessThanOrEqual(Expression *lhs, Expression *rhs)
 			: StringCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
 };
 
-class StringGT : public StringCompare
+class StringGreaterThan : public StringCompare
 {
 	public:
-		StringGT(Expression *lhs, Expression *rhs)
+		StringGreaterThan(Expression *lhs, Expression *rhs)
 			: StringCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
 };
 
-class StringGE : public StringCompare
+class StringGreaterThanOrEqual : public StringCompare
 {
 	public:
-		StringGE(Expression *lhs, Expression *rhs)
+		StringGreaterThanOrEqual(Expression *lhs, Expression *rhs)
 			: StringCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
@@ -740,17 +740,17 @@ class AST_Visitor
 	public:
 		virtual void visit(And *) = 0;
 		virtual void visit(Or *) = 0;
-		virtual void visit(LT *) = 0;
-		virtual void visit(LE *) = 0;
-		virtual void visit(GT *) = 0;
-		virtual void visit(GE *) = 0;
+		virtual void visit(LessThan *) = 0;
+		virtual void visit(LessThanOrEqual *) = 0;
+		virtual void visit(GreaterThan *) = 0;
+		virtual void visit(GreaterThanOrEqual *) = 0;
 		virtual void visit(Plus *) = 0;
 		virtual void visit(Minus *) = 0;
 		virtual void visit(Times *) = 0;
-		virtual void visit(StringLT *) = 0;
-		virtual void visit(StringLE *) = 0;
-		virtual void visit(StringGT *) = 0;
-		virtual void visit(StringGE *) = 0;
+		virtual void visit(StringLessThan *) = 0;
+		virtual void visit(StringLessThanOrEqual *) = 0;
+		virtual void visit(StringGreaterThan *) = 0;
+		virtual void visit(StringGreaterThanOrEqual *) = 0;
 		virtual void visit(StringRepeat *) = 0;
 		virtual void visit(StringConcat *) = 0;
 		virtual void visit(ListConcat *) = 0;
@@ -794,19 +794,19 @@ class AST_Printer : public AST_Visitor
 			binary("Or", p);
 		}
 
-		virtual void visit(LT *p) {
+		virtual void visit(LessThan *p) {
 			binary("<", p);
 		}
 
-		virtual void visit(LE *p) {
+		virtual void visit(LessThanOrEqual *p) {
 			binary("<=", p);
 		}
 
-		virtual void visit(GT *p) {
+		virtual void visit(GreaterThan *p) {
 			binary(">", p);
 		}
 
-		virtual void visit(GE *p) {
+		virtual void visit(GreaterThanOrEqual *p) {
 			binary(">=", p);
 		}
 
@@ -822,19 +822,19 @@ class AST_Printer : public AST_Visitor
 			binary("*", p);
 		}
 
-		virtual void visit(StringLT *p) {
+		virtual void visit(StringLessThan *p) {
 			binary("String<", p);
 		}
 
-		virtual void visit(StringLE *p) {
+		virtual void visit(StringLessThanOrEqual *p) {
 			binary("String<=", p);
 		}
 
-		virtual void visit(StringGT *p) {
+		virtual void visit(StringGreaterThan *p) {
 			binary("String>", p);
 		}
 
-		virtual void visit(StringGE *p) {
+		virtual void visit(StringGreaterThanOrEqual *p) {
 			binary("String>=", p);
 		}
 
