@@ -20,6 +20,11 @@ struct BoolUnaryFactory
 			auto empty = new StringConstantData("");
 			return new Not(new StringEquals(e,
 						new Constant(empty)));
+		} else if (e->type()->list()) {
+			auto zero = new IntConstantData(0);
+			TypeMethod m = e->type()->lookup("size");
+			return new GreaterThan(new MethodCall(e, m,  nullptr),
+					new Constant(zero));
 		} else {
 			throw InvalidTypeError(e->type()->str() +
 					" can't be converted to bool");

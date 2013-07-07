@@ -145,6 +145,13 @@ class Type
 		TypeMethod lookup(const string &,
 				const vector<const Type *> &) const;
 
+		/** Lookup a parameter-less method
+		 *
+		 * @return The TypeMethod class if found, throws if not found
+		 * @throw NoSuchMethodError
+		 */
+		TypeMethod lookup(const string &) const;
+
 		/** Print the list of methods defined for the type
 		 *
 		 */

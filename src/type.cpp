@@ -50,6 +50,11 @@ TypeMethod Type::lookup(const string &s, const vector<const Type *> &p) const
 	return it->second;
 }
 
+TypeMethod Type::lookup(const string &s) const
+{
+	return lookup(s, vector<const Type *>());
+}
+
 void Type::print_methods(ostream &os) const
 {
 	for (auto it = methods_.begin(); it != methods_.end();
