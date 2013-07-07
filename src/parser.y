@@ -81,7 +81,7 @@ void vyyerror(const char *, ...);
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
 %token AND "and" OR "or" NOT "not"
 %token L_INLINE "{{" R_INLINE "}}"
-%token LE "<=" EQ "==" GE ">="
+%token LE "<=" EQ "==" NEQ "!=" GE ">="
 %token<string> TEXT
 
 %token<boolean> BOOL "bool constant"
@@ -119,7 +119,7 @@ void vyyerror(const char *, ...);
 
 %left OR
 %left AND
-%left EQ
+%left EQ NEQ
 %left '<' '>' LE GE
 %left '+' '-'
 %left '*'
@@ -601,7 +601,21 @@ expression
     }
     | expression EQ expression
     {
-
+        try {
+            $$ = ast_factory::EqualsFactory::create($1, $3);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
+    }
+    | expression NEQ expression
+    {
+        try {
+            $$ = new ast::Not(ast_factory::EqualsFactory::create($1, $3));
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
     }
     | expression '+' expression
     {

@@ -36,6 +36,7 @@ class BinaryExpression;
 class UnaryExpression;
 class And;
 class Or;
+class Not;
 class LessThan;
 class LessThanOrEqual;
 class GreaterThan;
@@ -159,6 +160,26 @@ class Or : public BinaryBoolExpression
 		virtual void accept(AST_Visitor &);
 };
 
+class Not : public UnaryExpression
+{
+	public:
+		Not(Expression *e)
+			: UnaryExpression(), type_(TypeFactory::get("bool")),
+			expression_(e) {
+			assert(e->type() == type_);
+		}
+
+		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const { return type_; }
+
+		Expression *expression() { return expression_; }
+	private:
+		Not(const Not &) = delete;
+		Not &operator=(const Not &) = delete;
+		const Type *type_;
+		Expression *expression_;
+};
+
 class IntCompare : public BinaryExpression
 {
 	public:
@@ -209,6 +230,15 @@ class GreaterThanOrEqual : public IntCompare
 {
 	public:
 		GreaterThanOrEqual(Expression *lhs, Expression *rhs)
+			: IntCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class Equals : public IntCompare
+{
+	public:
+		Equals(Expression *lhs, Expression *rhs)
 			: IntCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
@@ -325,6 +355,15 @@ class StringGreaterThanOrEqual : public StringCompare
 {
 	public:
 		StringGreaterThanOrEqual(Expression *lhs, Expression *rhs)
+			: StringCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class StringEquals : public StringCompare
+{
+	public:
+		StringEquals(Expression *lhs, Expression *rhs)
 			: StringCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
@@ -740,10 +779,12 @@ class AST_Visitor
 	public:
 		virtual void visit(And *) = 0;
 		virtual void visit(Or *) = 0;
+		virtual void visit(Not *) = 0;
 		virtual void visit(LessThan *) = 0;
 		virtual void visit(LessThanOrEqual *) = 0;
 		virtual void visit(GreaterThan *) = 0;
 		virtual void visit(GreaterThanOrEqual *) = 0;
+		virtual void visit(Equals *) = 0;
 		virtual void visit(Plus *) = 0;
 		virtual void visit(Minus *) = 0;
 		virtual void visit(Times *) = 0;
@@ -751,6 +792,7 @@ class AST_Visitor
 		virtual void visit(StringLessThanOrEqual *) = 0;
 		virtual void visit(StringGreaterThan *) = 0;
 		virtual void visit(StringGreaterThanOrEqual *) = 0;
+		virtual void visit(StringEquals *) = 0;
 		virtual void visit(StringRepeat *) = 0;
 		virtual void visit(StringConcat *) = 0;
 		virtual void visit(ListConcat *) = 0;
@@ -794,6 +836,14 @@ class AST_Printer : public AST_Visitor
 			binary("Or", p);
 		}
 
+		virtual void visit(Not *p) {
+			print_ws();
+			cerr << "Not\n";
+			indent++;
+			p->expression()->accept(*this);
+			indent--;
+		}
+
 		virtual void visit(LessThan *p) {
 			binary("<", p);
 		}
@@ -808,6 +858,10 @@ class AST_Printer : public AST_Visitor
 
 		virtual void visit(GreaterThanOrEqual *p) {
 			binary(">=", p);
+		}
+
+		virtual void visit(Equals *p) {
+			binary("==", p);
 		}
 
 		virtual void visit(Plus *p) {
@@ -836,6 +890,10 @@ class AST_Printer : public AST_Visitor
 
 		virtual void visit(StringGreaterThanOrEqual *p) {
 			binary("String>=", p);
+		}
+
+		virtual void visit(StringEquals *p) {
+			binary("String==", p);
 		}
 
 		virtual void visit(StringRepeat *p) {

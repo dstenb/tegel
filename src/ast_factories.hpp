@@ -21,7 +21,6 @@ struct BoolBinaryFactory
 					TypeFactory::get("bool"));
 		return new T(lhs, rhs);
 	}
-
 };
 
 struct PlusBinaryFactory
@@ -131,6 +130,22 @@ struct GreaterThanOrEqualFactory
 				return new LessThan(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
 				return new StringLessThan(lhs, rhs);
+		}
+		throw InvalidTypeError("Can't apply '>=' operand on " +
+				lhs->type()->str()  + " and " +
+				rhs->type()->str());
+	}
+};
+
+struct EqualsFactory
+{
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
+	{
+		if (lhs->type() == rhs->type()) {
+			if (lhs->type() == TypeFactory::get("int"))
+				return new Equals(lhs, rhs);
+			else if (lhs->type() == TypeFactory::get("string"))
+				return new StringEquals(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '>=' operand on " +
 				lhs->type()->str()  + " and " +
