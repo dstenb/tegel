@@ -5,12 +5,13 @@
 
 namespace ast_factory {
 
+using namespace ast;
+
 template<class T>
 struct BoolBinaryFactory
 {
 
-	static ast::BinaryExpression *create(ast::Expression *lhs,
-			ast::Expression *rhs)
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		if (lhs->type() != TypeFactory::get("bool"))
 			throw DifferentTypesError(lhs->type(),
@@ -25,16 +26,15 @@ struct BoolBinaryFactory
 
 struct PlusBinaryFactory
 {
-	static ast::BinaryExpression *create(ast::Expression *lhs,
-			ast::Expression *rhs)
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::Plus(lhs, rhs);
+				return new Plus(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringConcat(lhs, rhs);
+				return new StringConcat(lhs, rhs);
 			else if (lhs->type()->list())
-				return new ast::ListConcat(lhs, rhs);
+				return new ListConcat(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '+' operand on " +
 				lhs->type()->str()  + " and " +
@@ -44,12 +44,11 @@ struct PlusBinaryFactory
 
 struct MinusBinaryFactory
 {
-	static ast::BinaryExpression *create(ast::Expression *lhs,
-			ast::Expression *rhs)
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		if (lhs->type() == rhs->type() &&
 				lhs->type() == TypeFactory::get("int"))
-			return new ast::Minus(lhs, rhs);
+			return new Minus(lhs, rhs);
 		throw InvalidTypeError("Can't apply '-' operand on " +
 				lhs->type()->str()  + " and " +
 				rhs->type()->str());
@@ -58,18 +57,17 @@ struct MinusBinaryFactory
 
 struct TimesBinaryFactory
 {
-	static ast::BinaryExpression *create(ast::Expression *lhs,
-			ast::Expression *rhs)
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		const Type *integer = TypeFactory::get("int");
 		const Type *string = TypeFactory::get("string");
 
 		if (lhs->type() == string && rhs->type() == integer)
-			return new ast::StringRepeat(lhs, rhs);
+			return new StringRepeat(lhs, rhs);
 		else if (lhs->type() == integer && rhs->type() == string)
-			return new ast::StringRepeat(rhs, lhs);
+			return new StringRepeat(rhs, lhs);
 		else if (lhs->type() == integer && lhs->type() == rhs->type())
-			return new ast::Times(lhs, rhs);
+			return new Times(lhs, rhs);
 		throw InvalidTypeError("Can't apply '*' operand on " +
 				lhs->type()->str()  + " and " +
 				rhs->type()->str());
@@ -78,14 +76,13 @@ struct TimesBinaryFactory
 
 struct LessThanFactory
 {
-	static ast::BinaryExpression *create(ast::Expression *lhs,
-			ast::Expression *rhs)
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::LessThan(lhs, rhs);
+				return new LessThan(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringLessThan(lhs, rhs);
+				return new StringLessThan(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '<' operand on " +
 				lhs->type()->str()  + " and " +
@@ -95,14 +92,13 @@ struct LessThanFactory
 
 struct LessThanOrEqualFactory
 {
-	static ast::BinaryExpression *create(ast::Expression *lhs,
-			ast::Expression *rhs)
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::LessThanOrEqual(lhs, rhs);
+				return new LessThanOrEqual(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringLessThanOrEqual(lhs, rhs);
+				return new StringLessThanOrEqual(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '<=' operand on " +
 				lhs->type()->str()  + " and " +
@@ -112,14 +108,13 @@ struct LessThanOrEqualFactory
 
 struct GreaterThanFactory
 {
-	static ast::BinaryExpression *create(ast::Expression *lhs,
-			ast::Expression *rhs)
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::GreaterThan(lhs, rhs);
+				return new GreaterThan(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringGreaterThan(lhs, rhs);
+				return new StringGreaterThan(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '>' operand on " +
 				lhs->type()->str()  + " and " +
@@ -129,14 +124,13 @@ struct GreaterThanFactory
 
 struct GreaterThanOrEqualFactory
 {
-	static ast::BinaryExpression *create(ast::Expression *lhs,
-			ast::Expression *rhs)
+	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		if (lhs->type() == rhs->type()) {
 			if (lhs->type() == TypeFactory::get("int"))
-				return new ast::LessThan(lhs, rhs);
+				return new LessThan(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
-				return new ast::StringLessThan(lhs, rhs);
+				return new StringLessThan(lhs, rhs);
 		}
 		throw InvalidTypeError("Can't apply '>=' operand on " +
 				lhs->type()->str()  + " and " +
