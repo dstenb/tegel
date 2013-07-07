@@ -81,6 +81,7 @@ void vyyerror(const char *, ...);
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
 %token AND "and" OR "or" NOT "not"
 %token L_INLINE "{{" R_INLINE "}}"
+%token LE "<=" EQ "==" GE ">="
 %token<string> TEXT
 
 %token<boolean> BOOL "bool constant"
@@ -118,6 +119,8 @@ void vyyerror(const char *, ...);
 
 %left OR
 %left AND
+%left EQ
+%left '<' '>' LE GE
 %left '+' '-'
 %left '*'
 %left '.'
@@ -559,6 +562,46 @@ expression
                 e.what());
             YYERROR;
         }
+    }
+    | expression '<' expression
+    {
+        try {
+            $$ = ast_factory::LessThanFactory::create($1, $3);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
+    }
+    | expression '>' expression
+    {
+        try {
+            $$ = ast_factory::GreaterThanFactory::create($1, $3);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
+    }
+    | expression LE expression
+    {
+        try {
+            $$ = ast_factory::LessThanOrEqualFactory::create($1, $3);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
+    }
+    | expression GE expression
+    {
+        try {
+            $$ = ast_factory::GreaterThanOrEqualFactory::create($1, $3);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
+    }
+    | expression EQ expression
+    {
+
     }
     | expression '+' expression
     {

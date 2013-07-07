@@ -76,6 +76,74 @@ struct TimesBinaryFactory
 	}
 };
 
+struct LessThanFactory
+{
+	static ast::BinaryExpression *create(ast::Expression *lhs,
+			ast::Expression *rhs)
+	{
+		if (lhs->type() == rhs->type()) {
+			if (lhs->type() == TypeFactory::get("int"))
+				return new ast::LT(lhs, rhs);
+			else if (lhs->type() == TypeFactory::get("string"))
+				return new ast::StringLT(lhs, rhs);
+		}
+		throw InvalidTypeError("Can't apply '<' operand on " +
+				lhs->type()->str()  + " and " +
+				rhs->type()->str());
+	}
+};
+
+struct LessThanOrEqualFactory
+{
+	static ast::BinaryExpression *create(ast::Expression *lhs,
+			ast::Expression *rhs)
+	{
+		if (lhs->type() == rhs->type()) {
+			if (lhs->type() == TypeFactory::get("int"))
+				return new ast::LE(lhs, rhs);
+			else if (lhs->type() == TypeFactory::get("string"))
+				return new ast::StringLE(lhs, rhs);
+		}
+		throw InvalidTypeError("Can't apply '<=' operand on " +
+				lhs->type()->str()  + " and " +
+				rhs->type()->str());
+	}
+};
+
+struct GreaterThanFactory
+{
+	static ast::BinaryExpression *create(ast::Expression *lhs,
+			ast::Expression *rhs)
+	{
+		if (lhs->type() == rhs->type()) {
+			if (lhs->type() == TypeFactory::get("int"))
+				return new ast::GT(lhs, rhs);
+			else if (lhs->type() == TypeFactory::get("string"))
+				return new ast::StringGT(lhs, rhs);
+		}
+		throw InvalidTypeError("Can't apply '>' operand on " +
+				lhs->type()->str()  + " and " +
+				rhs->type()->str());
+	}
+};
+
+struct GreaterThanOrEqualFactory
+{
+	static ast::BinaryExpression *create(ast::Expression *lhs,
+			ast::Expression *rhs)
+	{
+		if (lhs->type() == rhs->type()) {
+			if (lhs->type() == TypeFactory::get("int"))
+				return new ast::LT(lhs, rhs);
+			else if (lhs->type() == TypeFactory::get("string"))
+				return new ast::StringLT(lhs, rhs);
+		}
+		throw InvalidTypeError("Can't apply '>=' operand on " +
+				lhs->type()->str()  + " and " +
+				rhs->type()->str());
+	}
+};
+
 }
 
 #endif

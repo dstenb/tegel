@@ -36,9 +36,19 @@ class BinaryExpression;
 class UnaryExpression;
 class And;
 class Or;
+class LT;
+class LE;
+class GT;
+class GE;
+class Equals;
 class Plus;
 class Minus;
 class Times;
+class StringLT;
+class StringLE;
+class StringGT;
+class StringGE;
+class StringEquals;
 class StringRepeat;
 class StringConcat;
 class ListConcat;
@@ -149,6 +159,61 @@ class Or : public BinaryBoolExpression
 		virtual void accept(AST_Visitor &);
 };
 
+class IntCompare : public BinaryExpression
+{
+	public:
+		IntCompare(Expression *lhs, Expression *rhs)
+			: BinaryExpression(lhs, rhs),
+			type_(TypeFactory::get("bool")) {
+			assert(lhs->type() == TypeFactory::get("int"));
+			assert(rhs->type() == TypeFactory::get("int"));
+		}
+
+		virtual void accept(AST_Visitor &) = 0;
+		virtual const Type *type() const { return type_; }
+	private:
+		IntCompare(const IntCompare &) = delete;
+		IntCompare &operator=(const IntCompare &) = delete;
+
+		const Type *type_;
+};
+
+class LT : public IntCompare
+{
+	public:
+		LT(Expression *lhs, Expression *rhs)
+			: IntCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class LE : public IntCompare
+{
+	public:
+		LE(Expression *lhs, Expression *rhs)
+			: IntCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class GT : public IntCompare
+{
+	public:
+		GT(Expression *lhs, Expression *rhs)
+			: IntCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class GE : public IntCompare
+{
+	public:
+		GE(Expression *lhs, Expression *rhs)
+			: IntCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
 /**
  *
  */
@@ -206,6 +271,61 @@ class Times : public BinaryIntExpression
 	public:
 		Times(Expression *lhs, Expression *rhs)
 			: BinaryIntExpression(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class StringCompare : public BinaryExpression
+{
+	public:
+		StringCompare(Expression *lhs, Expression *rhs)
+			: BinaryExpression(lhs, rhs),
+			type_(TypeFactory::get("bool")) {
+			assert(lhs->type() == TypeFactory::get("string"));
+			assert(rhs->type() == TypeFactory::get("string"));
+		}
+
+		virtual void accept(AST_Visitor &) = 0;
+		virtual const Type *type() const { return type_; }
+	private:
+		StringCompare(const StringCompare &) = delete;
+		StringCompare &operator=(const StringCompare &) = delete;
+
+		const Type *type_;
+};
+
+class StringLT : public StringCompare
+{
+	public:
+		StringLT(Expression *lhs, Expression *rhs)
+			: StringCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class StringLE : public StringCompare
+{
+	public:
+		StringLE(Expression *lhs, Expression *rhs)
+			: StringCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class StringGT : public StringCompare
+{
+	public:
+		StringGT(Expression *lhs, Expression *rhs)
+			: StringCompare(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+class StringGE : public StringCompare
+{
+	public:
+		StringGE(Expression *lhs, Expression *rhs)
+			: StringCompare(lhs, rhs) {}
 
 		virtual void accept(AST_Visitor &);
 };
@@ -620,9 +740,17 @@ class AST_Visitor
 	public:
 		virtual void visit(And *) = 0;
 		virtual void visit(Or *) = 0;
+		virtual void visit(LT *) = 0;
+		virtual void visit(LE *) = 0;
+		virtual void visit(GT *) = 0;
+		virtual void visit(GE *) = 0;
 		virtual void visit(Plus *) = 0;
 		virtual void visit(Minus *) = 0;
 		virtual void visit(Times *) = 0;
+		virtual void visit(StringLT *) = 0;
+		virtual void visit(StringLE *) = 0;
+		virtual void visit(StringGT *) = 0;
+		virtual void visit(StringGE *) = 0;
 		virtual void visit(StringRepeat *) = 0;
 		virtual void visit(StringConcat *) = 0;
 		virtual void visit(ListConcat *) = 0;
@@ -666,6 +794,22 @@ class AST_Printer : public AST_Visitor
 			binary("Or", p);
 		}
 
+		virtual void visit(LT *p) {
+			binary("<", p);
+		}
+
+		virtual void visit(LE *p) {
+			binary("<=", p);
+		}
+
+		virtual void visit(GT *p) {
+			binary(">", p);
+		}
+
+		virtual void visit(GE *p) {
+			binary(">=", p);
+		}
+
 		virtual void visit(Plus *p) {
 			binary("+", p);
 		}
@@ -676,6 +820,22 @@ class AST_Printer : public AST_Visitor
 
 		virtual void visit(Times *p) {
 			binary("*", p);
+		}
+
+		virtual void visit(StringLT *p) {
+			binary("String<", p);
+		}
+
+		virtual void visit(StringLE *p) {
+			binary("String<=", p);
+		}
+
+		virtual void visit(StringGT *p) {
+			binary("String>", p);
+		}
+
+		virtual void visit(StringGE *p) {
+			binary("String>=", p);
 		}
 
 		virtual void visit(StringRepeat *p) {
