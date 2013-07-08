@@ -176,7 +176,9 @@ struct EqualsFactory
 	static BinaryExpression *create(Expression *lhs, Expression *rhs)
 	{
 		if (lhs->type() == rhs->type()) {
-			if (lhs->type() == TypeFactory::get("int"))
+			if (lhs->type() == TypeFactory::get("bool"))
+				return new BoolEquals(lhs, rhs);
+			else if (lhs->type() == TypeFactory::get("int"))
 				return new Equals(lhs, rhs);
 			else if (lhs->type() == TypeFactory::get("string"))
 				return new StringEquals(lhs, rhs);

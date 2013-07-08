@@ -37,6 +37,7 @@ class UnaryExpression;
 class And;
 class Or;
 class Not;
+class BoolEquals;
 class LessThan;
 class LessThanOrEqual;
 class GreaterThan;
@@ -160,6 +161,10 @@ class Or : public BinaryBoolExpression
 		virtual void accept(AST_Visitor &);
 };
 
+/** Boolean not
+ *
+ * The class only accepts expressions of type bool
+ */
 class Not : public UnaryExpression
 {
 	public:
@@ -180,6 +185,23 @@ class Not : public UnaryExpression
 		Expression *expression_;
 };
 
+/** Boolean equivalence class
+ *
+ * The class only accepts left and right hand sides that are of type bool
+ */
+class BoolEquals : public BinaryBoolExpression
+{
+	public:
+		BoolEquals(Expression *lhs, Expression *rhs)
+			: BinaryBoolExpression(lhs, rhs) {}
+
+		virtual void accept(AST_Visitor &);
+};
+
+/** Integer comparator
+ *
+ * Expressions of type int [cmp] int -> bool
+ */
 class IntCompare : public BinaryExpression
 {
 	public:
@@ -780,6 +802,7 @@ class AST_Visitor
 		virtual void visit(And *) = 0;
 		virtual void visit(Or *) = 0;
 		virtual void visit(Not *) = 0;
+		virtual void visit(BoolEquals *) = 0;
 		virtual void visit(LessThan *) = 0;
 		virtual void visit(LessThanOrEqual *) = 0;
 		virtual void visit(GreaterThan *) = 0;
@@ -842,6 +865,10 @@ class AST_Printer : public AST_Visitor
 			indent++;
 			p->expression()->accept(*this);
 			indent--;
+		}
+
+		virtual void visit(BoolEquals *p) {
+			binary("==", p);
 		}
 
 		virtual void visit(LessThan *p) {
