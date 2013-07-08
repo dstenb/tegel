@@ -67,21 +67,6 @@ void Variable::print(ostream &os) const
 		<< get_type()->str() << ")";
 }
 
-void Function::print(ostream &os) const
-{
-	os << "Function(" << get_type()->str() << " " << get_name() << "(";
-
-	auto it = params_.begin();
-
-	while (it != params_.end()) {
-		os << (*it)->str();
-		if (++it != params_.end())
-			os << ", ";
-	}
-
-	os << "))";
-}
-
 void SymbolTable::add(Symbol *s)
 {
 	string n = s->get_name();
@@ -110,16 +95,6 @@ void SymbolTable::print(ostream &os) const
 		it->second->print(os);
 		os << endl;
 	}
-}
-
-void add_default_functions(SymbolTable &st)
-{
-	vector<const Type *> str_param = { TypeFactory::get("string") };
-
-	/* String functions */
-	st.add(new Function("upper", TypeFactory::get("string"), str_param));
-	st.add(new Function("lower", TypeFactory::get("string"), str_param));
-	st.add(new Function("title", TypeFactory::get("string"), str_param));
 }
 
 }

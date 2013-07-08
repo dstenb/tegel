@@ -14,8 +14,6 @@ using namespace std;
 using namespace constant;
 using namespace type;
 
-/* TODO: remove Function */
-
 namespace symbol {
 
 class Param
@@ -48,7 +46,6 @@ class ParamException : public runtime_error
 
 class Argument;
 class Variable;
-class Function;
 
 class Symbol
 {
@@ -61,7 +58,6 @@ class Symbol
 
 		virtual Argument *argument() { return nullptr; }
 		virtual Variable *variable() { return nullptr; }
-		virtual Function *function() { return nullptr; }
 
 		string get_name() const { return name_; }
 		const Type *get_type() const { return type_; }
@@ -109,25 +105,6 @@ class Variable : public Symbol
 	private:
 		Variable(const Variable &) = delete;
 		Variable &operator=(const Variable &) = delete;
-};
-
-class Function : public Symbol
-{
-	public:
-		Function(const string &name, const Type *rt,
-				const vector<const Type *> &params)
-			: Symbol(name, rt), params_(params) {}
-
-		virtual bool is_constant() const { return true; }
-		virtual void print(ostream &os) const;
-		virtual Function *function() { return this; }
-
-		vector<const Type *> parameters() { return params_; }
-	private:
-		Function(const Function &) = delete;
-		Function &operator=(const Function &) = delete;
-
-		vector<const Type *> params_;
 };
 
 class SymTabAlreadyDefinedError : public runtime_error

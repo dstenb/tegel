@@ -795,6 +795,4 @@ void setup_symbol_table()
 {
     root_table = new SymbolTable;
     current_table = root_table;
-
-    add_default_functions(*root_table);
 }
