@@ -121,8 +121,8 @@ field_vector::const_iterator&#160;</td><td class="memItemRight" valign="bottom">
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0d4e7e6b64e27c325266394473a392e9"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1PrimitiveType.html">PrimitiveType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1RecordType.html#a0d4e7e6b64e27c325266394473a392e9">dot</a> (const string &amp;) const </td></tr>
 <tr class="separator:a0d4e7e6b64e27c325266394473a392e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af045af6084041e84a684174000bcce89"><td class="memItemLeft" align="right" valign="top">virtual const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1RecordType.html#af045af6084041e84a684174000bcce89">str</a> () const </td></tr>
-<tr class="separator:af045af6084041e84a684174000bcce89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22309f35d20902375592351ba0bfe91d"><td class="memItemLeft" align="right" valign="top">virtual string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1RecordType.html#a22309f35d20902375592351ba0bfe91d">str</a> () const </td></tr>
+<tr class="separator:a22309f35d20902375592351ba0bfe91d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a499903b967338af1e57ace1d77e8a267"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1RecordType.html#a499903b967338af1e57ace1d77e8a267">print</a> (ostream &amp;os) const </td></tr>
 <tr class="separator:a499903b967338af1e57ace1d77e8a267"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a451530c2b1f306b2ee1b66b6d178ae09"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a451530c2b1f306b2ee1b66b6d178ae09"></a>
@@ -146,6 +146,8 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>no_of_fields</b> ()
 <tr class="separator:a7f94d12fdffd0585bcadc0e1b2529306 inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7057e4c5c402def76a582ecbe8be2fdc inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtype_1_1TypeMethod.html">TypeMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a7057e4c5c402def76a582ecbe8be2fdc">lookup</a> (const string &amp;, const vector&lt; const <a class="el" href="classtype_1_1Type.html">Type</a> * &gt; &amp;) const </td></tr>
 <tr class="separator:a7057e4c5c402def76a582ecbe8be2fdc inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32f05f47fe9de26cd4f7ddda64fed35e inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtype_1_1TypeMethod.html">TypeMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a32f05f47fe9de26cd4f7ddda64fed35e">lookup</a> (const string &amp;) const </td></tr>
+<tr class="separator:a32f05f47fe9de26cd4f7ddda64fed35e inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d613f7ffaf7312573b39f177e2419ec inherit pub_methods_classtype_1_1Type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1Type.html#a5d613f7ffaf7312573b39f177e2419ec">print_methods</a> (ostream &amp;os) const </td></tr>
 <tr class="separator:a5d613f7ffaf7312573b39f177e2419ec inherit pub_methods_classtype_1_1Type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -245,7 +247,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFactory</b></td>
 
 </div>
 </div>
-<a class="anchor" id="af045af6084041e84a684174000bcce89"></a>
+<a class="anchor" id="a22309f35d20902375592351ba0bfe91d"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -253,7 +255,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFactory</b></td>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual const string&amp; type::RecordType::str </td>
+          <td class="memname">virtual string type::RecordType::str </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -268,7 +270,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFactory</b></td>
 <p>Get type representation</p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the type string </dd></dl>
 
-<p>Implements <a class="el" href="classtype_1_1Type.html#ad792c355f871e0579bdc5e197ae4eed8">type::Type</a>.</p>
+<p>Implements <a class="el" href="classtype_1_1Type.html#ad0cfa2b3560b70a623937d1d142b2c01">type::Type</a>.</p>
 
 </div>
 </div>
@@ -279,7 +281,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFactory</b></td>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Jul 6 2013 18:27:40 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 8 2013 08:10:57 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
