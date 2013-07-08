@@ -649,19 +649,19 @@ class ForEach : public Scope
 class If : public Scope
 {
 	public:
-		If(Expression *e, symbol::SymbolTable *t)
-			: Scope(t, nullptr), expression_(e) {}
+		If(Expression *c, symbol::SymbolTable *t)
+			: Scope(t, nullptr), condition_(c) {}
 
-		void set_expression(Expression *e) { expression_ = e; }
+		void set_condition(Expression *c) { condition_ = c; }
 
-		Expression *expression() { return expression_; }
+		Expression *condition() { return condition_; }
 
 		virtual void accept(AST_Visitor &);
 	private:
 		If(const If &) = delete;
 		If &operator=(const If &) = delete;
 
-		Expression *expression_;
+		Expression *condition_;
 };
 
 /**
@@ -670,13 +670,13 @@ class If : public Scope
 class Elif : public Scope
 {
 	public:
-		Elif(Expression *e, symbol::SymbolTable *t)
-			: Scope(t, nullptr), expression_(e), next_() {}
+		Elif(Expression *c, symbol::SymbolTable *t)
+			: Scope(t, nullptr), condition_(c), next_() {}
 
-		void set_expression(Expression *e) { expression_ = e; }
+		void set_condition(Expression *c) { condition_ = c; }
 		void set_next(Elif *n) { next_ = n; }
 
-		Expression *expression() { return expression_; }
+		Expression *condition() { return condition_; }
 		Elif *next() { return next_; }
 
 		virtual void accept(AST_Visitor &);
@@ -684,7 +684,7 @@ class Elif : public Scope
 		Elif(const Elif &) = delete;
 		Elif &operator=(const Elif &) = delete;
 
-		Expression *expression_;
+		Expression *condition_;
 		Elif *next_;
 };
 
@@ -973,7 +973,7 @@ class AST_Printer : public AST_Visitor
 			print_ws();
 			cerr << "If(" << p->table() << ")\n";
 			indent++;
-			p->expression()->accept(*this);
+			p->condition()->accept(*this);
 			if (p->statements())
 				p->statements()->accept(*this);
 			indent--;
@@ -983,7 +983,7 @@ class AST_Printer : public AST_Visitor
 			print_ws();
 			cerr << "Elif(" << p->table() << ")\n";
 			indent++;
-			p->expression()->accept(*this);
+			p->condition()->accept(*this);
 			if (p->statements())
 				p->statements()->accept(*this);
 			if (p->next())

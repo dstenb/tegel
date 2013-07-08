@@ -1,12 +1,14 @@
 #include <iostream>
+#include <vector>
 
-//extern Arguments *args;
-//extern Statements *body;
-
+#include "ast.hpp"
 #include "type.hpp"
 
 using namespace std;
 using type::TypeFactory;
+
+extern vector<symbol::Argument *> arguments;
+extern ast::Statements *body;
 
 extern void setup_symbol_table();
 extern int yyparse();
@@ -17,6 +19,10 @@ int main(int argc, char **argv)
 {
 	setup_symbol_table();
 	yyparse();
+
+        ast::AST_Printer p;
+        if (body)
+            body->accept(p);
 
 	cout << "Types that are defined:\n";
 	TypeFactory::print(cout);

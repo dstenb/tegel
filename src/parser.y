@@ -1,6 +1,7 @@
 %{
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 #include "ast.hpp"
 #include "ast_factories.hpp"
@@ -11,6 +12,8 @@ using namespace symbol;
 
 SymbolTable *root_table;
 SymbolTable *current_table;
+vector<Argument *> arguments;
+ast::Statements *body;
 
 /* constant_list is used by the constant_list grammar rule to hold the list
   elements. This is used instead of a AST approach and is ok since only one
@@ -155,9 +158,9 @@ header_block_p
 header_item
     : arg
     {
-        // TODO: add to argument vector
         try {
             root_table->add($1);
+            arguments.push_back($1);
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
             root_table->lookup($1->get_name())->print(sstr);
@@ -362,12 +365,7 @@ constant_list_values
 body_block
     : statements
     {
-        ast::AST_Printer p;
-
-        std::cout << $1 << std::endl;
-        if ($1)
-            $1->accept(p);
-
+        body = $1;
         assert(current_table == root_table);
     }
     |
@@ -418,10 +416,8 @@ conditional
 if
     : if_start condition statements
     {
-        /* TODO: check expression->type() == bool */
-        /* TODO: maybe convert (e.g. "" => false, "fewaew" => true) */
         $$ = $1;
-        $$->set_expression($2);
+        $$->set_condition($2);
         $$->set_statements($3);
 
         /* Return the the surrounding block's symbol table */
@@ -441,8 +437,6 @@ if_start
 else
     : else_start statements
     {
-        /* TODO: check expression->type() == bool */
-        /* TODO: maybe convert (e.g. "" => false, "fewaew" => true) */
         $$ = $1;
         $$->set_statements($2);
 
@@ -472,7 +466,7 @@ elif
     : elif_start condition statements
     {
         $$ = $1;
-        $$->set_expression($2);
+        $$->set_condition($2);
         $$->set_statements($3);
 
         /* Return the the surrounding block's symbol table */
