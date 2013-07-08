@@ -189,6 +189,24 @@ struct EqualsFactory
 	}
 };
 
+struct StringFactory
+{
+	static Expression *create(Expression *e)
+	{
+		if (e->type() == TypeFactory::get("bool")) {
+			TypeMethod m = e->type()->lookup("str");
+			return new MethodCall(e, m,  nullptr);
+		} else if (e->type() == TypeFactory::get("int")) {
+			TypeMethod m = e->type()->lookup("str");
+			return new MethodCall(e, m,  nullptr);
+		} else if (e->type() == TypeFactory::get("string")) {
+			return e;
+		}
+			throw InvalidTypeError("Type " + e->type()->str() +
+					" can't be converted to string");
+	}
+};
+
 }
 
 #endif

@@ -533,7 +533,7 @@ end_for
 inlined
     : L_INLINE expression R_INLINE
     {
-        $$ = new ast::InlinedExpression($2);
+        $$ = new ast::InlinedExpression(ast_factory::StringFactory::create($2));
     }
     ;
 
