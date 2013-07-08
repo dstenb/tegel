@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "ast.hpp"
+#include "py_backend.hpp"
 #include "type.hpp"
 
 using namespace std;
@@ -23,6 +24,9 @@ int main(int argc, char **argv)
         ast::AST_Printer p;
         if (body)
             body->accept(p);
+
+	py_backend::PyBackend b;
+	b.generate(cout, arguments, body);
 
 	cout << "Types that are defined:\n";
 	TypeFactory::print(cout);
