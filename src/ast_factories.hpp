@@ -181,7 +181,7 @@ struct EqualsFactory
 			else if (lhs->type() == TypeFactory::get("string"))
 				return new StringEquals(lhs, rhs);
 		}
-		throw InvalidTypeError("Can't apply '>=' operand on " +
+		throw InvalidTypeError("Can't apply '==' operand on " +
 				lhs->type()->str()  + " and " +
 				rhs->type()->str());
 	}
