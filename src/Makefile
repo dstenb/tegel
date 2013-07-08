@@ -20,7 +20,7 @@ parser.cpp: parser.y type.hpp
 parser.hpp: parser.cpp
 
 clean:
-	rm -f *.o tegel parser.cpp parser.hpp lexical.cpp
+	rm -f *.o tegel parser.cpp parser.hpp lexical.cpp *.gch
 
 generate-tags:
 	ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q
