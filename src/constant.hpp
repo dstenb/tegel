@@ -87,6 +87,8 @@ class BoolConstantData : public PrimitiveConstantData
 		void print(ostream &os) const {
 			os << (value_ ? "true" : "false");
 		}
+
+		bool value() const { return value_; }
 	private:
 		bool value_;
 };
@@ -102,6 +104,8 @@ class IntConstantData : public PrimitiveConstantData
 		void print(ostream &os) const {
 			os << value_;
 		}
+
+		int value() const { return value_; }
 	private:
 		int value_;
 };
@@ -118,6 +122,8 @@ class StringConstantData : public PrimitiveConstantData
 		void print(ostream &os) const {
 			os << "\"" << value_ << "\"";
 		}
+
+		string value() const { return value_; }
 	private:
 		string value_;
 };
