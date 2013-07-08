@@ -697,6 +697,15 @@ expression
 
         free($1);
     }
+    | '-' expression
+    {
+        try {
+            $$ = ast_factory::MinusUnaryFactory::create($2);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
+    }
     | '(' expression ')'
     {
         $$ = $2;

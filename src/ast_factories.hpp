@@ -61,6 +61,20 @@ struct PlusBinaryFactory
 	}
 };
 
+
+struct MinusUnaryFactory
+{
+	static BinaryExpression *create(Expression *e)
+	{
+		if (e->type() == TypeFactory::get("int")) {
+			auto zero = new IntConstantData(0);
+			return new Minus(new Constant(zero), e);
+		}
+		throw InvalidTypeError("Can't apply '-' operand on " +
+				e->type()->str());
+	}
+};
+
 struct MinusBinaryFactory
 {
 	static BinaryExpression *create(Expression *lhs, Expression *rhs)
