@@ -115,7 +115,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classast_1_1GreaterThan.html">GreaterThan</a>(<span class="keyword">new</span> <a class="code" href="classast_1_1MethodCall.html">MethodCall</a>(e, m,  <span class="keyword">nullptr</span>),</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                    <span class="keyword">new</span> <a class="code" href="classast_1_1Constant.html">Constant</a>(zero));</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classtype_1_1InvalidTypeError.html">InvalidTypeError</a>(e-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#ad0cfa2b3560b70a623937d1d142b2c01">str</a>() +</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classtype_1_1InvalidTypeError.html">InvalidTypeError</a>(<span class="stringliteral">&quot;Type &quot;</span> + e-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#ad0cfa2b3560b70a623937d1d142b2c01">str</a>() +</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                    <span class="stringliteral">&quot; can&#39;t be converted to bool&quot;</span>);</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        }</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    }</div>
@@ -265,24 +265,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keyword">static</span> <a class="code" href="classast_1_1BinaryExpression.html">BinaryExpression</a> *create(<a class="code" href="classast_1_1Expression.html">Expression</a> *lhs, <a class="code" href="classast_1_1Expression.html">Expression</a> *rhs)</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    {</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <span class="keywordflow">if</span> (lhs-&gt;type() == rhs-&gt;type()) {</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;            <span class="keywordflow">if</span> (lhs-&gt;type() == TypeFactory::get(<span class="stringliteral">&quot;int&quot;</span>))</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classast_1_1Equals.html">Equals</a>(lhs, rhs);</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (lhs-&gt;type() == TypeFactory::get(<span class="stringliteral">&quot;string&quot;</span>))</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classast_1_1StringEquals.html">StringEquals</a>(lhs, rhs);</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        }</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classtype_1_1InvalidTypeError.html">InvalidTypeError</a>(<span class="stringliteral">&quot;Can&#39;t apply &#39;&gt;=&#39; operand on &quot;</span> +</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                lhs-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#ad0cfa2b3560b70a623937d1d142b2c01">str</a>()  + <span class="stringliteral">&quot; and &quot;</span> +</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                rhs-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#ad0cfa2b3560b70a623937d1d142b2c01">str</a>());</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    }</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;};</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;}</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;            <span class="keywordflow">if</span> (lhs-&gt;type() == TypeFactory::get(<span class="stringliteral">&quot;bool&quot;</span>))</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classast_1_1BoolEquals.html">BoolEquals</a>(lhs, rhs);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (lhs-&gt;type() == TypeFactory::get(<span class="stringliteral">&quot;int&quot;</span>))</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classast_1_1Equals.html">Equals</a>(lhs, rhs);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (lhs-&gt;type() == TypeFactory::get(<span class="stringliteral">&quot;string&quot;</span>))</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classast_1_1StringEquals.html">StringEquals</a>(lhs, rhs);</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classtype_1_1InvalidTypeError.html">InvalidTypeError</a>(<span class="stringliteral">&quot;Can&#39;t apply &#39;==&#39; operand on &quot;</span> +</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                lhs-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#ad0cfa2b3560b70a623937d1d142b2c01">str</a>()  + <span class="stringliteral">&quot; and &quot;</span> +</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                rhs-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#ad0cfa2b3560b70a623937d1d142b2c01">str</a>());</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    }</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;};</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno"><a class="code" href="structast__factory_1_1StringFactory.html">  192</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structast__factory_1_1StringFactory.html">StringFactory</a></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;{</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keyword">static</span> <a class="code" href="classast_1_1Expression.html">Expression</a> *create(<a class="code" href="classast_1_1Expression.html">Expression</a> *e)</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    {</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        <span class="keywordflow">if</span> (e-&gt;type() == TypeFactory::get(<span class="stringliteral">&quot;bool&quot;</span>)) {</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            <a class="code" href="classtype_1_1TypeMethod.html">TypeMethod</a> m = e-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#a7057e4c5c402def76a582ecbe8be2fdc">lookup</a>(<span class="stringliteral">&quot;str&quot;</span>);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classast_1_1MethodCall.html">MethodCall</a>(e, m,  <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (e-&gt;type() == TypeFactory::get(<span class="stringliteral">&quot;int&quot;</span>)) {</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            <a class="code" href="classtype_1_1TypeMethod.html">TypeMethod</a> m = e-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#a7057e4c5c402def76a582ecbe8be2fdc">lookup</a>(<span class="stringliteral">&quot;str&quot;</span>);</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classast_1_1MethodCall.html">MethodCall</a>(e, m,  <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (e-&gt;type() == TypeFactory::get(<span class="stringliteral">&quot;string&quot;</span>)) {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            <span class="keywordflow">return</span> e;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        }</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classtype_1_1InvalidTypeError.html">InvalidTypeError</a>(<span class="stringliteral">&quot;Type &quot;</span> + e-&gt;type()-&gt;<a class="code" href="classtype_1_1Type.html#ad0cfa2b3560b70a623937d1d142b2c01">str</a>() +</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                    <span class="stringliteral">&quot; can&#39;t be converted to string&quot;</span>);</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    }</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;};</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;}</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 8 2013 08:10:57 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 8 2013 13:56:22 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

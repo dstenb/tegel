@@ -9,6 +9,7 @@ var searchData=
   ['stringconcat',['StringConcat',['../classast_1_1StringConcat.html',1,'ast']]],
   ['stringconstantdata',['StringConstantData',['../classconstant_1_1StringConstantData.html',1,'constant']]],
   ['stringequals',['StringEquals',['../classast_1_1StringEquals.html',1,'ast']]],
+  ['stringfactory',['StringFactory',['../structast__factory_1_1StringFactory.html',1,'ast_factory']]],
   ['stringgreaterthan',['StringGreaterThan',['../classast_1_1StringGreaterThan.html',1,'ast']]],
   ['stringgreaterthanorequal',['StringGreaterThanOrEqual',['../classast_1_1StringGreaterThanOrEqual.html',1,'ast']]],
   ['stringlessthan',['StringLessThan',['../classast_1_1StringLessThan.html',1,'ast']]],
