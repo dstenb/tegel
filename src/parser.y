@@ -112,7 +112,7 @@ void vyyerror(const char *, ...);
 %type<elif_node> elif_start elifs elif
 %type<else_node> else_start else
 
-%type<expression> expression
+%type<expression> expression condition
 
 %type<list> list
 %type<expression_list> expression_list list_values
@@ -416,7 +416,7 @@ conditional
     ;
 
 if
-    : if_start expression statements
+    : if_start condition statements
     {
         /* TODO: check expression->type() == bool */
         /* TODO: maybe convert (e.g. "" => false, "fewaew" => true) */
@@ -469,7 +469,7 @@ elifs
     }
 
 elif
-    : elif_start expression statements
+    : elif_start condition statements
     {
         $$ = $1;
         $$->set_expression($2);
@@ -709,6 +709,17 @@ expression
     | '(' expression ')'
     {
         $$ = $2;
+    }
+
+condition
+    : expression
+    {
+        try {
+            $$ = ast_factory::BoolUnaryFactory::create($1);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
     }
 
 constant

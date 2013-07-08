@@ -26,7 +26,7 @@ struct BoolUnaryFactory
 			return new GreaterThan(new MethodCall(e, m,  nullptr),
 					new Constant(zero));
 		} else {
-			throw InvalidTypeError(e->type()->str() +
+			throw InvalidTypeError("Type " + e->type()->str() +
 					" can't be converted to bool");
 		}
 	}
