@@ -35,7 +35,7 @@ namespace py_backend {
 
 	void PyBody::generate(ast::Statements *body)
 	{
-		indent() << "def generate(_args):\n";
+		indent() << "def generate(_args, _file):\n";
 		indent_inc();
 		body->accept(*this);
 		indent_dec();
@@ -151,15 +151,7 @@ namespace py_backend {
 
 	void PyBody::visit(ast::Constant *p)
 	{
-		if (p->data()->type() == TypeFactory::get("bool")) {
-			auto b = (BoolConstantData *)p->data();
-			unindent() << (b ? "True" : "False");
-		} else if (p->data()->type() == TypeFactory::get("string")) {
-			auto s = (StringConstantData *)p->data();
-			unindent() << "\"" << Escaper()(s->value()) << "\"";
-		} else {
-			p->data()->print(cerr);
-		}
+		unindent() << PyUtils::constant_to_str(p->data());
 	}
 
 	void PyBody::visit(ast::MethodCall *p)
@@ -170,17 +162,17 @@ namespace py_backend {
 
 		if (t == type::TypeFactory::get("bool")) {
 			if (m.name() == "str") {
-				unindent() << "str(";
+				unindent() << "\"true\" if ";
 				p->expression()->accept(*this);
-				unindent() << ")";
+				unindent() << " else \"false\"";
 			}
 		} else if (t == type::TypeFactory::get("int")) {
 			if (m.name() == "downto") {
 				unindent() << "list(reversed(range(";
-				p->expression()->accept(*this);
-				unindent() << ", ";
 				p->arguments()->expression->accept(*this);
-				unindent() << ")))";
+				unindent() << ", ";
+				p->expression()->accept(*this);
+				unindent() << "+ 1)))";
 			}
 			if (m.name() == "str") {
 				unindent() << "str(";
@@ -192,7 +184,7 @@ namespace py_backend {
 				p->expression()->accept(*this);
 				unindent() << ", ";
 				p->arguments()->expression->accept(*this);
-				unindent() << ")";
+				unindent() << "+ 1))";
 			}
 		} else if (t == type::TypeFactory::get("string")) {
 			if (m.name() == "length") {
@@ -210,26 +202,43 @@ namespace py_backend {
 				unindent() << ".upper()";
 			}
 		} else if (t->list()) {
+			auto tl = t->list();
 
+			if (m.name() == "size") {
+				unindent() << "len(";
+				p->expression()->accept(*this);
+				unindent() << ")";
+			} else if (m.name() == "sort") {
+				if (tl->elem()->primitive()) {
+					unindent() << "sorted(";
+					p->expression()->accept(*this);
+					unindent() << ", reverse=not ";
+					p->arguments()->expression->accept(*this);
+					unindent() << ")";
+				} else if (tl->elem()->record()) {
+
+				}
+			}
 		} else if (t->record()) {
 
-		}
+		} else {
 
-		// p->expression()->accept(*this);
-		// unindent() << "." << p->method().name() << "(";
-		// for (auto e = p->arguments(); e != nullptr;
-		// 		e = e->next) {
-		// 	e->expression->accept(*this);
-		// 	if (e->next)
-		// 		unindent() << ", ";
-		// }
-		// unindent() << ")";
+		}
 	}
 
 	void PyBody::visit(ast::SymbolRef *p)
 	{
 		/* TODO */
-		unindent() << p->symbol()->get_name();
+
+		symbol::Argument *a;
+		symbol::Variable *v;
+
+		if ((a = dynamic_cast<symbol::Argument *>(p->symbol()))) {
+		    unindent() << "_args[\"" << p->symbol()->get_name()
+			    << "\"][\"value\"]";
+		} else if ((v = dynamic_cast<symbol::Variable *>(p->symbol()))) {
+		    unindent() << p->symbol()->get_name();
+		}
 	}
 
 	void PyBody::visit(ast::List *p)
@@ -304,12 +313,12 @@ namespace py_backend {
 
 	void PyBody::visit(ast::Text *p)
 	{
-		indent() << "print('" << Escaper()(p->text()) << "')\n";
+		indent() << "_file.write('" << Escaper()(p->text()) << "')\n";
 	}
 
 	void PyBody::visit(ast::InlinedExpression *p)
 	{
-		indent() << "print(";
+		indent() << "_file.write(";
 		p->expression()->accept(*this);
 		unindent() << ")\n";
 	}
@@ -326,9 +335,9 @@ namespace py_backend {
 	void PyUsage::generate(const vector<symbol::Argument *> &args) {
 		indent() << "def usage(cmd):\n";
 		indent_inc();
-		indent() << "print(\"Usage: %s [OPTIONS...]\" % cmd)\n";
+		indent() << "_file.write(\"Usage: %s [OPTIONS...]\" % cmd)\n";
 		for (auto it = args.begin(); it != args.end(); ++it) {
-			indent() << "print(\"";
+			indent() << "_file.write(\"";
 
 			/* Print command line strings */
 			/* TODO */
@@ -350,10 +359,14 @@ namespace py_backend {
 		indent() << "   argv = sys.argv\n\n";
 
 		generate_arg_dict(args);
-		indent() << "\n";
+		unindent() << "\n";
 
 		generate_arg_list(args);
-		indent() << "\n";
+		unindent() << "\n";
+
+		indent() << "generate(args, sys.stdout)\n\n";
+
+		indent_dec();
 
 		indent() << "if __name__ == \"__main__\":\n";
 		indent() << "    main()\n";
@@ -367,9 +380,14 @@ namespace py_backend {
 			indent() << "\"" << (*it)->get_name()
 				<< "\": {\n";
 			indent_inc();
-			/* TODO */
+
+			auto p = (*it)->get("default");
+			indent() << "\"value\": ";
+			unindent() << PyUtils::constant_to_str(p->get());
+			unindent() << ",\n";
+
 			indent_dec();
-			indent() << "}\n";
+			indent() << "},\n";
 		}
 		indent_dec();
 		indent() << "}\n";

@@ -28,8 +28,8 @@ int main(int argc, char **argv)
 	py_backend::PyBackend b;
 	b.generate(cout, arguments, body);
 
-	cout << "Types that are defined:\n";
-	TypeFactory::print(cout);
+	cerr << "Types that are defined:\n";
+	TypeFactory::print(cerr);
 
 	return 0;
 }

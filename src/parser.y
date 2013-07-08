@@ -136,7 +136,7 @@ void vyyerror(const char *, ...);
 file
     : header_block SEPARATOR body_block
     {
-        root_table->print(std::cout);
+        root_table->print(std::cerr);
     }
 
 /***************************************************************************

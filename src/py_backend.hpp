@@ -1,11 +1,37 @@
 #ifndef __PYTHON_BACKEND_H__
 #define __PYTHON_BACKEND_H__
 
+#include <string>
+
+using namespace std;
+
 #include "backend.hpp"
 #include "common.hpp"
 #include "type.hpp"
 
 namespace py_backend {
+
+struct PyUtils
+{
+	static string constant_to_str(const ConstantData *c) {
+		if (c->type() == TypeFactory::get("bool")) {
+			auto b = (const BoolConstantData *)c;
+			return (b->value() ? "True" : "False");
+		} else if (c->type() == TypeFactory::get("int")) {
+			auto i = (const IntConstantData *)c;
+			return to_string(i->value());
+		} else if (c->type() == TypeFactory::get("string")) {
+			auto s = (const StringConstantData *)c;
+			return "\"" + Escaper()(s->value()) + "\"";
+		} else if (c->type()->list()) {
+			/* TODO */
+			return "[ 1, 2, 3 ]";
+		} else if (c->type()->record()) {
+			/* TODO */
+			return "book{1, \"hej\"}";
+		}
+	}
+};
 
 /** PyWriter class
  *
