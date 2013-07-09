@@ -41,11 +41,11 @@ class ConstantData
 class ConstantDataVisitor
 {
 	public:
-		virtual void visit(const BoolConstantData *) = 0;
-		virtual void visit(const IntConstantData *) = 0;
-		virtual void visit(const StringConstantData *) = 0;
-		virtual void visit(const ListConstantData *) = 0;
-		virtual void visit(const RecordConstantData *) = 0;
+		virtual void visit(const BoolConstantData *) {}
+		virtual void visit(const IntConstantData *) {}
+		virtual void visit(const StringConstantData *) {}
+		virtual void visit(const ListConstantData *) {}
+		virtual void visit(const RecordConstantData *) {}
 };
 
 ConstantData *create_default_constant(const Type *t);
