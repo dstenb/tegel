@@ -21,6 +21,9 @@ class TypeFactory;
 class Type;
 class SingleType;
 class PrimitiveType;
+class BoolType;
+class IntType;
+class StringType;
 class RecordType;
 class ListType;
 
@@ -78,6 +81,16 @@ class WrongArgumentSignatureError : public runtime_error
  *
  */
 string types_to_str(const vector<const Type *> &);
+
+class TypeVisitor
+{
+	public:
+		virtual void visit(const BoolType *) {}
+		virtual void visit(const IntType *) {}
+		virtual void visit(const StringType *) {}
+		virtual void visit(const ListType *) {}
+		virtual void visit(const RecordType *) {}
+};
 
 /** Abstract type class
  *
@@ -155,6 +168,9 @@ class Type
 		 *
 		 */
 		void print_methods(ostream &os) const;
+
+
+		virtual void accept(TypeVisitor &) const = 0;
 	protected:
 		Type() : methods_() {}
 		virtual ~Type() {}
@@ -193,6 +209,8 @@ class BoolType : public PrimitiveType
 {
 	friend class TypeFactory;
 
+	public:
+		virtual void accept(TypeVisitor &v) const { v.visit(this); }
 	protected:
 		BoolType() : PrimitiveType("bool") {}
 		virtual ~BoolType() {}
@@ -202,6 +220,8 @@ class IntType : public PrimitiveType
 {
 	friend class TypeFactory;
 
+	public:
+		virtual void accept(TypeVisitor &v) const { v.visit(this); }
 	protected:
 		IntType() : PrimitiveType("int") {}
 		virtual ~IntType() {}
@@ -211,6 +231,8 @@ class StringType : public PrimitiveType
 {
 	friend class TypeFactory;
 
+	public:
+		virtual void accept(TypeVisitor &v) const { v.visit(this); }
 	protected:
 		StringType() : PrimitiveType("string") {}
 		virtual ~StringType() {}
@@ -247,6 +269,8 @@ class RecordType : public SingleType
 		size_t no_of_fields() const { return fields_.size(); }
 
 		virtual const RecordType *record() const { return this; }
+
+		virtual void accept(TypeVisitor &v) const { v.visit(this); }
 	protected:
 		RecordType(const string &name, const field_vector &m)
 			: str_(name), fields_(m) {}
@@ -266,6 +290,8 @@ class ListType : public Type
 		virtual void print(ostream &os) const;
 
 		virtual const ListType *list() const { return this; }
+
+		virtual void accept(TypeVisitor &v) const { v.visit(this); }
 	protected:
 		ListType(const SingleType *t)
 			: str_(t->str() + "[]"), elem_(t) {}
