@@ -14,7 +14,7 @@ namespace py_backend {
 
 struct PyUtils
 {
-	static string constant_to_str(const ConstantData *);
+	static ostream &constant_to_stream(ostream &, const ConstantData *);
 	static string record_name(const RecordType *);
 
 	static bool is_short_cmd(const string &s)

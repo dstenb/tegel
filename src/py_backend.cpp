@@ -2,56 +2,62 @@
 
 namespace py_backend {
 
-	string PyUtils::constant_to_str(const ConstantData *c)
+	class PyConstToStream : public ConstantDataVisitor
 	{
-		if (c->type() == TypeFactory::get("bool")) {
-			auto b = (const BoolConstantData *)c;
-			return (b->value() ? "True" : "False");
-		} else if (c->type() == TypeFactory::get("int")) {
-			auto i = (const IntConstantData *)c;
-			return to_string(i->value());
-		} else if (c->type() == TypeFactory::get("string")) {
-			auto s = (const StringConstantData *)c;
-			return "\"" + Escaper()(s->value()) + "\"";
-		} else if (c->type()->list()) {
-			auto l = (ListConstantData *)c;
+		public:
+			PyConstToStream(ostream &os)
+				: os_(os) {}
 
-			stringstream sstr;
-			sstr << "[";
-
-			auto v = l->values();
-			auto it = v.begin();
-
-			while (it != v.end()) {
-				sstr << constant_to_str(*it);
-				if (++it != v.end())
-					sstr << ", ";
+			virtual void visit(const BoolConstantData *p) {
+				os_ << (p->value() ? "True" : "False");
 			}
 
-			sstr << "]";
-
-			return sstr.str();
-		} else if (c->type()->record()) {
-			auto r = (RecordConstantData *)c;
-
-			stringstream sstr;
-			sstr << record_name(r->type()) << "(";
-
-			auto v = r->values();
-			auto it = v.begin();
-
-			while (it != v.end()) {
-				sstr << constant_to_str(*it);
-				if (++it != v.end())
-					sstr << ", ";
+			virtual void visit(const IntConstantData *p) {
+				os_ << to_string(p->value());
 			}
 
-			sstr << ")";
+			virtual void visit(const StringConstantData *p) {
+				os_ << Escaper()(p->value());
+			}
 
-			return sstr.str();
-		} else {
-			return "";
-		}
+			virtual void visit(const ListConstantData *p) {
+				/* TODO: replace with iterators */
+				os_ << "[";
+
+				auto v = p->values();
+				auto it = v.begin();
+
+				while (it != v.end()) {
+					(*it)->accept(*this);
+					if (++it != v.end())
+						os_ << ", ";
+				}
+
+				os_ << "]";
+			}
+
+			virtual void visit(const RecordConstantData *p) {
+				/* TODO: replace with iterators */
+				auto v = p->values();
+				auto it = v.begin();
+
+				os_ << PyUtils::record_name(p->type()) << "(";
+				while (it != v.end()) {
+					(*it)->accept(*this);
+					if (++it != v.end())
+						os_ << ", ";
+				}
+				os_ << ")";
+			}
+		private:
+			ostream &os_;
+	};
+
+	ostream &PyUtils::constant_to_stream(ostream &os, const ConstantData *c)
+	{
+		PyConstToStream cs(os);
+		c->accept(cs);
+		return os;
 	}
 
 	string PyUtils::record_name(const RecordType *r)
@@ -112,7 +118,26 @@ namespace py_backend {
 						unindent() << ", ";
 				}
 
-				unindent() << "])\n";
+				unindent() << "])\n\n";
+
+				indent() << "def parse_" << name << "(s):\n";
+				indent_inc();
+				indent() << "l = s.split(':')\n\n";
+
+				indent() << "if len(l) != " <<
+					r->no_of_fields() << ":\n";
+				indent_inc();
+				indent() << "raise argparse.ArgumentTypeError('nej')";
+				indent_dec();
+
+				it = r->begin();
+				while (it != r->end()) {
+					unindent() << "\"" << (*it).name
+						<< "\"";
+					if (++it != r->end())
+						unindent() << ", ";
+				}
+				indent_dec();
 			}
 		}
 	}
@@ -235,7 +260,7 @@ namespace py_backend {
 
 	void PyBody::visit(ast::Constant *p)
 	{
-		unindent() << PyUtils::constant_to_str(p->data());
+		PyUtils::constant_to_stream(unindent(), p->data());
 	}
 
 	void PyBody::visit(ast::MethodCall *p)
@@ -469,7 +494,7 @@ namespace py_backend {
 
 			auto p = (*it)->get("default");
 			unindent() << "\"value\": ";
-			unindent() << PyUtils::constant_to_str(p->get());
+			PyUtils::constant_to_stream(unindent(), p->get());
 			unindent() << ", ";
 
 			unindent() << "},\n";
@@ -555,6 +580,7 @@ namespace py_backend {
 		} else if (t->record()) {
 			/* TODO: add subparser */
 			throw BackendException("generate_opts()");
+
 		}
 
 		unindent() << ", help=\"" << is << "\"";
