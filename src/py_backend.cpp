@@ -2,6 +2,9 @@
 
 namespace py_backend {
 
+	/** Converts a TeGeL constant to the corresponding constant in Python
+	 *
+	 */
 	class PyConstToStream : public ConstantDataVisitor
 	{
 		public:
@@ -17,22 +20,21 @@ namespace py_backend {
 			}
 
 			virtual void visit(const StringConstantData *p) {
-				os_ << Escaper()(p->value());
+				os_ << "\"" << Escaper()(p->value()) << "\"";
 			}
 
 			virtual void visit(const ListConstantData *p) {
 				/* TODO: replace with iterators */
-				os_ << "[";
 
 				auto v = p->values();
 				auto it = v.begin();
 
+				os_ << "[";
 				while (it != v.end()) {
 					(*it)->accept(*this);
 					if (++it != v.end())
 						os_ << ", ";
 				}
-
 				os_ << "]";
 			}
 
@@ -49,7 +51,76 @@ namespace py_backend {
 				}
 				os_ << ")";
 			}
+		protected:
+			ostream &os_;
+	};
+
+	/**
+	 *
+	 */
+	class PyRecordColonDelim : public TypeVisitor
+	{
+		public:
+			PyRecordColonDelim(ostream &os)
+				: os_(os) {}
+
+			virtual void visit(const RecordType *p) {
+				auto it = p->begin();
+				while (it != p->end()) {
+					(*it).type->accept(*this);
+					if (++it != p->end())
+						os_ << ":";
+				}
+			}
+
+			virtual void visit(const BoolType *) {
+				os_ << "[y/n]";
+			}
+
+			virtual void visit(const IntType *) {
+				os_ << "int";
+			}
+
+			virtual void visit(const StringType *) {
+				os_ << "string";
+			}
 		private:
+			ostream &os_;
+	};
+
+	/** Outputs a comma delimited list of casts to the proper types for
+	 * each of the record's fields
+	 *
+	 */
+	class PyRecordCastList : public TypeVisitor
+	{
+		public:
+			PyRecordCastList(ostream &os)
+				: os_(os) {}
+
+			virtual void visit(const RecordType *p) {
+				auto it = p->begin();
+				while (it != p->end()) {
+					(*it).type->accept(*this);
+					i++;
+					if (++it != p->end())
+						os_ << ", ";
+				}
+			}
+
+			virtual void visit(const BoolType *) {
+				os_ << "parse_bool(l[" << i << "])";
+			}
+
+			virtual void visit(const IntType *) {
+				os_ << "int(l[" << i << "])";
+			}
+
+			virtual void visit(const StringType *) {
+				os_ << "l[" << i << "]";
+			}
+		private:
+			int i = 0;
 			ostream &os_;
 	};
 
@@ -95,6 +166,10 @@ namespace py_backend {
 		unindent() << "import sys\n";
 		unindent() << "from collections import namedtuple\n\n";
 
+		unindent() << "def parse_bool(s):\n";
+		unindent() << "    return True if s.lower() == \"y\" "
+			"else False\n\n";
+
 		generate_records(args);
 	}
 
@@ -102,44 +177,47 @@ namespace py_backend {
 	{
 		for (symbol::Argument *a : args) {
 			auto t = a->get_type();
-			const RecordType *r;
-
-			if ((r = t->record())) {
-				string name = PyUtils::record_name(r);
-				unindent() << name << " = namedtuple(\""
-					<< name << "\", [";
-
-				auto it = r->begin();
-
-				while (it != r->end()) {
-					unindent() << "\"" << (*it).name
-						<< "\"";
-					if (++it != r->end())
-						unindent() << ", ";
-				}
-
-				unindent() << "])\n\n";
-
-				indent() << "def parse_" << name << "(s):\n";
-				indent_inc();
-				indent() << "l = s.split(':')\n\n";
-
-				indent() << "if len(l) != " <<
-					r->no_of_fields() << ":\n";
-				indent_inc();
-				indent() << "raise argparse.ArgumentTypeError('nej')";
-				indent_dec();
-
-				it = r->begin();
-				while (it != r->end()) {
-					unindent() << "\"" << (*it).name
-						<< "\"";
-					if (++it != r->end())
-						unindent() << ", ";
-				}
-				indent_dec();
-			}
+			if (t->record())
+				generate_record(t->record());
+			else if (t->list() && t->list()->elem()->record())
+				generate_record(t->list()->elem()->record());
 		}
+	}
+
+	void PyHeader::generate_record(const RecordType *r)
+	{
+		string name = PyUtils::record_name(r);
+		unindent() << name << " = namedtuple(\""
+			<< name << "\", [";
+
+		auto it = r->begin();
+
+		while (it != r->end()) {
+			unindent() << "\"" << (*it).name
+				<< "\"";
+			if (++it != r->end())
+				unindent() << ", ";
+		}
+
+		unindent() << "])\n\n";
+
+		unindent() << "def parse_" << name << "(s):\n";
+		unindent() << "    rs = \"";
+		PyRecordColonDelim rcd(unindent());
+		r->accept(rcd);
+		unindent() << "\"\n";
+		unindent() << "    l = s.split(':')\n\n";
+		unindent() << "    if len(l) != " << r->no_of_fields() << ":\n";
+		unindent() << "        raise argparse.ArgumentTypeError("
+			"\"Expected a string of type \" + rs)\n";
+		unindent() << "    try:\n";
+		unindent() << "        return " << name << "(";
+		PyRecordCastList rcl(unindent());
+		r->accept(rcl);
+		unindent() << ")\n";
+		unindent() << "    except:\n";
+		unindent() << "        raise argparse.ArgumentTypeError("
+			"\"Expected a string of type \" + rs)\n";
 	}
 
 	void PyBody::generate(ast::Statements *body)
@@ -341,8 +419,7 @@ namespace py_backend {
 		symbol::Variable *v;
 
 		if (dynamic_cast<symbol::Argument *>(p->symbol())) {
-		    unindent() << "_args[\"" << p->symbol()->get_name()
-			    << "\"][\"value\"]";
+		    unindent() << "_args." << p->symbol()->get_name();
 		} else if (dynamic_cast<symbol::Variable *>(p->symbol())) {
 		    unindent() << p->symbol()->get_name();
 		}
@@ -467,12 +544,6 @@ namespace py_backend {
 		indent() << "   argv = sys.argv\n\n";
 		indent() << "cmd = argv[0]\n\n";
 
-		generate_arg_dict(args);
-		unindent() << "\n";
-
-		generate_arg_list(args);
-		unindent() << "\n";
-
 		generate_opts(args);
 		unindent() << "\n";
 
@@ -484,48 +555,17 @@ namespace py_backend {
 		indent() << "    main()\n";
 	}
 
-	void PyMain::generate_arg_dict(const vector<symbol::Argument *> &args)
-	{
-		indent() << "args = {\n";
-		indent_inc();
-		for (auto it = args.begin(); it != args.end(); ++it) {
-			indent() << "\"" << (*it)->get_name()
-				<< "\": {";
-
-			auto p = (*it)->get("default");
-			unindent() << "\"value\": ";
-			PyUtils::constant_to_stream(unindent(), p->get());
-			unindent() << ", ";
-
-			unindent() << "},\n";
-		}
-		indent_dec();
-		indent() << "}\n";
-	}
-
-	void PyMain::generate_arg_list(const vector<symbol::Argument *> &args)
-	{
-		indent() << "args_order = [";
-		for (auto it = args.begin(); it != args.end(); ++it) {
-			unindent() << "\"" << (*it)->get_name()
-				<< "\", ";
-		}
-		unindent() << "]\n";
-	}
-
 	void PyMain::generate_opts(const vector<symbol::Argument *> &args)
 	{
 		indent() << "parser = argparse.ArgumentParser(description="
 			"\"Generated by TeGeL.\")\n";
 
-		indent() << "bc = [ \"y\", \"n\" ]\n";
-
 		for (auto a : args) {
 			generate_opt(a);
 		}
 
-		indent() << "pn = parser.parse_args()\n";
-		indent() << "print(pn)\n";
+		indent() << "args = parser.parse_args()\n";
+		indent() << "print(args)\n";
 	}
 
 	void PyMain::generate_opt(symbol::Argument *a)
@@ -548,43 +588,37 @@ namespace py_backend {
 		const Type *t = dd->type();
 
 		if (t == TypeFactory::get("bool")) {
-			unindent() << ", nargs=1, type=str, choices=bc";
-			auto bd = static_cast<const BoolConstantData *>(dd);
-			unindent() << ", default=" <<
-				(bd->value() ? "\"y\"" : "\"n\"");
+			unindent() << ", type=parse_bool";
 		} else if (t == TypeFactory::get("int")) {
 			unindent() << ", nargs=1, type=int";
-			auto id = static_cast<const IntConstantData *>(dd);
-			unindent() << ", default=" << id->value();
 		} else if (t == TypeFactory::get("string")) {
 			unindent() << ", nargs=1, type=str";
-			auto sd = static_cast<const StringConstantData *>(dd);
-			unindent() << ", default=\"" <<
-				Escaper()(sd->value()) << "\"";
 		} else if (t->list()) {
 			auto e = t->list()->elem();
 
 			if (e == TypeFactory::get("bool")) {
-				unindent() << ", nargs=\"+\", type=str, choices=bc";
-				auto bd = static_cast<const BoolConstantData *>(dd);
+				unindent() << ", nargs=\"+\", type=parse_bool";
 			} else if (e == TypeFactory::get("int")) {
 				unindent() << ", nargs=\"+\", type=int";
-				auto id = static_cast<const IntConstantData *>(dd);
 			} else if (e == TypeFactory::get("string")) {
 				unindent() << ", nargs=\"+\", type=str";
-				auto sd = static_cast<const StringConstantData *>(dd);
 			} else if (e->record()) {
-				/* TODO: add subparser */
-				throw BackendException("generate_opts()");
+				unindent() << ", nargs=\"+\", type=parse_"
+					<< PyUtils::record_name(e->record());
 			}
 		} else if (t->record()) {
-			/* TODO: add subparser */
-			throw BackendException("generate_opts()");
-
+			unindent() << ", type=parse_"
+				<< PyUtils::record_name(t->record());
 		}
 
+		PyConstToStream pcs(unindent());
+		unindent() << ", default=";
+		dd->accept(pcs);
+
 		unindent() << ", help=\"" << is << "\"";
+		unindent() << ", dest=\"" << a->get_name() << "\"";
 		unindent() << ")\n";
+
 	}
 
 	void PyBackend::generate(ostream &os,

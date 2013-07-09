@@ -80,6 +80,7 @@ class PyHeader : public PyWriter
 		 *
 		 */
 		void generate_records(const vector<symbol::Argument *> &);
+		void generate_record(const RecordType *);
 };
 
 class PyBody : public PyWriter, public ast::AST_Visitor
