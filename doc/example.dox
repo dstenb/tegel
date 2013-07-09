@@ -11,13 +11,13 @@
 
   arg string caption {
   	info = "Caption";
-	cmd = [ "c", "caption=" ];
+	cmd = "-c";
 	default = "Books";
   }
 
   arg book[] books {
       default = [ book{"Book 1", 1997}, book{"Book 2", 2001} ];
-      cmd = [ "b", "books=" ];
+      cmd = [ "--books" ];
       info = "Book list";
   }
 

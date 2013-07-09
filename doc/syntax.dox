@@ -17,7 +17,7 @@
 
   arg book[] books {
       default = [ book{"Book 1", 1997}, book{"Book 2", 2001} ];
-      cmd = [ "b", "books=" ];
+      cmd =  "--books";
       info = "Book list";
   }
 
@@ -60,7 +60,7 @@
   Parameter     | Description
   ------------- | -------------
   default       | Default value for the argument
-  cmd           | Command line parameters for the argument ("X" for short, "X=" for long)
+  cmd           | Command line parameter for the argument ("-X" for short, "--XYZ" for long)
   info          | Information string
 
   Below is an example of an argument declaration

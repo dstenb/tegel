@@ -19,30 +19,24 @@ struct PyUtils
 
 	static bool is_short_cmd(const string &s)
 	{
-		return (s.length() == 1 && isalpha(s[0]));
+		return (s.length() == 2 && s[0] == '-' && isalpha(s[1]));
 	}
 
 	static bool is_long_cmd(const string &s)
 	{
 		/* TODO: replace with a regex when gcc has proper support */
-		bool valid = false;
-
-		if (s.length() > 1) {
+		if (s.length() > 2) {
+			if (!s[0] == '-' || !s[1] == '-')
+				return false;
 			auto it = s.begin();
+			advance(it, 2);
 
-			while (it != s.end()) {
-				char c = (*it);
-
-				if (++it == s.end()) {
-					valid = (c == '=');
-				} else {
-					if (!(valid = isalpha(c)))
-						break;
-				}
-			}
+			for ( ; it != s.end(); ++it)
+				if (!isalpha((*it)))
+					return false;
+			return true;
 		}
-
-		return valid;
+		return false;
 	}
 
 	static bool valid_cmd_format(const string &s)

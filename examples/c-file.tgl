@@ -1,18 +1,18 @@
 arg string[] global_includes {
 	info = "Global includes";
-	cmd = [ "g", "global=" ];
+	cmd = "-g";
 	default = string[];
 }
 
 arg string[] relative_includes {
 	info = "Relative includes";
-	cmd = [ "r", "relative=" ];
+	cmd = "-r";
 	default = string[];
 }
 
 arg bool main {
 	info = "Generate main function?";
-	cmd = [ "m", "main=" ];
+	cmd = "-m";
 	default = true;
 }
 

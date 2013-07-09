@@ -55,8 +55,7 @@ void Argument::add(const string &id, ConstantData *data)
 
 void Argument::setup_parameters()
 {
-	add("cmd", new ListConstantData(
-		TypeFactory::get("string[]")->list()));
+	add("cmd", new StringConstantData(""));
 	add("default", constant::create_default_constant(get_type()));
 	add("info", new StringConstantData(""));
 }

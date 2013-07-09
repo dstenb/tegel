@@ -518,28 +518,28 @@ namespace py_backend {
 
 		for (auto a : args) {
 			auto p = a->get("cmd");
-			auto l = (ListConstantData *)p->get();
-			auto v = l->values();
+			auto l = (StringConstantData *)p->get();
+			// auto v = l->values();
 
-			if (!v.empty()) {
-				indent() << "elif o in (";
+			// if (!v.empty()) {
+			// 	indent() << "elif o in (";
 
-				for (auto e : v) {
-					auto s = (StringConstantData *)e;
-					string c = s->value();
+			// 	for (auto e : v) {
+			// 		auto s = (StringConstantData *)e;
+			// 		string c = s->value();
 
-					if (PyUtils::is_short_cmd(c))
-						unindent() << "\"-" <<
-							c << "\", ";
-					else
-						unindent() << "\"--" <<
-							c << "\", ";
-				}
-				unindent() << "):\n";
-				indent_inc();
-				indent() << "pass\n";
-				indent_dec();
-			}
+			// 		if (PyUtils::is_short_cmd(c))
+			// 			unindent() << "\"-" <<
+			// 				c << "\", ";
+			// 		else
+			// 			unindent() << "\"--" <<
+			// 				c << "\", ";
+			// 	}
+			// 	unindent() << "):\n";
+			// 	indent_inc();
+			// 	indent() << "pass\n";
+			// 	indent_dec();
+			// }
 
 		}
 		indent_dec();
@@ -570,43 +570,34 @@ namespace py_backend {
 
 	void PyBackend::check_cmd(const vector<symbol::Argument *> &args)
 	{
-		vector<string> reserved = { "h", "o" };
+		vector<string> reserved = { "-h", "-o" };
 		vector<string> handled = reserved;
 
 		for (auto a : args) {
 			auto p = a->get("cmd");
-			auto l = (ListConstantData *)p->get();
+			auto s = (StringConstantData *)p->get();
 
-			/* TODO */
-			for (auto e : l->values()) {
-				auto s = (StringConstantData *)e;
-				string c = s->value();
+			string c = s->value();
 
-				/* TODO: check format */
-
-				if (!PyUtils::valid_cmd_format(c))
-					throw BackendException(
-							"Invalid command line"
-							" name: `" + c +
-							"` (valid types: "
-							"a, abc=)");
-
-				if (find(reserved.begin(), reserved.end(), c)
-						!= reserved.end()) {
-					throw BackendException(
-							"Reserved command "
-							"line name: " + c);
-				}
-				if (find(handled.begin(), handled.end(),
-							c) != handled.end()) {
-					throw BackendException(
-							"Multiple command "
-							"line arguments named "
-							+ c);
-				}
-
-				handled.push_back(c);
+			if (!PyUtils::valid_cmd_format(c)) {
+				throw BackendException(
+						"Invalid command line name: `"
+						+ c + "` (valid types: "
+						"-a, --abc)");
 			}
+			if (find(reserved.begin(), reserved.end(), c)
+					!= reserved.end()) {
+				throw BackendException(
+						"Reserved command "
+						"line name: " + c);
+			}
+			if (find(handled.begin(), handled.end(),
+						c) != handled.end()) {
+				throw BackendException("Multiple command "
+						"line arguments named " + c);
+			}
+
+			handled.push_back(c);
 		}
 	}
 }
