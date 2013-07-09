@@ -1,13 +1,13 @@
 arg string[] global_includes {
 	info = "Global includes";
 	cmd = [ "g", "global=" ];
-	default = [];
+	default = string[];
 }
 
 arg string[] relative_includes {
 	info = "Relative includes";
 	cmd = [ "r", "relative=" ];
-	default = [];
+	default = string[];
 }
 
 arg bool main {
@@ -22,7 +22,7 @@ arg bool main {
 % endfor
 
 % for h in relative_includes
-#include <{{ $h }}>
+#include "{{ $h }}"
 % endfor
 
 % if main
