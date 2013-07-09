@@ -30,7 +30,7 @@ class ConstantData
 
 		virtual void print(ostream &os) const = 0;
 
-		virtual void accept(ConstantDataVisitor &) = 0;
+		virtual void accept(ConstantDataVisitor &) const = 0;
 
 		friend ostream &operator<<(ostream &os, const ConstantData &d) {
 			d.print(os);
@@ -41,11 +41,11 @@ class ConstantData
 class ConstantDataVisitor
 {
 	public:
-		virtual void visit(BoolConstantData *) = 0;
-		virtual void visit(IntConstantData *) = 0;
-		virtual void visit(StringConstantData *) = 0;
-		virtual void visit(ListConstantData *) = 0;
-		virtual void visit(RecordConstantData *) = 0;
+		virtual void visit(const BoolConstantData *) = 0;
+		virtual void visit(const IntConstantData *) = 0;
+		virtual void visit(const StringConstantData *) = 0;
+		virtual void visit(const ListConstantData *) = 0;
+		virtual void visit(const RecordConstantData *) = 0;
 };
 
 ConstantData *create_default_constant(const Type *t);
@@ -92,7 +92,7 @@ class ListConstantData : public ConstantData
 
 		void print(ostream &os) const;
 
-		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
+		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
 		/* TODO */
 		vector<SingleConstantData *> values() const {
@@ -115,7 +115,7 @@ class BoolConstantData : public PrimitiveConstantData
 			os << (value_ ? "true" : "false");
 		}
 
-		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
+		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
 		bool value() const { return value_; }
 	private:
@@ -134,7 +134,8 @@ class IntConstantData : public PrimitiveConstantData
 			os << value_;
 		}
 
-		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
+		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
+
 
 		int value() const { return value_; }
 	private:
@@ -154,7 +155,7 @@ class StringConstantData : public PrimitiveConstantData
 			os << "\"" << value_ << "\"";
 		}
 
-		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
+		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
 		string value() const { return value_; }
 	private:
@@ -199,7 +200,7 @@ class RecordConstantData : public SingleConstantData
 
 		void print(ostream &os) const;
 
-		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
+		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
 		/* TODO */
 		vector<PrimitiveConstantData *> values() const {
