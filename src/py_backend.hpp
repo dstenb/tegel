@@ -127,15 +127,6 @@ class PyBody : public PyWriter, public ast::AST_Visitor
 		void binary(const string &s, ast::BinaryExpression *e);
 };
 
-class PyUsage : public PyWriter
-{
-	public:
-		PyUsage(ostream &os)
-			: PyWriter(os, 0) {}
-
-		void generate(const vector<symbol::Argument *> &);
-};
-
 class PyMain : public PyWriter
 {
 	public:

@@ -516,26 +516,6 @@ namespace py_backend {
 		unindent() << ")";
 	}
 
-	void PyUsage::generate(const vector<symbol::Argument *> &args)
-	{
-		indent() << "def usage(cmd):\n";
-		indent_inc();
-		indent() << "print(\"Usage: %s [OPTIONS...]\" % cmd)\n";
-		for (auto it = args.begin(); it != args.end(); ++it) {
-			indent() << "print(\"";
-
-			/* Print command line strings */
-			/* TODO */
-
-			/* Print argument information */
-			auto p = (*it)->get("info");
-			auto s = (StringConstantData *)p->get();
-			unindent() << Escaper()(s->value());
-			unindent() << "\")\n";
-		}
-		indent_dec();
-	}
-
 	void PyMain::generate(const vector<symbol::Argument *> &args)
 	{
 		indent() << "def main(argv=None):\n";
@@ -631,14 +611,11 @@ namespace py_backend {
 
 			PyHeader h(os);
 			PyBody b(os);
-			PyUsage u(os);
 			PyMain m(os);
 
 			h.generate(args);
 			os << "\n";
 			b.generate(body);
-			os << "\n";
-			u.generate(args);
 			os << "\n";
 			m.generate(args);
 		}
