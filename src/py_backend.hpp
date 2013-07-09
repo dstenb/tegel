@@ -16,6 +16,39 @@ struct PyUtils
 {
 	static string constant_to_str(const ConstantData *);
 	static string record_name(const RecordType *);
+
+	static bool is_short_cmd(const string &s)
+	{
+		return (s.length() == 1 && isalpha(s[0]));
+	}
+
+	static bool is_long_cmd(const string &s)
+	{
+		/* TODO: replace with a regex when gcc has proper support */
+		bool valid = false;
+
+		if (s.length() > 1) {
+			auto it = s.begin();
+
+			while (it != s.end()) {
+				char c = (*it);
+
+				if (++it == s.end()) {
+					valid = (c == '=');
+				} else {
+					if (!(valid = isalpha(c)))
+						break;
+				}
+			}
+		}
+
+		return valid;
+	}
+
+	static bool valid_cmd_format(const string &s)
+	{
+		return is_short_cmd(s) || is_long_cmd(s);
+	}
 };
 
 /** PyWriter class

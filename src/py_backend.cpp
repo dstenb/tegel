@@ -418,9 +418,9 @@ namespace py_backend {
 	{
 		indent() << "def usage(cmd):\n";
 		indent_inc();
-		indent() << "_file.write(\"Usage: %s [OPTIONS...]\" % cmd)\n";
+		indent() << "print(\"Usage: %s [OPTIONS...]\" % cmd)\n";
 		for (auto it = args.begin(); it != args.end(); ++it) {
-			indent() << "_file.write(\"";
+			indent() << "print(\"";
 
 			/* Print command line strings */
 			/* TODO */
@@ -440,6 +440,7 @@ namespace py_backend {
 		indent_inc();
 		indent() << "if argv is None:\n";
 		indent() << "   argv = sys.argv\n\n";
+		indent() << "cmd = argv[0]\n\n";
 
 		generate_arg_dict(args);
 		unindent() << "\n";
@@ -447,9 +448,10 @@ namespace py_backend {
 		generate_arg_list(args);
 		unindent() << "\n";
 
-		indent() << "generate(args, sys.stdout)\n\n";
-
 		generate_opts(args);
+		unindent() << "\n";
+
+		indent() << "generate(args, sys.stdout)\n\n";
 
 		indent_dec();
 
@@ -463,16 +465,14 @@ namespace py_backend {
 		indent_inc();
 		for (auto it = args.begin(); it != args.end(); ++it) {
 			indent() << "\"" << (*it)->get_name()
-				<< "\": {\n";
-			indent_inc();
+				<< "\": {";
 
 			auto p = (*it)->get("default");
-			indent() << "\"value\": ";
+			unindent() << "\"value\": ";
 			unindent() << PyUtils::constant_to_str(p->get());
-			unindent() << ",\n";
+			unindent() << ", ";
 
-			indent_dec();
-			indent() << "},\n";
+			unindent() << "},\n";
 		}
 		indent_dec();
 		indent() << "}\n";
@@ -480,19 +480,69 @@ namespace py_backend {
 
 	void PyMain::generate_arg_list(const vector<symbol::Argument *> &args)
 	{
-		indent() << "args_order = [\n";
-		indent_inc();
+		indent() << "args_order = [";
 		for (auto it = args.begin(); it != args.end(); ++it) {
-			indent() << "\"" << (*it)->get_name()
-				<< "\", \n";
+			unindent() << "\"" << (*it)->get_name()
+				<< "\", ";
 		}
-		indent_dec();
-		indent() << "]\n";
+		unindent() << "]\n";
 	}
 
 	void PyMain::generate_opts(const vector<symbol::Argument *> &args)
 	{
+		indent() << "try:\n";
+		indent_inc();
+		indent() << "opts, argv = getopt.getopt(argv[1:], \"";
+		unindent() << "fbi"; /* TODO */
+		unindent() << "o:h\", [";
+		unindent() << " \"TODO=\" ";
+		unindent() << "])\n";
+		indent_dec();
+		indent() << "except getopt.GetoptError as e:\n";
+		indent_inc();
+		indent() << "print(e)\n";
+		indent() << "usage(cmd)\n";
+		indent() << "sys.exit()\n\n";
+		indent_dec();
+		indent() << "for o, a in opts:\n";
+		indent_inc();
+		indent() << "if o == '-h':\n";
+		indent_inc();
+		indent() << "usage(cmd)\n";
+		indent() << "sys.exit()\n";
+		indent_dec();
+		indent() << "elif o == '-o':\n";
+		indent_inc();
+		indent() << "print(\"Set file\")\n";
+		indent_dec();
 
+		for (auto a : args) {
+			auto p = a->get("cmd");
+			auto l = (ListConstantData *)p->get();
+			auto v = l->values();
+
+			if (!v.empty()) {
+				indent() << "elif o in (";
+
+				for (auto e : v) {
+					auto s = (StringConstantData *)e;
+					string c = s->value();
+
+					if (PyUtils::is_short_cmd(c))
+						unindent() << "\"-" <<
+							c << "\", ";
+					else
+						unindent() << "\"--" <<
+							c << "\", ";
+				}
+				unindent() << "):\n";
+				indent_inc();
+				indent() << "pass\n";
+				indent_dec();
+			}
+
+		}
+		indent_dec();
 	}
 
 	void PyBackend::generate(ostream &os,
@@ -500,6 +550,7 @@ namespace py_backend {
 			ast::Statements *body)
 	{
 		if (body) {
+			/* Validate the command line names */
 			check_cmd(args);
 
 			PyHeader h(os);
@@ -532,6 +583,13 @@ namespace py_backend {
 				string c = s->value();
 
 				/* TODO: check format */
+
+				if (!PyUtils::valid_cmd_format(c))
+					throw BackendException(
+							"Invalid command line"
+							" name: `" + c +
+							"` (valid types: "
+							"a, abc=)");
 
 				if (find(reserved.begin(), reserved.end(), c)
 						!= reserved.end()) {
