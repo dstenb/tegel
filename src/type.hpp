@@ -98,9 +98,8 @@ class Type
 	friend class TypeFactory;
 
 	public:
-		/** Get type representation
+		/** Get the type's string representation
 		 *
-		 * @return A const reference to the type string
 		 */
 		virtual string str() const = 0;
 
