@@ -1,6 +1,7 @@
 #ifndef __PYTHON_BACKEND_H__
 #define __PYTHON_BACKEND_H__
 
+#include <sstream>
 #include <string>
 
 using namespace std;
@@ -13,24 +14,8 @@ namespace py_backend {
 
 struct PyUtils
 {
-	static string constant_to_str(const ConstantData *c) {
-		if (c->type() == TypeFactory::get("bool")) {
-			auto b = (const BoolConstantData *)c;
-			return (b->value() ? "True" : "False");
-		} else if (c->type() == TypeFactory::get("int")) {
-			auto i = (const IntConstantData *)c;
-			return to_string(i->value());
-		} else if (c->type() == TypeFactory::get("string")) {
-			auto s = (const StringConstantData *)c;
-			return "\"" + Escaper()(s->value()) + "\"";
-		} else if (c->type()->list()) {
-			/* TODO */
-			return "[ 1, 2, 3 ]";
-		} else if (c->type()->record()) {
-			/* TODO */
-			return "book{1, \"hej\"}";
-		}
-	}
+	static string constant_to_str(const ConstantData *);
+	static string record_name(const RecordType *);
 };
 
 /** PyWriter class
@@ -63,6 +48,11 @@ class PyHeader : public PyWriter
 			: PyWriter(os, 0) {}
 
 		void generate(const vector<symbol::Argument *> &);
+	private:
+		/** Generate the named tuples for all the defined records
+		 *
+		 */
+		void generate_records(const vector<symbol::Argument *> &);
 };
 
 class PyBody : public PyWriter, public ast::AST_Visitor
@@ -128,6 +118,7 @@ class PyMain : public PyWriter
 	private:
 		void generate_arg_dict(const vector<symbol::Argument *> &);
 		void generate_arg_list(const vector<symbol::Argument *> &);
+		void generate_opts(const vector<symbol::Argument *> &);
 };
 
 class PyBackend : public Backend
@@ -135,6 +126,8 @@ class PyBackend : public Backend
 	public:
 		void generate(ostream &, const vector<symbol::Argument *> &,
 				ast::Statements *);
+	private:
+		void check_cmd(const vector<symbol::Argument *> &args);
 };
 
 }

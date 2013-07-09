@@ -2,6 +2,63 @@
 
 namespace py_backend {
 
+	string PyUtils::constant_to_str(const ConstantData *c)
+	{
+		if (c->type() == TypeFactory::get("bool")) {
+			auto b = (const BoolConstantData *)c;
+			return (b->value() ? "True" : "False");
+		} else if (c->type() == TypeFactory::get("int")) {
+			auto i = (const IntConstantData *)c;
+			return to_string(i->value());
+		} else if (c->type() == TypeFactory::get("string")) {
+			auto s = (const StringConstantData *)c;
+			return "\"" + Escaper()(s->value()) + "\"";
+		} else if (c->type()->list()) {
+			auto l = (ListConstantData *)c;
+
+			stringstream sstr;
+			sstr << "[";
+
+			auto v = l->values();
+			auto it = v.begin();
+
+			while (it != v.end()) {
+				sstr << constant_to_str(*it);
+				if (++it != v.end())
+					sstr << ", ";
+			}
+
+			sstr << "]";
+
+			return sstr.str();
+		} else if (c->type()->record()) {
+			auto r = (RecordConstantData *)c;
+
+			stringstream sstr;
+			sstr << record_name(r->type()) << "(";
+
+			auto v = r->values();
+			auto it = v.begin();
+
+			while (it != v.end()) {
+				sstr << constant_to_str(*it);
+				if (++it != v.end())
+					sstr << ", ";
+			}
+
+			sstr << ")";
+
+			return sstr.str();
+		} else {
+			return "";
+		}
+	}
+
+	string PyUtils::record_name(const RecordType *r)
+	{
+		return "tuple_" + r->str();
+	}
+
 	ostream &PyWriter::indent()
 	{
 		for (unsigned i = 0; i < indentation_; i++)
@@ -28,9 +85,36 @@ namespace py_backend {
 
 	void PyHeader::generate(const vector<symbol::Argument *> &args)
 	{
-		indent() << "import getopt\n";
-		indent() << "import sys\n";
-		/* TODO */
+		unindent() << "import getopt\n";
+		unindent() << "import sys\n";
+		unindent() << "from collections import namedtuple\n\n";
+
+		generate_records(args);
+	}
+
+	void PyHeader::generate_records(const vector<symbol::Argument *> &args)
+	{
+		for (symbol::Argument *a : args) {
+			auto t = a->get_type();
+			const RecordType *r;
+
+			if ((r = t->record())) {
+				string name = PyUtils::record_name(r);
+				unindent() << name << " = namedtuple(\""
+					<< name << "\", [";
+
+				auto it = r->begin();
+
+				while (it != r->end()) {
+					unindent() << "\"" << (*it).name
+						<< "\"";
+					if (++it != r->end())
+						unindent() << ", ";
+				}
+
+				unindent() << "])\n";
+			}
+		}
 	}
 
 	void PyBody::generate(ast::Statements *body)
@@ -173,13 +257,11 @@ namespace py_backend {
 				unindent() << ", ";
 				p->expression()->accept(*this);
 				unindent() << "+ 1)))";
-			}
-			if (m.name() == "str") {
+			} else if (m.name() == "str") {
 				unindent() << "str(";
 				p->expression()->accept(*this);
 				unindent() << ")";
-			}
-			if (m.name() == "upto") {
+			} else if (m.name() == "upto") {
 				unindent() << "list(range(";
 				p->expression()->accept(*this);
 				unindent() << ", ";
@@ -216,7 +298,7 @@ namespace py_backend {
 					p->arguments()->expression->accept(*this);
 					unindent() << ")";
 				} else if (tl->elem()->record()) {
-
+					/* TODO */
 				}
 			}
 		} else if (t->record()) {
@@ -233,10 +315,10 @@ namespace py_backend {
 		symbol::Argument *a;
 		symbol::Variable *v;
 
-		if ((a = dynamic_cast<symbol::Argument *>(p->symbol()))) {
+		if (dynamic_cast<symbol::Argument *>(p->symbol())) {
 		    unindent() << "_args[\"" << p->symbol()->get_name()
 			    << "\"][\"value\"]";
-		} else if ((v = dynamic_cast<symbol::Variable *>(p->symbol()))) {
+		} else if (dynamic_cast<symbol::Variable *>(p->symbol())) {
 		    unindent() << p->symbol()->get_name();
 		}
 	}
@@ -332,7 +414,8 @@ namespace py_backend {
 		unindent() << ")";
 	}
 
-	void PyUsage::generate(const vector<symbol::Argument *> &args) {
+	void PyUsage::generate(const vector<symbol::Argument *> &args)
+	{
 		indent() << "def usage(cmd):\n";
 		indent_inc();
 		indent() << "_file.write(\"Usage: %s [OPTIONS...]\" % cmd)\n";
@@ -365,6 +448,8 @@ namespace py_backend {
 		unindent() << "\n";
 
 		indent() << "generate(args, sys.stdout)\n\n";
+
+		generate_opts(args);
 
 		indent_dec();
 
@@ -405,11 +490,18 @@ namespace py_backend {
 		indent() << "]\n";
 	}
 
+	void PyMain::generate_opts(const vector<symbol::Argument *> &args)
+	{
+
+	}
+
 	void PyBackend::generate(ostream &os,
 			const vector<symbol::Argument *> &args,
 			ast::Statements *body)
 	{
 		if (body) {
+			check_cmd(args);
+
 			PyHeader h(os);
 			PyBody b(os);
 			PyUsage u(os);
@@ -422,6 +514,41 @@ namespace py_backend {
 			u.generate(args);
 			os << "\n";
 			m.generate(args);
+		}
+	}
+
+	void PyBackend::check_cmd(const vector<symbol::Argument *> &args)
+	{
+		vector<string> reserved = { "h", "o" };
+		vector<string> handled = reserved;
+
+		for (auto a : args) {
+			auto p = a->get("cmd");
+			auto l = (ListConstantData *)p->get();
+
+			/* TODO */
+			for (auto e : l->values()) {
+				auto s = (StringConstantData *)e;
+				string c = s->value();
+
+				/* TODO: check format */
+
+				if (find(reserved.begin(), reserved.end(), c)
+						!= reserved.end()) {
+					throw BackendException(
+							"Reserved command "
+							"line name: " + c);
+				}
+				if (find(handled.begin(), handled.end(),
+							c) != handled.end()) {
+					throw BackendException(
+							"Multiple command "
+							"line arguments named "
+							+ c);
+				}
+
+				handled.push_back(c);
+			}
 		}
 	}
 }
