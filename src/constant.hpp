@@ -71,6 +71,11 @@ class ListConstantData : public ConstantData
  		void add(SingleConstantData *d);
 
 		void print(ostream &os) const;
+
+		/* TODO */
+		vector<SingleConstantData *> values() const {
+			return data_;
+		}
 	private:
 		const ListType *type_;
 		vector<SingleConstantData *> data_;
@@ -165,6 +170,11 @@ class RecordConstantData : public SingleConstantData
 		virtual const RecordType *type() const { return type_; }
 
 		void print(ostream &os) const;
+
+		/* TODO */
+		vector<PrimitiveConstantData *> values() const {
+			return values_;
+		}
 	private:
 		const RecordType *type_;
 		vector<PrimitiveConstantData *> values_;
