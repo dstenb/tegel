@@ -1,6 +1,7 @@
 var searchData=
 [
   ['backend',['Backend',['../classBackend.html',1,'']]],
+  ['backendexception',['BackendException',['../classBackendException.html',1,'']]],
   ['binaryboolexpression',['BinaryBoolExpression',['../classast_1_1BinaryBoolExpression.html',1,'ast']]],
   ['binaryexpression',['BinaryExpression',['../classast_1_1BinaryExpression.html',1,'ast']]],
   ['binaryintexpression',['BinaryIntExpression',['../classast_1_1BinaryIntExpression.html',1,'ast']]],
