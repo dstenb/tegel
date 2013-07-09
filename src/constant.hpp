@@ -13,6 +13,14 @@ using namespace type;
 
 namespace constant {
 
+class ConstantData;
+class ConstantDataVisitor;
+class BoolConstantData;
+class IntConstantData;
+class StringConstantData;
+class ListConstantData;
+class RecordConstantData;
+
 class ConstantData
 {
 	public:
@@ -22,10 +30,22 @@ class ConstantData
 
 		virtual void print(ostream &os) const = 0;
 
+		virtual void accept(ConstantDataVisitor &) = 0;
+
 		friend ostream &operator<<(ostream &os, const ConstantData &d) {
 			d.print(os);
 			return os;
 		}
+};
+
+class ConstantDataVisitor
+{
+	public:
+		virtual void visit(BoolConstantData *) = 0;
+		virtual void visit(IntConstantData *) = 0;
+		virtual void visit(StringConstantData *) = 0;
+		virtual void visit(ListConstantData *) = 0;
+		virtual void visit(RecordConstantData *) = 0;
 };
 
 ConstantData *create_default_constant(const Type *t);
@@ -72,6 +92,8 @@ class ListConstantData : public ConstantData
 
 		void print(ostream &os) const;
 
+		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
+
 		/* TODO */
 		vector<SingleConstantData *> values() const {
 			return data_;
@@ -93,6 +115,8 @@ class BoolConstantData : public PrimitiveConstantData
 			os << (value_ ? "true" : "false");
 		}
 
+		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
+
 		bool value() const { return value_; }
 	private:
 		bool value_;
@@ -109,6 +133,8 @@ class IntConstantData : public PrimitiveConstantData
 		void print(ostream &os) const {
 			os << value_;
 		}
+
+		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
 
 		int value() const { return value_; }
 	private:
@@ -127,6 +153,8 @@ class StringConstantData : public PrimitiveConstantData
 		void print(ostream &os) const {
 			os << "\"" << value_ << "\"";
 		}
+
+		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
 
 		string value() const { return value_; }
 	private:
@@ -170,6 +198,8 @@ class RecordConstantData : public SingleConstantData
 		virtual const RecordType *type() const { return type_; }
 
 		void print(ostream &os) const;
+
+		virtual void accept(ConstantDataVisitor &v) { v.visit(this);}
 
 		/* TODO */
 		vector<PrimitiveConstantData *> values() const {
