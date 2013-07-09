@@ -146,6 +146,7 @@ class PyMain : public PyWriter
 		void generate_arg_dict(const vector<symbol::Argument *> &);
 		void generate_arg_list(const vector<symbol::Argument *> &);
 		void generate_opts(const vector<symbol::Argument *> &);
+		void generate_opt(symbol::Argument *);
 };
 
 class PyBackend : public Backend
