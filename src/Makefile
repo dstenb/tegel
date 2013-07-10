@@ -1,5 +1,6 @@
 CC = g++
-CFLAGS = -g -std=c++0x -pedantic -Wall -Wextra -Weffc++
+CFLAGS = -g -std=c++0x -pedantic -Wall -Wextra -Weffc++ \
+	 -Woverloaded-virtual -Wc++11-compat
 LDFLAGS =
 OBJFILES := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
