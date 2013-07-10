@@ -184,10 +184,10 @@ class StringConstantData : public PrimitiveConstantData
 		string value_;
 };
 
-class UnevenNoOfFieldsException : public runtime_error
+class UnmatchingFieldSignature : public runtime_error
 {
 	public:
-		UnevenNoOfFieldsException(const string &what)
+		UnmatchingFieldSignature(const string &what)
 			: runtime_error(what) {}
 };
 
@@ -196,21 +196,11 @@ class RecordConstantData : public SingleConstantData
 	public:
 		RecordConstantData(const RecordType *t)
 			: SingleConstantData(), type_(t), values_() {
-			for (auto it = t->begin(); it != t->end(); ++it) {
-				RecordField f = (*it);
-				values_.push_back(
-					static_cast<PrimitiveConstantData *>(
-						create_default_constant(f.type)));
-			}
+			set_default();
 		}
 
-		RecordConstantData(const RecordType *t,
-				vector<PrimitiveConstantData *> &v)
-			: SingleConstantData(), type_(t), values_(v) {}
-
 		~RecordConstantData() {
-			for (auto it = begin(); it != end(); ++it)
-				delete (*it);
+			clear();
 		}
 
 		typedef vector<PrimitiveConstantData *>::const_iterator
@@ -220,18 +210,23 @@ class RecordConstantData : public SingleConstantData
 		virtual void print(ostream &) const;
 		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
+		/** Set the fields. The object will take over ownership of the
+		 * constants
+		 */
+		void set(const vector<PrimitiveConstantData *> &);
+
 		iterator begin() const { return values_.begin(); }
 		iterator end() const { return values_.begin(); }
 	private:
 		RecordConstantData(const RecordConstantData &) = delete;
 		RecordConstantData &operator=(const RecordConstantData &) = delete;
 
+		void clear();
+		void set_default();
+
 		const RecordType *type_;
 		vector<PrimitiveConstantData *> values_;
 };
-
-void validate_field_types(const RecordType *t,
-		const vector<PrimitiveConstantData *> &v);
 
 }
 

@@ -273,17 +273,14 @@ record_constant
             vyyerror("expected a record (got '%s')", t->str().c_str());
         }
 
+        $$ = new RecordConstantData(p);
+
         try {
-            validate_field_types(p, constant_record);
-        } catch (const UnevenNoOfFieldsException &e) {
+            $$->set(constant_record);
+        } catch (const UnmatchingFieldSignature &e) {
             vyyerror("%s", e.what());
             YYERROR;
-        } catch (const DifferentTypesError &e) {
-            vyyerror("invalid type for field  (%s)", e.what()); // TODO improve
-            YYERROR;
         }
-
-        $$ = new RecordConstantData(p, constant_record);
 
         constant_record.clear();
 

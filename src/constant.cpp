@@ -54,6 +54,48 @@ void StringConstantData::print(ostream &os) const
 	os << "\"" << value_ << "\"";
 }
 
+void RecordConstantData::set(const vector<PrimitiveConstantData *> &v)
+{
+	if (v.size() != values_.size()) {
+		stringstream s;
+		s << "wrong number of fields (got " << v.size()
+			<< ", expected " << values_.size() << ")";
+		throw UnmatchingFieldSignature(s.str());
+	}
+
+	auto m = mismatch(values_.begin(), values_.end(), v.begin(),
+			[] (const PrimitiveConstantData *c,
+				const PrimitiveConstantData *n) {
+				return c->type() == n->type();
+			});
+
+	if (m.first != values_.end()) {
+		stringstream s;
+		s << "wrong type for field " << (m.first - values_.begin() + 1)
+			<< " (got " << (*m.second)->type()->str() <<
+			", expected " << (*m.first)->type()->str() << ")";
+		throw UnmatchingFieldSignature(s.str());
+	}
+
+	clear();
+	values_ = v;
+}
+
+void RecordConstantData::set_default()
+{
+	for (auto it = type_->begin(); it != type_->end(); ++it) {
+		RecordField f = (*it);
+		values_.push_back(static_cast<PrimitiveConstantData *>(
+					create_default_constant(f.type)));
+	}
+}
+
+void RecordConstantData::clear()
+{
+	for (auto it = begin(); it != end(); ++it)
+		delete (*it);
+}
+
 ConstantData *create_default_constant(const Type *t)
 {
 	if (t == TypeFactory::get("bool"))
@@ -68,26 +110,6 @@ ConstantData *create_default_constant(const Type *t)
 		return new RecordConstantData(t->record());
 	else
 		return nullptr;
-}
-
-// TODO: fix
-void validate_field_types(const RecordType *t,
-		const vector<PrimitiveConstantData *> &v)
-{
-	if (v.size() != t->no_of_fields()) {
-		stringstream s;
-		s << "Uneven number of fields (got " << v.size()
-			<< ", expected " << t->no_of_fields() << ")";
-		throw UnevenNoOfFieldsException(s.str());
-	}
-
-	// TODO rewrite
-	int i = 0;
-	for (auto it = t->begin(); it != t->end(); ++it, ++i) {
-		RecordField r = (*it);
-		if (r.type != v[i]->type()) // TODO: improve error
-			throw DifferentTypesError(v[i]->type(), r.type);
-	}
 }
 
 }
