@@ -632,17 +632,25 @@ namespace py_backend {
 
 			string c = s->value();
 
+			if (c.size() == 0) {
+				throw BackendException(
+						"No command line name given "
+						"for: " + a->get_name());
+			}
+
 			if (!PyUtils::valid_cmd_format(c)) {
 				throw BackendException(
 						"Invalid command line name: `"
-						+ c + "` (valid types: "
-						"-X, --XYZ)");
+						+ c + "` given for: " +
+						a->get_name() +
+						"(valid types: -X, --XYZ)");
 			}
 			if (find(reserved.begin(), reserved.end(), c)
 					!= reserved.end()) {
 				throw BackendException(
-						"Reserved command "
-						"line name: " + c);
+						"Reserved command line name: "
+						+ c + " given for: " +
+						a->get_name());
 			}
 			if (find(handled.begin(), handled.end(),
 						c) != handled.end()) {
