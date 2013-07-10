@@ -662,19 +662,21 @@ expression
     }
     | expression '.' IDENTIFIER
     {
-        auto t = $1->type()->dot($3);
-        if (t != nullptr) {
-            if ($1->type()->record()) {
-                $$ = new ast::FieldRef($1, $3);
-            } else {
-                vyyerror("expression . IDENTIFIER unhandled");
+        if ($1->type()->record()) {
+            auto t = $1->type()->dot($3);
+
+            if (t == nullptr) {
+                vyyerror("'%s' has no field named '%s'",
+                    $1->type()->str().c_str(), $3);
                 YYERROR;
             }
+            $$ = new ast::FieldRef($1, $3);
         } else {
             vyyerror("can't apply '.' operator on expression of type '%s'",
                 $1->type()->str().c_str());
             YYERROR;
         }
+
         free($3);
     }
     | expression '.' IDENTIFIER '(' expression_list ')'
