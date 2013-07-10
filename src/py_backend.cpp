@@ -419,7 +419,8 @@ namespace py_backend {
 		    unindent() << p->symbol()->get_name();
 	}
 
-	void PyBody::visit(ast::FieldRef *p) {
+	void PyBody::visit(ast::FieldRef *p)
+	{
 		p->record()->accept(*this);
 		unindent() << "." << p->field();
 	}
@@ -569,9 +570,9 @@ namespace py_backend {
 		if (t == TypeFactory::get("bool")) {
 			unindent() << ", type=parse_bool";
 		} else if (t == TypeFactory::get("int")) {
-			unindent() << ", nargs=1, type=int";
+			unindent() << ", type=int";
 		} else if (t == TypeFactory::get("string")) {
-			unindent() << ", nargs=1, type=str";
+			unindent() << ", type=str";
 		} else if (t->list()) {
 			auto e = t->list()->elem();
 
