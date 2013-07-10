@@ -85,8 +85,7 @@ void RecordConstantData::set_default()
 {
 	for (auto it = type_->begin(); it != type_->end(); ++it) {
 		RecordField f = (*it);
-		values_.push_back(static_cast<PrimitiveConstantData *>(
-					create_default_constant(f.type)));
+		values_.push_back(create_primitive_constant(f.type));
 	}
 }
 
@@ -96,7 +95,7 @@ void RecordConstantData::clear()
 		delete (*it);
 }
 
-ConstantData *create_default_constant(const Type *t)
+PrimitiveConstantData *create_primitive_constant(const PrimitiveType *t)
 {
 	if (t == TypeFactory::get("bool"))
 		return new BoolConstantData(false);
@@ -104,6 +103,14 @@ ConstantData *create_default_constant(const Type *t)
 		return new IntConstantData(0);
 	else if (t == TypeFactory::get("string"))
 		return new StringConstantData("");
+	else
+		return nullptr;
+}
+
+ConstantData *create_default_constant(const Type *t)
+{
+	if (t->primitive())
+		return create_primitive_constant(t->primitive());
 	else if (t->list())
 		return new ListConstantData(t->list());
 	else if (t->record())

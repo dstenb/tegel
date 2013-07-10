@@ -15,6 +15,7 @@ namespace constant {
 
 class ConstantData;
 class ConstantDataVisitor;
+class PrimitiveConstantData;
 class BoolConstantData;
 class IntConstantData;
 class StringConstantData;
@@ -60,6 +61,7 @@ class ConstantDataVisitor
 		virtual void visit(const RecordConstantData *) = 0;
 };
 
+PrimitiveConstantData *create_primitive_constant(const PrimitiveType *);
 ConstantData *create_default_constant(const Type *t);
 
 class SingleConstantData : public ConstantData
