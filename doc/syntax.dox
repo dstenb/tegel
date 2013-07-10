@@ -199,18 +199,17 @@
   "xxxxx"
   ~~~
 
-  \subsection list_repeat List repetition
-  A list expression can repeated by using the `*` operand with an integer
-  expression
+  \subsection list_concat List Concatenation
+  Two list expressions can be concatenated by using the `+` operand.
 
   ~~~
-  [ 1, 2, 3 ] * 2
+  [ 1, 2, 3] + [ 4, 5, 6 ]
   ~~~
 
   Translates to
 
   ~~~
-  [ 1, 2, 3, 1, 2, 3 ]
+  [ 1, 2, 3, 4, 5, 6 ]
   ~~~
 
 */
