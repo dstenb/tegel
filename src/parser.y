@@ -286,6 +286,8 @@ record_constant
         $$ = new RecordConstantData(p, constant_record);
 
         constant_record.clear();
+
+        free($1);
     }
 
 record_values
@@ -308,6 +310,8 @@ single_type
             vyyerror("Unknown type '%s'", $1);
             YYERROR;
         }
+
+        free($1);
     }
     ;
 
@@ -322,6 +326,8 @@ list_type
             vyyerror("Unknown type '%s'", $1);
             YYERROR;
         }
+
+        free($1);
     }
 
 constant_list
