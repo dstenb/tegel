@@ -39,6 +39,21 @@ void RecordConstantData::print(ostream &os) const
 	os << "}";
 }
 
+void BoolConstantData::print(ostream &os) const
+{
+	os << (value_ ? "true" : "false");
+}
+
+void IntConstantData::print(ostream &os) const
+{
+	os << value_;
+}
+
+void StringConstantData::print(ostream &os) const
+{
+	os << "\"" << value_ << "\"";
+}
+
 ConstantData *create_default_constant(const Type *t)
 {
 	if (t == TypeFactory::get("bool"))

@@ -26,10 +26,19 @@ class ConstantData
 	public:
 		virtual ~ConstantData() {}
 
+		/** Returns the constant's type
+		 *
+		 */
 		virtual const Type *type() const = 0;
 
-		virtual void print(ostream &os) const = 0;
+		/** Print the constant to the stream
+		 *
+		 */
+		virtual void print(ostream &) const = 0;
 
+		/** Accept the ConstantDataVisitor (for the visitor pattern)
+		 *
+		 */
 		virtual void accept(ConstantDataVisitor &) const = 0;
 
 		friend ostream &operator<<(ostream &os, const ConstantData &d) {
@@ -38,14 +47,17 @@ class ConstantData
 		}
 };
 
+/** ConstantData visitor interface
+ *
+ */
 class ConstantDataVisitor
 {
 	public:
-		virtual void visit(const BoolConstantData *) {}
-		virtual void visit(const IntConstantData *) {}
-		virtual void visit(const StringConstantData *) {}
-		virtual void visit(const ListConstantData *) {}
-		virtual void visit(const RecordConstantData *) {}
+		virtual void visit(const BoolConstantData *) = 0;
+		virtual void visit(const IntConstantData *) = 0;
+		virtual void visit(const StringConstantData *) = 0;
+		virtual void visit(const ListConstantData *) = 0;
+		virtual void visit(const RecordConstantData *) = 0;
 };
 
 ConstantData *create_default_constant(const Type *t);
@@ -65,10 +77,11 @@ class PrimitiveConstantData : public SingleConstantData
 	protected:
 		PrimitiveConstantData(const PrimitiveType *t)
 			: SingleConstantData(), type_(t) {}
-		PrimitiveConstantData(const PrimitiveConstantData &) = default;
-		PrimitiveConstantData &operator=(const
-				PrimitiveConstantData &) = default;
 	private:
+		PrimitiveConstantData(const PrimitiveConstantData &) = delete;
+		PrimitiveConstantData &operator=(const
+				PrimitiveConstantData &) = delete;
+
 		const PrimitiveType *type_;
 };
 
@@ -76,30 +89,31 @@ class ListConstantData : public ConstantData
 {
 	public:
 		ListConstantData(const ListType *t) : type_(t), data_() {}
-		ListConstantData(const ListConstantData &) = default;
-		ListConstantData &operator=(const
-				ListConstantData &) = default;
 
 		~ListConstantData() {
-			for (auto it = data_.begin();
-					it != data_.end(); ++it)
+			for (auto it = begin(); it != end(); ++it)
 				delete (*it);
 		}
-
-		virtual const ListType *type() const { return type_; }
-
- 		void add(SingleConstantData *d);
-
-		void print(ostream &os) const;
-
-		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
 		typedef vector<SingleConstantData *>::const_iterator
 			iterator;
 
+		virtual const ListType *type() const { return type_; }
+		virtual void print(ostream &) const;
+		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
+
+		/** Add a constant to the end of the list. Throws if wrong type
+		 *
+		 * @throw DifferentTypesError
+		 */
+ 		void add(SingleConstantData *d);
+
 		iterator begin() const { return data_.begin(); }
 		iterator end() const { return data_.begin(); }
 	private:
+		ListConstantData(const ListConstantData &) = delete;
+		ListConstantData &operator=(const ListConstantData &) = delete;
+
 		const ListType *type_;
 		vector<SingleConstantData *> data_;
 };
@@ -112,14 +126,17 @@ class BoolConstantData : public PrimitiveConstantData
 				static_cast<const PrimitiveType *>(
 					TypeFactory::get("bool"))), value_(b) {}
 
-		void print(ostream &os) const {
-			os << (value_ ? "true" : "false");
-		}
-
+		virtual void print(ostream &) const;
 		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
+		/** Returns the boolean value
+		 *
+		 */
 		bool value() const { return value_; }
 	private:
+		BoolConstantData(const BoolConstantData &) = delete;
+		BoolConstantData &operator=(const BoolConstantData &) = delete;
+
 		bool value_;
 };
 
@@ -131,15 +148,17 @@ class IntConstantData : public PrimitiveConstantData
 				static_cast<const PrimitiveType *>(
 					TypeFactory::get("int"))), value_(i) {}
 
-		void print(ostream &os) const {
-			os << value_;
-		}
-
+		virtual void print(ostream &) const;
 		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
-
+		/** Returns the integer value
+		 *
+		 */
 		int value() const { return value_; }
 	private:
+		IntConstantData(const IntConstantData &) = delete;
+		IntConstantData &operator=(const IntConstantData &) = delete;
+
 		int value_;
 };
 
@@ -151,15 +170,17 @@ class StringConstantData : public PrimitiveConstantData
 				static_cast<const PrimitiveType *>(
 					TypeFactory::get("string"))), value_(s) {}
 
-
-		void print(ostream &os) const {
-			os << "\"" << value_ << "\"";
-		}
-
+		virtual void print(ostream &) const;
 		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
+		/** Returns the string
+		 *
+		 */
 		string value() const { return value_; }
 	private:
+		StringConstantData(const StringConstantData &) = delete;
+		StringConstantData &operator=(const StringConstantData &) = delete;
+
 		string value_;
 };
 
@@ -187,28 +208,24 @@ class RecordConstantData : public SingleConstantData
 				vector<PrimitiveConstantData *> &v)
 			: SingleConstantData(), type_(t), values_(v) {}
 
-		RecordConstantData(const RecordConstantData &) = default;
-		RecordConstantData &operator=(const
-				RecordConstantData &) = default;
-
 		~RecordConstantData() {
-			for (auto it = values_.begin();
-					it != values_.end(); ++it)
+			for (auto it = begin(); it != end(); ++it)
 				delete (*it);
 		}
-
-		virtual const RecordType *type() const { return type_; }
-
-		void print(ostream &os) const;
-
-		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
 		typedef vector<PrimitiveConstantData *>::const_iterator
 			iterator;
 
+		virtual const RecordType *type() const { return type_; }
+		virtual void print(ostream &) const;
+		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
+
 		iterator begin() const { return values_.begin(); }
 		iterator end() const { return values_.begin(); }
 	private:
+		RecordConstantData(const RecordConstantData &) = delete;
+		RecordConstantData &operator=(const RecordConstantData &) = delete;
+
 		const RecordType *type_;
 		vector<PrimitiveConstantData *> values_;
 };
