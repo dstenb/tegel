@@ -114,6 +114,7 @@ class PyBody : public PyWriter, public ast::AST_Visitor
 		virtual void visit(ast::Constant *);
 		virtual void visit(ast::MethodCall *);
 		virtual void visit(ast::SymbolRef *);
+		virtual void visit(ast::FieldRef *);
 		virtual void visit(ast::List *);
 		virtual void visit(ast::Statements *);
 		virtual void visit(ast::Conditional *);

@@ -419,6 +419,11 @@ namespace py_backend {
 		    unindent() << p->symbol()->get_name();
 	}
 
+	void PyBody::visit(ast::FieldRef *p) {
+		p->record()->accept(*this);
+		unindent() << "." << p->field();
+	}
+
 	void PyBody::visit(ast::List *p)
 	{
 		unindent() << "[";
