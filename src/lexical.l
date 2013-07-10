@@ -154,6 +154,11 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
                             yyterminate(); }
 <inline>"\""              { str_caller = inline; string_builder_append("");
                             BEGIN(str); }
+
+ /* Consider all other characters as errors */
+<inline,control,INITIAL>{UANYN} { vyyerror("unexpected character `%s`",
+                                  yytext);
+                                  yyterminate(); }
 %%
 
 void string_builder_append(const char *s)
