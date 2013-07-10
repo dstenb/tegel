@@ -401,7 +401,17 @@ namespace py_backend {
 					p->arguments()->expression->accept(*this);
 					unindent() << ")";
 				} else if (tl->elem()->record()) {
-					/* TODO */
+					auto a = p->arguments();
+					auto key = a->expression;
+					auto asc = a->next->expression;
+
+					unindent() << "sorted(";
+					p->expression()->accept(*this);
+					unindent() << ", reverse=not ";
+					asc->accept(*this);
+					unindent() << ", key=lambda r: getattr(r, ";
+					key->accept(*this);
+					unindent() << "))";
 				}
 			}
 		} else if (t->record()) {
