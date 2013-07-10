@@ -57,6 +57,7 @@ class ListConcat;
 class Constant;
 class MethodCall;
 class SymbolRef;
+class FieldRef;
 class List;
 class ExpressionList;
 
@@ -508,6 +509,31 @@ class SymbolRef : public UnaryExpression
 		symbol::Symbol *symbol_;
 };
 
+class FieldRef : public UnaryExpression
+{
+	public:
+		FieldRef(Expression *r, const string &f)
+			: record_(r), field_(f) {}
+
+		~FieldRef() {
+			delete record_;
+		}
+
+		Expression *record() { return record_; }
+		string field() { return field_; }
+
+		virtual void accept(AST_Visitor &);
+		virtual const Type *type() const {
+			return record_->type()->dot(field_);
+		}
+	private:
+		FieldRef(const FieldRef &) = delete;
+		FieldRef &operator=(const FieldRef &) = delete;
+
+		Expression *record_;
+		string field_;
+};
+
 /**
  *
  */
@@ -822,6 +848,7 @@ class AST_Visitor
 		virtual void visit(Constant *) = 0;
 		virtual void visit(MethodCall *) = 0;
 		virtual void visit(SymbolRef *) = 0;
+		virtual void visit(FieldRef *) = 0;
 		virtual void visit(List *) = 0;
 
 		virtual void visit(Statements *) = 0;
@@ -958,6 +985,15 @@ class AST_Printer : public AST_Visitor
 			cerr << "SymbolRef(" << p->symbol()->get_name()
 				<< ", " << p->symbol()->get_type()->str()
 				<< ", " << p->symbol() << ")\n";
+		}
+
+		virtual void visit(FieldRef *p) {
+			print_ws();
+			cerr << "FieldRef";
+			indent++;
+			p->record()->accept(*this);
+			print_ws();
+			cerr << "." << p->field() << "\n";
 		}
 
 		virtual void visit(List *p) {
