@@ -86,52 +86,111 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="textblock"><h1><a class="anchor" id="file"></a>
 File</h1>
-<div class="fragment"><div class="line"><span class="preprocessor"># Example record</span></div>
-<div class="line"><span class="preprocessor"></span>record book {</div>
-<div class="line">    <span class="keywordtype">string</span> title;</div>
-<div class="line">    <span class="keywordtype">int</span> year;</div>
+<div class="fragment"><div class="line"><span class="preprocessor"># example for the 3-clause BSD license</span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line"><span class="preprocessor"># define an &#39;author&#39; record</span></div>
+<div class="line"><span class="preprocessor"></span>record author {</div>
+<div class="line">    <span class="keywordtype">string</span> name;</div>
+<div class="line">    <span class="keywordtype">int</span> started;</div>
+<div class="line">    <span class="keywordtype">int</span> ended;</div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line">arg <span class="keywordtype">string</span> caption {</div>
-<div class="line">   info = <span class="stringliteral">&quot;Caption&quot;</span>;</div>
-<div class="line">  cmd = <span class="stringliteral">&quot;-c&quot;</span>;</div>
-<div class="line">  <span class="keywordflow">default</span> = <span class="stringliteral">&quot;Books&quot;</span>;</div>
+<div class="line"><span class="preprocessor"># declare an argument that is a list of authors</span></div>
+<div class="line"><span class="preprocessor"></span>arg author[] authors {</div>
+<div class="line">    cmd = <span class="stringliteral">&quot;-a&quot;</span>;               # <span class="keyword">set</span> a <span class="keywordtype">short</span> format command line name</div>
+<div class="line">    info = <span class="stringliteral">&quot;list of authors&quot;</span>; # <span class="keyword">set</span> the description <span class="keywordtype">string</span></div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line">arg book[] books {</div>
-<div class="line">    <span class="keywordflow">default</span> = [ book{<span class="stringliteral">&quot;Book 1&quot;</span>, 1997}, book{<span class="stringliteral">&quot;Book 2&quot;</span>, 2001} ];</div>
-<div class="line">    cmd = [ <span class="stringliteral">&quot;--books&quot;</span> ];</div>
-<div class="line">    info = <span class="stringliteral">&quot;Book list&quot;</span>;</div>
+<div class="line"><span class="preprocessor"># declare an argument that is a string (the organization name)</span></div>
+<div class="line"><span class="preprocessor"></span>arg <span class="keywordtype">string</span> org {</div>
+<div class="line">  <span class="keywordflow">default</span> = <span class="stringliteral">&quot;Acme Corporation&quot;</span>;   # <span class="keyword">set</span> the <span class="keywordflow">default</span> value</div>
+<div class="line">  cmd = <span class="stringliteral">&quot;--org&quot;</span>;                  # <span class="keyword">set</span> a <span class="keywordtype">long</span> format command line name</div>
+<div class="line">  info = <span class="stringliteral">&quot;organization&quot;</span>;          # <span class="keyword">set</span> the description <span class="keywordtype">string</span></div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line"><span class="preprocessor"># The body starts below</span></div>
+<div class="line"><span class="preprocessor"># the body starts after &#39;%%&#39;</span></div>
 <div class="line"><span class="preprocessor"></span>%%</div>
-<div class="line">\begin{table}[H]</div>
-<div class="line">    \caption{{ <span class="stringliteral">&quot;{&quot;</span> + caption + <span class="stringliteral">&quot;}&quot;</span> }}</div>
-<div class="line">    \begin{tabular}{l l}</div>
-<div class="line">        Book &amp; Published {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
+<div class="line">% <span class="keywordflow">for</span> a in authors.sort(<span class="stringliteral">&quot;started&quot;</span>, <span class="keyword">true</span>)</div>
+<div class="line">Copyright (c) \\</div>
+<div class="line">    % <span class="keywordflow">if</span> a.started == a.ended</div>
+<div class="line">{{ a.started }}, \\</div>
+<div class="line">    % <span class="keywordflow">else</span></div>
+<div class="line">{{ a.started.str() + <span class="stringliteral">&quot;-&quot;</span> + a.ended.str() }}, \\</div>
+<div class="line">    % endif</div>
+<div class="line">{{ a.name }}</div>
+<div class="line">% endfor</div>
+<div class="line">All rights reserved.</div>
 <div class="line"></div>
-<div class="line">        % <span class="keywordflow">if</span> hline</div>
-<div class="line">        \hline {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
-<div class="line">        % endif</div>
+<div class="line">Redistribution and use in source and binary forms, with or without</div>
+<div class="line">modification, are permitted provided that the following conditions are met:</div>
+<div class="line">      Redistributions of source code must retain the above copyright</div>
+<div class="line">      notice, <span class="keyword">this</span> list of conditions and the following disclaimer.</div>
+<div class="line">      Redistributions in binary form must reproduce the above copyright</div>
+<div class="line">      notice, <span class="keyword">this</span> list of conditions and the following disclaimer in the</div>
+<div class="line">      documentation and/or other materials provided with the distribution.</div>
+<div class="line">      Neither the name of the {{ org }} nor the</div>
+<div class="line">      names of its contributors may be used to endorse or promote products</div>
+<div class="line">      derived from <span class="keyword">this</span> software without specific prior written permission.</div>
 <div class="line"></div>
-<div class="line">        % <span class="keywordflow">for</span> b in books.sort(<span class="stringliteral">&quot;title&quot;</span>, <span class="keyword">true</span>)</div>
-<div class="line">        {{ b.title }} &amp; {{ b.year }} {{ <span class="stringliteral">&quot;\\&quot;</span> }}</div>
-<div class="line">        % endfor</div>
-<div class="line">    \end{tabular}</div>
-<div class="line">\end{table}</div>
+<div class="line">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS <span class="stringliteral">&quot;AS IS&quot;</span> AND</div>
+<div class="line">ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</div>
+<div class="line">WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</div>
+<div class="line">DISCLAIMED. IN NO EVENT SHALL {{ org.upper() }} BE LIABLE FOR ANY</div>
+<div class="line">DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES</div>
+<div class="line">(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</div>
+<div class="line">LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND</div>
+<div class="line">ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</div>
+<div class="line">(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS</div>
+<div class="line">SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</div>
 </div><!-- fragment --><h1><a class="anchor" id="compile"></a>
 Compiling the file</h1>
-<div class="fragment"><div class="line">$ tegel -b py -o example.py</div>
-</div><!-- fragment --><div class="fragment"><div class="line">$ tegel -b sh -o example.sh</div>
-</div><!-- fragment --><div class="fragment"><div class="line">$ tegel -b pygtk -o example-gtk.py</div>
+<p>A Python script can then be generated by calling TeGeL with the following arguments:</p>
+<div class="fragment"><div class="line">$ tegel -b py bsd.tgl -o bsd.py</div>
 </div><!-- fragment --><h1><a class="anchor" id="running"></a>
 Running the generated script</h1>
-<p>More text. </p>
-</div></div><!-- contents -->
+<p>Information about the script (e.g. command line flags) can be found by using the '-h' flag.</p>
+<div class="fragment"><div class="line">$ python bsd.py -h</div>
+<div class="line">usage: bsd.py [-h] [-a AUTHORS [AUTHORS ...]] [--org ORG]</div>
+<div class="line"></div>
+<div class="line">Generated by TeGeL.</div>
+<div class="line"></div>
+<div class="line">optional arguments:</div>
+<div class="line">  -h, --help            show <span class="keyword">this</span> help message and exit</div>
+<div class="line">  -a AUTHORS [AUTHORS ...]</div>
+<div class="line">                        list of authors</div>
+<div class="line">  --org ORG             organization</div>
+</div><!-- fragment --><p>For example, running the script with the following arguments</p>
+<div class="fragment"><div class="line">$ python bsd.py -a <span class="stringliteral">&quot;Richard Stallman:1993:1993&quot;</span> <span class="stringliteral">&quot;Bill Gates:1987:1992&quot;</span> --org <span class="stringliteral">&quot;MicroGnu&quot;</span></div>
+</div><!-- fragment --><p>generates</p>
+<div class="fragment"><div class="line">Copyright (c) 1987-1992, Bill Gates</div>
+<div class="line">Copyright (c) 1993, Richard Stallman</div>
+<div class="line">All rights reserved.</div>
+<div class="line"></div>
+<div class="line">Redistribution and use in source and binary forms, with or without</div>
+<div class="line">modification, are permitted provided that the following conditions are met:</div>
+<div class="line">      Redistributions of source code must retain the above copyright</div>
+<div class="line">      notice, <span class="keyword">this</span> list of conditions and the following disclaimer.</div>
+<div class="line">      Redistributions in binary form must reproduce the above copyright</div>
+<div class="line">      notice, <span class="keyword">this</span> list of conditions and the following disclaimer in the</div>
+<div class="line">      documentation and/or other materials provided with the distribution.</div>
+<div class="line">      Neither the name of the MicroGNU nor the</div>
+<div class="line">      names of its contributors may be used to endorse or promote products</div>
+<div class="line">      derived from <span class="keyword">this</span> software without specific prior written permission.</div>
+<div class="line"></div>
+<div class="line">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS <span class="stringliteral">&quot;AS IS&quot;</span> AND</div>
+<div class="line">ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</div>
+<div class="line">WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</div>
+<div class="line">DISCLAIMED. IN NO EVENT SHALL MICROGNU BE LIABLE FOR ANY</div>
+<div class="line">DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES</div>
+<div class="line">(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</div>
+<div class="line">LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND</div>
+<div class="line">ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</div>
+<div class="line">(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS</div>
+<div class="line">SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</div>
+</div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 9 2013 13:20:17 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 10 2013 15:52:34 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
