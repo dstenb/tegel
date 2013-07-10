@@ -90,9 +90,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classconstant_1_1ConstantDataVisitor-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">constant::ConstantDataVisitor Class Reference</div>  </div>
+<div class="title">constant::ConstantDataVisitor Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="constant_8hpp_source.html">constant.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for constant::ConstantDataVisitor:</div>
 <div class="dyncontent">
@@ -105,29 +107,31 @@ Inheritance diagram for constant::ConstantDataVisitor:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a846b81aaae44016b7940e0d9a2469b3a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a846b81aaae44016b7940e0d9a2469b3a"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1BoolConstantData.html">BoolConstantData</a> *)</td></tr>
-<tr class="separator:a846b81aaae44016b7940e0d9a2469b3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7baaecf2181d7d4bf3d7f648bdbc47e4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7baaecf2181d7d4bf3d7f648bdbc47e4"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1IntConstantData.html">IntConstantData</a> *)</td></tr>
-<tr class="separator:a7baaecf2181d7d4bf3d7f648bdbc47e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8f094a66ecf932e1fa3e82fed481e85"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8f094a66ecf932e1fa3e82fed481e85"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1StringConstantData.html">StringConstantData</a> *)</td></tr>
-<tr class="separator:af8f094a66ecf932e1fa3e82fed481e85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27512bddd98f7c5dd45d07fd7f11204c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27512bddd98f7c5dd45d07fd7f11204c"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1ListConstantData.html">ListConstantData</a> *)</td></tr>
-<tr class="separator:a27512bddd98f7c5dd45d07fd7f11204c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75922d17b1f558af422932a140a4a14f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75922d17b1f558af422932a140a4a14f"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1RecordConstantData.html">RecordConstantData</a> *)</td></tr>
-<tr class="separator:a75922d17b1f558af422932a140a4a14f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61de99d255d657f11b38aca788e1175f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61de99d255d657f11b38aca788e1175f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1BoolConstantData.html">BoolConstantData</a> *)=0</td></tr>
+<tr class="separator:a61de99d255d657f11b38aca788e1175f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ecd959d6a641a03ce22bc34137c3c7d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ecd959d6a641a03ce22bc34137c3c7d"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1IntConstantData.html">IntConstantData</a> *)=0</td></tr>
+<tr class="separator:a0ecd959d6a641a03ce22bc34137c3c7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace9722fccf3a7b0415824effe3c02f3f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace9722fccf3a7b0415824effe3c02f3f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1StringConstantData.html">StringConstantData</a> *)=0</td></tr>
+<tr class="separator:ace9722fccf3a7b0415824effe3c02f3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed86fe32a8802a589f4881c43a9db94e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed86fe32a8802a589f4881c43a9db94e"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1ListConstantData.html">ListConstantData</a> *)=0</td></tr>
+<tr class="separator:aed86fe32a8802a589f4881c43a9db94e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac371a77af1d32ecb690d9c400b8b6f7d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac371a77af1d32ecb690d9c400b8b6f7d"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>visit</b> (const <a class="el" href="classconstant_1_1RecordConstantData.html">RecordConstantData</a> *)=0</td></tr>
+<tr class="separator:ac371a77af1d32ecb690d9c400b8b6f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classconstant_1_1ConstantData.html">ConstantData</a> visitor interface </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="constant_8hpp_source.html">constant.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 10 2013 15:52:35 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 10 2013 17:49:11 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

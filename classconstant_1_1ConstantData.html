@@ -112,14 +112,11 @@ Inheritance diagram for constant::ConstantData:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a33db8d3f433a3b29fc5acf3b775952da"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33db8d3f433a3b29fc5acf3b775952da"></a>
-virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> () const =0</td></tr>
+<tr class="memitem:a33db8d3f433a3b29fc5acf3b775952da"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1Type.html">Type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classconstant_1_1ConstantData.html#a33db8d3f433a3b29fc5acf3b775952da">type</a> () const =0</td></tr>
 <tr class="separator:a33db8d3f433a3b29fc5acf3b775952da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae9c30cbdc9a351be99ee6a685aa0a3b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae9c30cbdc9a351be99ee6a685aa0a3b"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> (ostream &amp;os) const =0</td></tr>
-<tr class="separator:aae9c30cbdc9a351be99ee6a685aa0a3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8df2683dba913d3f87ec64cf186344b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8df2683dba913d3f87ec64cf186344b"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>accept</b> (<a class="el" href="classconstant_1_1ConstantDataVisitor.html">ConstantDataVisitor</a> &amp;) const =0</td></tr>
+<tr class="memitem:a1391e695f3b5423441ed2bf53343ec84"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classconstant_1_1ConstantData.html#a1391e695f3b5423441ed2bf53343ec84">print</a> (ostream &amp;) const =0</td></tr>
+<tr class="separator:a1391e695f3b5423441ed2bf53343ec84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8df2683dba913d3f87ec64cf186344b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classconstant_1_1ConstantData.html#af8df2683dba913d3f87ec64cf186344b">accept</a> (<a class="el" href="classconstant_1_1ConstantDataVisitor.html">ConstantDataVisitor</a> &amp;) const =0</td></tr>
 <tr class="separator:af8df2683dba913d3f87ec64cf186344b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -128,13 +125,94 @@ Friends</h2></td></tr>
 ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (ostream &amp;os, const <a class="el" href="classconstant_1_1ConstantData.html">ConstantData</a> &amp;d)</td></tr>
 <tr class="separator:adcd30ba9a87d35d2adcd3fdd772f033e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="af8df2683dba913d3f87ec64cf186344b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void constant::ConstantData::accept </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classconstant_1_1ConstantDataVisitor.html">ConstantDataVisitor</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Accept the <a class="el" href="classconstant_1_1ConstantDataVisitor.html">ConstantDataVisitor</a> (for the visitor pattern) </p>
+
+<p>Implemented in <a class="el" href="classconstant_1_1RecordConstantData.html#a8a4df653dcf1a3dc839ee9215c55548b">constant::RecordConstantData</a>, <a class="el" href="classconstant_1_1StringConstantData.html#ab2909512ab324eb16f6299366f02ceda">constant::StringConstantData</a>, <a class="el" href="classconstant_1_1IntConstantData.html#a986381e2201f3619423953eee1f4fae6">constant::IntConstantData</a>, <a class="el" href="classconstant_1_1BoolConstantData.html#ab4303515fabd35d286f2f512c22de3b1">constant::BoolConstantData</a>, and <a class="el" href="classconstant_1_1ListConstantData.html#a0507af5bc6fe93dbee27b529d27b4150">constant::ListConstantData</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a1391e695f3b5423441ed2bf53343ec84"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void constant::ConstantData::print </td>
+          <td>(</td>
+          <td class="paramtype">ostream &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Print the constant to the stream </p>
+
+<p>Implemented in <a class="el" href="classconstant_1_1RecordConstantData.html#ad66b4ac667c41651f1f62fd90030789c">constant::RecordConstantData</a>, <a class="el" href="classconstant_1_1StringConstantData.html#a3ffef529403c640a5c63eb7bc6f7d961">constant::StringConstantData</a>, <a class="el" href="classconstant_1_1IntConstantData.html#a25b3df684831625f1e89c0a3bf3c7a93">constant::IntConstantData</a>, <a class="el" href="classconstant_1_1BoolConstantData.html#a8f11c52568ae52a09d5a30f0296bd77e">constant::BoolConstantData</a>, and <a class="el" href="classconstant_1_1ListConstantData.html#a4bb32ef648d850779cdc898ca84255a5">constant::ListConstantData</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a33db8d3f433a3b29fc5acf3b775952da"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual const <a class="el" href="classtype_1_1Type.html">Type</a>* constant::ConstantData::type </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns the constant's type </p>
+
+<p>Implemented in <a class="el" href="classconstant_1_1RecordConstantData.html#a7328ca46da0888d413280c1923def32c">constant::RecordConstantData</a>, <a class="el" href="classconstant_1_1ListConstantData.html#a577a49433a85eca272928f297177c40c">constant::ListConstantData</a>, <a class="el" href="classconstant_1_1PrimitiveConstantData.html#a1312e22a1f65ea13df27204d100eca8d">constant::PrimitiveConstantData</a>, and <a class="el" href="classconstant_1_1SingleConstantData.html#a75fff75a4f242a2162f51a03a1e57d89">constant::SingleConstantData</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="constant_8hpp_source.html">constant.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 10 2013 15:52:35 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 10 2013 17:49:11 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
