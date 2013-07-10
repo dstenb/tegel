@@ -413,16 +413,10 @@ namespace py_backend {
 
 	void PyBody::visit(ast::SymbolRef *p)
 	{
-		/* TODO */
-
-		symbol::Argument *a;
-		symbol::Variable *v;
-
-		if (dynamic_cast<symbol::Argument *>(p->symbol())) {
+		if (p->symbol()->argument())
 		    unindent() << "_args." << p->symbol()->get_name();
-		} else if (dynamic_cast<symbol::Variable *>(p->symbol())) {
+		else if (p->symbol()->variable())
 		    unindent() << p->symbol()->get_name();
-		}
 	}
 
 	void PyBody::visit(ast::List *p)

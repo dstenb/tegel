@@ -18,11 +18,11 @@ arg bool main {
 
 %%
 % for h in [ "stdlib.h", "stdio.h" ] + global_includes
-#include <{{ $h }}>
+#include <{{ h }}>
 % endfor
 
 % for h in relative_includes
-#include "{{ $h }}"
+#include "{{ h }}"
 % endfor
 
 % if main
