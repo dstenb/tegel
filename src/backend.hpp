@@ -11,17 +11,17 @@ using namespace std;
 
 class Backend
 {
-	public:
-		virtual void generate(ostream &,
-				const vector<symbol::Argument *> &,
-				ast::Statements *) = 0;
+    public:
+        virtual void generate(ostream &,
+                              const vector<symbol::Argument *> &,
+                              ast::Statements *) = 0;
 };
 
 class BackendException : public runtime_error
 {
-	public:
-		BackendException(const string &s)
-			: runtime_error(s) {}
+    public:
+        BackendException(const string &s)
+            : runtime_error(s) {}
 };
 
 #endif

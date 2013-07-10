@@ -28,3 +28,6 @@ generate-tags:
 
 doc:
 	doxygen doxygen
+
+indent:
+	astyle -C -N -xC79 *.hpp *.cpp && rm *.orig
