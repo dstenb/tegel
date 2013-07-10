@@ -24,29 +24,26 @@ namespace py_backend {
 			}
 
 			virtual void visit(const ListConstantData *p) {
-				/* TODO: replace with iterators */
-
-				auto v = p->values();
-				auto it = v.begin();
+				auto it = p->begin();
+				auto end = p->end();
 
 				os_ << "[";
-				while (it != v.end()) {
+				while (it != end) {
 					(*it)->accept(*this);
-					if (++it != v.end())
+					if (++it != end)
 						os_ << ", ";
 				}
 				os_ << "]";
 			}
 
 			virtual void visit(const RecordConstantData *p) {
-				/* TODO: replace with iterators */
-				auto v = p->values();
-				auto it = v.begin();
+				auto it = p->begin();
+				auto end = p->end();
 
 				os_ << PyUtils::record_name(p->type()) << "(";
-				while (it != v.end()) {
+				while (it != end) {
 					(*it)->accept(*this);
-					if (++it != v.end())
+					if (++it != end)
 						os_ << ", ";
 				}
 				os_ << ")";
@@ -84,6 +81,8 @@ namespace py_backend {
 			virtual void visit(const StringType *) {
 				os_ << "string";
 			}
+
+			virtual void visit(const ListType *) { }
 		private:
 			ostream &os_;
 	};
@@ -119,6 +118,8 @@ namespace py_backend {
 			virtual void visit(const StringType *) {
 				os_ << "l[" << i << "]";
 			}
+
+			virtual void visit(const ListType *) { }
 		private:
 			int i = 0;
 			ostream &os_;
@@ -555,7 +556,6 @@ namespace py_backend {
 		}
 
 		indent() << "args = parser.parse_args()\n";
-		indent() << "print(args)\n";
 	}
 
 	void PyMain::generate_opt(symbol::Argument *a)

@@ -94,10 +94,11 @@ class ListConstantData : public ConstantData
 
 		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
-		/* TODO */
-		vector<SingleConstantData *> values() const {
-			return data_;
-		}
+		typedef vector<SingleConstantData *>::const_iterator
+			iterator;
+
+		iterator begin() const { return data_.begin(); }
+		iterator end() const { return data_.begin(); }
 	private:
 		const ListType *type_;
 		vector<SingleConstantData *> data_;
@@ -202,10 +203,11 @@ class RecordConstantData : public SingleConstantData
 
 		virtual void accept(ConstantDataVisitor &v) const { v.visit(this);}
 
-		/* TODO */
-		vector<PrimitiveConstantData *> values() const {
-			return values_;
-		}
+		typedef vector<PrimitiveConstantData *>::const_iterator
+			iterator;
+
+		iterator begin() const { return values_.begin(); }
+		iterator end() const { return values_.begin(); }
 	private:
 		const RecordType *type_;
 		vector<PrimitiveConstantData *> values_;
