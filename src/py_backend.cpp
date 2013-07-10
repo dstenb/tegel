@@ -634,14 +634,14 @@ namespace py_backend {
 
 			if (c.size() == 0) {
 				throw BackendException(
-						"No command line name given "
+						"no command line name given "
 						"for argument '" +
 						a->get_name() + "'");
 			}
 
 			if (!PyUtils::valid_cmd_format(c)) {
 				throw BackendException(
-						"Invalid command line name: '"
+						"invalid command line name: '"
 						+ c + "' given for argument '"
 						+ a->get_name() + "' (valid "
 						"types: '-X', '--XYZ')");
@@ -649,13 +649,13 @@ namespace py_backend {
 			if (find(reserved.begin(), reserved.end(), c)
 					!= reserved.end()) {
 				throw BackendException(
-						"Reserved command line name: "
+						"reserved command line name: "
 						+ c + " given for argument '" +
 						a->get_name());
 			}
 			if (find(handled.begin(), handled.end(),
 						c) != handled.end()) {
-				throw BackendException("Multiple command "
+				throw BackendException("multiple command "
 						"line arguments named " + c);
 			}
 
