@@ -164,7 +164,7 @@ header_item
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
             root_table->lookup($1->get_name())->print(sstr);
-            vyyerror("%s is already defined (as %s)\n",
+            vyyerror("'%s' is already defined (as %s)\n",
                 $1->get_name().c_str(), sstr.str().c_str());
             YYERROR;
         }
@@ -197,7 +197,7 @@ record_def
         const Type *t = TypeFactory::get($2);
 
         if (t != nullptr) {
-            vyyerror("Multiple definitions of type '%s'", $2);
+            vyyerror("multiple definitions of type '%s'", $2);
             YYERROR;
         }
 
@@ -218,7 +218,7 @@ record_member
         const PrimitiveType *p = $1 ? $1->primitive() : nullptr;
 
         if (p == nullptr) {
-            vyyerror("A record can only hold primitive types", $2);
+            vyyerror("a record can only hold primitive types", $2);
             YYERROR;
         }
 
@@ -263,14 +263,14 @@ record_constant
         const Type *t = TypeFactory::get($1);
 
         if (t == nullptr) {
-            vyyerror("Unknown type '%s'", $1);
+            vyyerror("unknown type '%s'", $1);
             YYERROR;
         }
 
         const RecordType *p = t->record();
 
         if (p == nullptr) {
-            vyyerror("Expected a record (got '%s')", t->str().c_str());
+            vyyerror("expected a record (got '%s')", t->str().c_str());
         }
 
         try {
@@ -279,7 +279,7 @@ record_constant
             vyyerror("%s", e.what());
             YYERROR;
         } catch (const DifferentTypesError &e) {
-            vyyerror("Invalid type for field  (%s)", e.what()); // TODO improve
+            vyyerror("invalid type for field  (%s)", e.what()); // TODO improve
             YYERROR;
         }
 
@@ -307,7 +307,7 @@ single_type
         $$ = t ? t->single() : nullptr;
 
         if ($$ == nullptr) {
-            vyyerror("Unknown type '%s'", $1);
+            vyyerror("unknown type '%s'", $1);
             YYERROR;
         }
 
@@ -323,7 +323,7 @@ list_type
         $$ = t ? t->list() : nullptr;
 
         if ($$ == nullptr) {
-            vyyerror("Unknown type '%s'", $1);
+            vyyerror("unknown type '%s'", $1);
             YYERROR;
         }
 
@@ -343,7 +343,7 @@ constant_list
             yyerror(e.what());
             YYERROR;
         } catch (const DifferentTypesError &e) {
-            vyyerror("A list can only hold items of same type (%s)",
+            vyyerror("a list can only hold items of same type (%s)",
                 e.what());
             YYERROR;
         }
@@ -509,7 +509,7 @@ for_each
     : FOR IDENTIFIER IN expression
     {
         if ($4->type()->list() == nullptr) {
-            vyyerror("Expected a list (got %s)", $4->type()->str().c_str());
+            vyyerror("expected a list (got %s)", $4->type()->str().c_str());
             YYERROR;
         }
 
@@ -691,7 +691,7 @@ expression
             Symbol *s = current_table->lookup($1);
             $$ = new ast::SymbolRef(s);
         } catch (const SymTabNoSuchSymbolError &e) {
-            vyyerror("No such symbol: %s\n", e.what());
+            vyyerror("no such symbol: %s\n", e.what());
             YYERROR;
         }
 
@@ -754,13 +754,13 @@ list_values
     : expression ',' list_values
     {
         if ($1->type()->list()) {
-            vyyerror("A list can only hold primitives/records (Got %s)",
+            vyyerror("a list can only hold primitives/records (Got %s)",
                 $1->type()->str().c_str());
             YYERROR;
         }
 
         if ($1->type() != $3->expression->type()) {
-            vyyerror("A list can only hold items of same type (Got %s and %s)",
+            vyyerror("a list can only hold items of same type (Got %s and %s)",
                 $1->type()->str().c_str(),
                 $3->expression->type()->str().c_str());
             YYERROR;
@@ -771,7 +771,7 @@ list_values
     | expression
     {
         if ($1->type()->list()) {
-            vyyerror("A list can only hold primitives/records (Got %s)",
+            vyyerror("a list can only hold primitives/records (Got %s)",
                 $1->type()->str().c_str());
             YYERROR;
         }

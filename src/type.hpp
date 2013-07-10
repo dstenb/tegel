@@ -242,7 +242,7 @@ class NoSuchFieldError : public runtime_error
 {
 	public:
 		NoSuchFieldError(const string &f, const string &r)
-			: runtime_error("No field named " + f + " in " + r) {}
+			: runtime_error("no field named " + f + " in " + r) {}
 };
 
 struct RecordField
@@ -307,7 +307,7 @@ class TypeAlreadyDefined : public runtime_error
 {
 	public:
 		TypeAlreadyDefined(const Type *t)
-			: runtime_error("Type " + t->str() +
+			: runtime_error("type " + t->str() +
 					" is already defined") {}
 };
 
@@ -449,7 +449,7 @@ class DifferentTypesError : public runtime_error
 {
 	public:
 		DifferentTypesError(const Type *g, const Type *e)
-			: runtime_error("Got " + g->str() +
+			: runtime_error("got " + g->str() +
 					", expected " + e->str()) {}
 };
 
