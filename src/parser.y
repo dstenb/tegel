@@ -495,7 +495,7 @@ loop
     }
     | for_each end_for
     {
-        /* TODO: remove loop */
+        /* This will be optimized away in the backend */
         $$ = $1;
     }
     | for_each_enum statements end_for
@@ -505,7 +505,7 @@ loop
     }
     | for_each_enum end_for
     {
-        /* TODO: remove loop */
+        /* This will be optimized away in the backend */
         $$ = $1;
     }
     ;
