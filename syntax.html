@@ -85,8 +85,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </ul>
 </li>
 <li class="level1"><a href="#body">Body</a><ul><li class="level2"><a href="#for">For loops</a><ul><li class="level3"><a href="#foreach">For Each loops</a></li>
-<li class="level3"><a href="#enumerated">Enumerated For Each loops (TODO)</a></li>
-<li class="level3"><a href="#range">For Range loops (TODO)</a></li>
+<li class="level3"><a href="#enumerated">Enumerated For Each loops</a></li>
+<li class="level3"><a href="#range">Loop over ranges</a></li>
 </ul>
 </li>
 <li class="level2"><a href="#conditional">Conditional statements</a></li>
@@ -174,21 +174,37 @@ For Each loops</h3>
 <div class="line">% endfor</div>
 </div><!-- fragment --><p>For example</p>
 <div class="fragment"><div class="line">% <span class="keywordflow">for</span> b in books + [ book{<span class="stringliteral">&quot;Book 3&quot;</span>, 2009}, book{<span class="stringliteral">&quot;Book 4&quot;</span>, 2012 ]</div>
-<div class="line">b.title</div>
+<div class="line">{{ b.title }}</div>
 <div class="line">% endfor</div>
-</div><!-- fragment --><p>Results in</p>
+</div><!-- fragment --><p>results in</p>
 <div class="fragment"><div class="line">Book 1</div>
 <div class="line">Book 2</div>
 <div class="line">Book 3</div>
 <div class="line">Book 4</div>
 </div><!-- fragment --><h3><a class="anchor" id="enumerated"></a>
-Enumerated For Each loops (TODO)</h3>
+Enumerated For Each loops</h3>
+<p>Enmerated for(each) loops that iterate over lists are defined using the following syntax</p>
 <div class="fragment"><div class="line">% <span class="keywordflow">for</span> [index-identifier], [value-identifier] in [list-expression]</div>
 <div class="line">[statements]</div>
 <div class="line">% endfor</div>
+</div><!-- fragment --><p>Where <code>[index-identifier]</code> starts at <code>0</code>.</p>
+<p>For example</p>
+<div class="fragment"><div class="line">% <span class="keywordflow">for</span> i, b in books + [ book{<span class="stringliteral">&quot;Book 3&quot;</span>, 2009}, book{<span class="stringliteral">&quot;Book 4&quot;</span>, 2012 ]</div>
+<div class="line">{{ i }}: {{ b.title }}</div>
+<div class="line">% endfor</div>
+</div><!-- fragment --><p>results in</p>
+<div class="fragment"><div class="line">0: Book 1</div>
+<div class="line">1: Book 2</div>
+<div class="line">2: Book 3</div>
+<div class="line">3: Book 4</div>
 </div><!-- fragment --><h3><a class="anchor" id="range"></a>
-For Range loops (TODO)</h3>
-<div class="fragment"><div class="line">% <span class="keywordflow">for</span> [identifier] in range [lower-bound] to [higher-bound]</div>
+Loop over ranges</h3>
+<p>Typical for loops can be simulated using the <code>downto</code> and <code>upto</code> methods on expressions of type <code>int</code>.</p>
+<div class="fragment"><div class="line">% <span class="keywordflow">for</span> [identifier] in [lower-bound].upto([upper-bound])</div>
+<div class="line">[statements]</div>
+<div class="line">% endfor</div>
+</div><!-- fragment --><p>and</p>
+<div class="fragment"><div class="line">% <span class="keywordflow">for</span> [identifier] in [upper-bound].downto([lower-bound])</div>
 <div class="line">[statements]</div>
 <div class="line">% endfor</div>
 </div><!-- fragment --><h2><a class="anchor" id="conditional"></a>
@@ -239,7 +255,7 @@ List Concatenation</h2>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 10 2013 17:49:11 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jul 11 2013 14:29:57 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
