@@ -464,6 +464,7 @@ namespace type {
                 il->add_method(TypeMethod("sort", il, b_v));
 
                 /* string[] methods */
+                sl->add_method(TypeMethod("join", s, s_v));
                 sl->add_method(TypeMethod("size", i, e_v));
                 sl->add_method(TypeMethod("sort", sl, b_v));
             }

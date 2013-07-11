@@ -441,6 +441,11 @@ namespace py_backend
                     key->accept(*this);
                     unindent() << "))";
                 }
+            } else if (m.name() == "join") {
+                p->arguments()->expression->accept(*this);
+                unindent() << ".join(";
+                p->expression()->accept(*this);
+                unindent() << ")";
             }
         } else if (t->record()) {
 
