@@ -34,6 +34,7 @@ namespace ast {
     GENERATE_ACCEPT(Statements)
     GENERATE_ACCEPT(Conditional)
     GENERATE_ACCEPT(ForEach)
+    GENERATE_ACCEPT(ForEachEnum)
     GENERATE_ACCEPT(If)
     GENERATE_ACCEPT(Elif)
     GENERATE_ACCEPT(Else)

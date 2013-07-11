@@ -65,6 +65,7 @@ namespace ast {
     class Conditional;
     class Scope;
     class ForEach;
+    class ForEachEnum;
     class If;
     class Elif;
     class Else;
@@ -753,6 +754,39 @@ namespace ast {
             symbol::Variable *variable_;
     };
 
+    class ForEachEnum : public Scope
+    {
+        public:
+            ForEachEnum(symbol::Variable *i,
+                    symbol::Variable *v, Expression *e,
+                    symbol::SymbolTable *ft,
+                    symbol::SymbolTable *t)
+                : Scope(t, nullptr), expression_(e), for_table_(ft),
+                  index_(i), value_(v) {}
+
+            Expression *expression() {
+                return expression_;
+            }
+
+            symbol::Variable *index() {
+                return index_;
+            }
+
+            symbol::Variable *value() {
+                return value_;
+            }
+
+            virtual void accept(AST_Visitor &);
+        private:
+            ForEachEnum(const ForEachEnum &) = delete;
+            ForEachEnum &operator=(const ForEachEnum &) = delete;
+
+            Expression *expression_;
+            symbol::SymbolTable *for_table_;
+            symbol::Variable *index_;
+            symbol::Variable *value_;
+    };
+
     /**
      *
      */
@@ -937,6 +971,7 @@ namespace ast {
 
             virtual void visit(Conditional *) = 0;
             virtual void visit(ForEach *) = 0;
+            virtual void visit(ForEachEnum *) = 0;
             virtual void visit(If *) = 0;
             virtual void visit(Elif *) = 0;
             virtual void visit(Else *) = 0;
@@ -1107,6 +1142,22 @@ namespace ast {
                 indent++;
                 print_ws();
                 p->variable()->print(cerr);
+                cerr <<"\n";
+                p->expression()->accept(*this);
+                if (p->statements())
+                    p->statements()->accept(*this);
+                indent--;
+            }
+
+            virtual void visit(ForEachEnum *p) {
+                print_ws();
+                cerr << "ForEachEnum\n";
+                indent++;
+                print_ws();
+                p->index()->print(cerr);
+                cerr <<"\n";
+                print_ws();
+                p->value()->print(cerr);
                 cerr <<"\n";
                 p->expression()->accept(*this);
                 if (p->statements())
