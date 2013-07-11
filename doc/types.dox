@@ -27,9 +27,8 @@
   `string s.lower()`       | Returns a lower case version of `s`
   `string s.title()`       | Returns a title case version of `s`
   `string s.upper()`       | Returns a upper case version of `s`
-  `string s.ralign(int n)` | Returns a right-aligned version of `s` padded with spaces to the left.
-  `string s.lalign(int n)` | Returns a left-aligned version of `s padded with spaces to the right.
-
+  `string s.ralign(int n)` | Returns a right-aligned version of `s` padded with spaces to the left. If `s` is longer than `n`, then `s` is returned.
+  `string s.lalign(int n)` | Returns a left-aligned version of `s` padded with spaces to the right. If `s` is longer than `n`, then `s` is returned.
 
   \subsection list List of primitives
 

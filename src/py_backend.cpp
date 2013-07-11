@@ -400,13 +400,23 @@ namespace py_backend
                 unindent() << "+ 1))";
             }
         } else if (t == type::TypeFactory::get("string")) {
-            if (m.name() == "length") {
+            if (m.name() == "lalign") {
+                p->expression()->accept(*this);
+                unindent() << ".ljust(";
+                p->arguments()->expression->accept(*this);
+                unindent() << ")";
+            } else if (m.name() == "length") {
                 unindent() << "len(";
                 p->expression()->accept(*this);
                 unindent() << ")";
             } else if (m.name() == "lower") {
                 p->expression()->accept(*this);
                 unindent() << ".lower()";
+            } else if (m.name() == "ralign") {
+                p->expression()->accept(*this);
+                unindent() << ".rjust(";
+                p->arguments()->expression->accept(*this);
+                unindent() << ")";
             } else if (m.name() == "title") {
                 p->expression()->accept(*this);
                 unindent() << ".title()";
