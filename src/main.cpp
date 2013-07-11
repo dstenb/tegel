@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "ast.hpp"
+#include "ast_printer.hpp"
 #include "py_backend.hpp"
 #include "type.hpp"
 
@@ -135,7 +136,7 @@ int main(int argc, char **argv)
 
     /* Print the syntax tree */
     if (print_ast) {
-        ast::AST_Printer p;
+        ast_printer::AST_Printer p;
         if (body)
             body->accept(p);
     }
