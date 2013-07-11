@@ -16,33 +16,9 @@ namespace py_backend {
     {
         static ostream &constant_to_stream(ostream &, const ConstantData *);
         static string record_name(const RecordType *);
-
-        static bool is_short_cmd(const string &s)
-        {
-            return (s.length() == 2 && s[0] == '-' && isalpha(s[1]));
-        }
-
-        static bool is_long_cmd(const string &s)
-        {
-            /* TODO: replace with a regex when gcc has proper support */
-            if (s.length() > 2) {
-                if (!s[0] == '-' || !s[1] == '-')
-                    return false;
-                auto it = s.begin();
-                advance(it, 2);
-
-                for ( ; it != s.end(); ++it)
-                    if (!isalpha((*it)))
-                        return false;
-                return true;
-            }
-            return false;
-        }
-
-        static bool valid_cmd_format(const string &s)
-        {
-            return is_short_cmd(s) || is_long_cmd(s);
-        }
+        static bool is_short_cmd(const string &);
+        static bool is_long_cmd(const string &);
+        static bool valid_cmd_format(const string &);
     };
 
     /** PyWriter class

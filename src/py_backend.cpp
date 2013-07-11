@@ -138,6 +138,32 @@ namespace py_backend
         return "tuple_" + r->str();
     }
 
+    bool PyUtils::is_short_cmd(const string &s)
+    {
+	    return (s.length() == 2 && s[0] == '-' && isalpha(s[1]));
+    }
+
+    bool PyUtils::is_long_cmd(const string &s)
+    {
+	    if (s.length() > 2) {
+		    if (!s[0] == '-' || !s[1] == '-')
+			    return false;
+		    auto it = s.begin();
+		    advance(it, 2);
+
+		    for ( ; it != s.end(); ++it)
+			    if (!isalpha((*it)))
+				    return false;
+		    return true;
+	    }
+	    return false;
+    }
+
+    bool PyUtils::valid_cmd_format(const string &s)
+    {
+	    return is_short_cmd(s) || is_long_cmd(s);
+    }
+
     ostream &PyWriter::indent()
     {
         for (unsigned i = 0; i < indentation_; i++)
