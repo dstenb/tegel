@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <sys/stat.h>
 
 #include "ast.hpp"
 #include "ast_printer.hpp"
@@ -154,6 +155,13 @@ int main(int argc, char **argv)
             }
             generate(f, backend);
             f.close();
+
+            /* Set the file permission to 0775 */
+            if (chmod(outpath.c_str(), S_IRWXU | S_IRGRP | S_IXGRP |
+                    S_IROTH | S_IXOTH) != 0) {
+                warning() << "couldn't set file permission ("
+                    << strerror(errno) << ")\n";
+            }
         } else {
             /* Output to stdout */
             generate(cout, backend);
