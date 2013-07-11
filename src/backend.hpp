@@ -24,4 +24,11 @@ class BackendException : public runtime_error
             : runtime_error(s) {}
 };
 
+class UnknownBackend : public runtime_error
+{
+    public:
+        UnknownBackend(const string &s)
+            : runtime_error(s) {}
+};
+
 #endif

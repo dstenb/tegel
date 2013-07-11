@@ -1,5 +1,6 @@
 #include <cstring>
 #include <unistd.h>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <vector>
@@ -24,7 +25,8 @@ void usage(ostream &os, const char *cmd)
     os << "usage: " << cmd << " [-h] [-b BACKEND] [-o OUTFILE] [INFILE]\n";
     os << "\n";
     os << " -h, --help          show this help message and exit\n";
-    os << " -b, BACKEND         select the backend\n";
+    os << " -b BACKEND          select the backend\n";
+    os << " -o FILE             output to FILE instead of stdout\n";
     os << "\n";
     os << "Available backends\n";
     os << " py                  Python (2.7+) backend\n";
@@ -42,9 +44,24 @@ ostream &warning(void)
     return cerr;
 }
 
+void generate(ostream &os, const string &backend)
+{
+        if (backend == "py") {
+            py_backend::PyBackend b;
+            b.generate(os, arguments, body);
+        } else if (backend.empty()) {
+            warning() << "no backend specified, defaulting to python\n";
+            py_backend::PyBackend b;
+            b.generate(os, arguments, body);
+        } else {
+            throw UnknownBackend("unknown backend '" + backend  + "'");
+        }
+}
+
 int main(int argc, char **argv)
 {
-    string infile = "";
+    string inpath = "";
+    string outpath = "";
     string backend = "";
     bool print_ast = false;
     bool print_types = false;
@@ -65,10 +82,10 @@ int main(int argc, char **argv)
         } else if (!strcmp(argv[i], "-o")) {
             if (++i == argc) {
                 usage(cerr, argv[0]);
-                error() << "argument '-o' expects one "
-                        "argument\n";
+                error() << "argument '-o' expects one argument\n";
                 return 1;
             }
+            outpath = argv[i];
         } else if (!strcmp(argv[i], "-a")) {
             print_ast = true;
         } else if (!strcmp(argv[i], "-s")) {
@@ -78,27 +95,26 @@ int main(int argc, char **argv)
             error() << "invalid argument '"<< argv[i] << "'\n";
             return 1;
         } else {
-            infile = argv[i];
+            inpath = argv[i];
         }
     }
 
     if (isatty(STDIN_FILENO)) {
         /* Read data from input file */
 
-        if (infile.empty()) {
+        if (inpath.empty()) {
             usage(cerr, argv[0]);
             error() << "no input file specified\n";
             return 1;
         }
 
-        if (!(yyin = fopen(infile.c_str(), "r"))) {
+        if (!(yyin = fopen(inpath.c_str(), "r"))) {
             if (errno == ENOENT) {
-                error() << "no such file or directory: '"
-                        << infile << "'\n";
+                error() << "no such file or directory: '" << inpath << "'\n";
                 return 1;
             } else {
-                error() << "couldn't open '" << infile <<
-                        "': " << strerror(errno) << "\n";
+                error() << "couldn't open '" << inpath << "': "
+                    << strerror(errno) << "\n";
                 return 1;
             }
         }
@@ -128,21 +144,26 @@ int main(int argc, char **argv)
         return 1;
 
     try {
-        if (backend == "py") {
-            py_backend::PyBackend b;
-            b.generate(cout, arguments, body);
-        } else if (backend.empty()) {
-            warning() << "no backend specified, defaulting to python\n";
-            py_backend::PyBackend b;
-            b.generate(cout, arguments, body);
-            return 1;
+        if (!outpath.empty()) {
+            /* Output to file */
+            ofstream f(outpath);
+            if (!f) {
+                error() << "failed to open '" << outpath << "' for writing\n";
+                return 1;
+            }
+            generate(f, backend);
+            f.close();
         } else {
-            usage(cerr, argv[0]);
-            error() << "unknown backend '" << backend << "'\n";
-            return 1;
+            /* Output to stdout */
+            generate(cout, backend);
         }
+    } catch (const UnknownBackend &e) {
+        usage(cerr, argv[0]);
+        error() << e.what() << endl;
+        return 1;
     } catch (const BackendException &e) {
         error() << e.what() << endl;
+        return 1;
     }
 
     return 0;
