@@ -120,7 +120,7 @@ namespace constant {
                 return data_.begin();
             }
             iterator end() const {
-                return data_.begin();
+                return data_.end();
             }
         private:
             ListConstantData(const ListConstantData &) = delete;
@@ -247,7 +247,7 @@ namespace constant {
                 return values_.begin();
             }
             iterator end() const {
-                return values_.begin();
+                return values_.end();
             }
         private:
             RecordConstantData(const RecordConstantData &) = delete;
