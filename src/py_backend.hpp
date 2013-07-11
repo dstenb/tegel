@@ -95,6 +95,7 @@ namespace py_backend {
             virtual void visit(ast::Statements *);
             virtual void visit(ast::Conditional *);
             virtual void visit(ast::ForEach *);
+            virtual void visit(ast::ForEachEnum *);
             virtual void visit(ast::If *);
             virtual void visit(ast::Elif *);
             virtual void visit(ast::Else *);

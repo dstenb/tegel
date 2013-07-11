@@ -514,6 +514,22 @@ namespace py_backend
         }
     }
 
+    void PyBody::visit(ast::ForEachEnum *p)
+    {
+        if (p->statements()) {
+            indent() << "for ";
+            unindent() << p->index()->get_name();
+            unindent() << ", ";
+            unindent() << p->value()->get_name();
+            unindent() << " in enumerate(";
+            p->expression()->accept(*this);
+            unindent() << "):\n";
+            indent_inc();
+            p->statements()->accept(*this);
+            indent_dec();
+        }
+    }
+
     void PyBody::visit(ast::If *p)
     {
         indent() << "if ";

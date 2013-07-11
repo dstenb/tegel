@@ -110,7 +110,7 @@ void vyyerror(const char *, ...);
 %type<statements> statements
 
 %type<statement> statement text conditional control inlined
-%type<scope> loop for_each
+%type<scope> loop for_each for_each_enum
 %type<if_node> if if_start
 %type<elif_node> elif_start elifs elif
 %type<else_node> else_start else
@@ -498,8 +498,16 @@ loop
         /* TODO: remove loop */
         $$ = $1;
     }
-    /* TODO: add enumerated for each */
-    /* TODO: add for with range */
+    | for_each_enum statements end_for
+    {
+        $$ = $1;
+        $$->set_statements($2);
+    }
+    | for_each_enum end_for
+    {
+        /* TODO: remove loop */
+        $$ = $1;
+    }
     ;
 
 for_each
@@ -521,6 +529,34 @@ for_each
         current_table = new SymbolTable(current_table);
 
         $$ = new ast::ForEach(v, $4, current_table->parent(), current_table);
+
+        /* Free the identifier string */
+        free($2);
+    }
+
+for_each_enum
+    : FOR IDENTIFIER ',' IDENTIFIER IN expression
+    {
+        if ($6->type()->list() == nullptr) {
+            vyyerror("expected a list (got %s)", $6->type()->str().c_str());
+            YYERROR;
+        }
+
+        /* Create symbol table for the for loop (which will only hold the loop
+         * variable) */
+        current_table = new SymbolTable(current_table);
+
+        Variable *i = new Variable($2, TypeFactory::get("int"));
+        current_table->add(i);
+
+        Variable *v = new Variable($4, $6->type()->list()->elem());
+        current_table->add(v);
+
+        /* Create symbol table for the statements block */
+        current_table = new SymbolTable(current_table);
+
+        $$ = new ast::ForEachEnum(i, v, $6, current_table->parent(),
+            current_table);
 
         /* Free the identifier string */
         free($2);
