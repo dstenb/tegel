@@ -93,11 +93,11 @@
 
   ~~~
   % for b in books + [ book{"Book 3", 2009}, book{"Book 4", 2012 ]
-  b.title
+  {{ b.title }}
   % endfor
   ~~~
 
-  Results in
+  results in
 
   ~~~
   Book 1
@@ -106,8 +106,10 @@
   Book 4
   ~~~
 
-  \subsubsection enumerated Enumerated For Each loops (TODO)
+  \subsubsection enumerated Enumerated For Each loops
 
+  Enmerated for(each) loops that iterate over lists are defined using the
+  following syntax
 
   ~~~
   % for [index-identifier], [value-identifier] in [list-expression]
@@ -115,10 +117,39 @@
   % endfor
   ~~~
 
-  \subsubsection range For Range loops (TODO)
+  Where `[index-identifier]` starts at `0`.
+
+  For example
 
   ~~~
-  % for [identifier] in range [lower-bound] to [higher-bound]
+  % for i, b in books + [ book{"Book 3", 2009}, book{"Book 4", 2012 ]
+  {{ i }}: {{ b.title }}
+  % endfor
+  ~~~
+
+  results in
+
+  ~~~
+  0: Book 1
+  1: Book 2
+  2: Book 3
+  3: Book 4
+  ~~~
+
+  \subsubsection range Loop over ranges
+  Typical for loops can be simulated using the `downto` and `upto` methods on
+  expressions of type `int`.
+
+  ~~~
+  % for [identifier] in [lower-bound].upto([upper-bound])
+  [statements]
+  % endfor
+  ~~~
+
+  and
+
+  ~~~
+  % for [identifier] in [upper-bound].downto([lower-bound])
   [statements]
   % endfor
   ~~~
