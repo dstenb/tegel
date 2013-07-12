@@ -758,9 +758,9 @@ namespace ast {
     {
         public:
             ForEachEnum(symbol::Variable *i,
-                    symbol::Variable *v, Expression *e,
-                    symbol::SymbolTable *ft,
-                    symbol::SymbolTable *t)
+                        symbol::Variable *v, Expression *e,
+                        symbol::SymbolTable *ft,
+                        symbol::SymbolTable *t)
                 : Scope(t, nullptr), expression_(e), for_table_(ft),
                   index_(i), value_(v) {}
 

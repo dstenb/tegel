@@ -140,28 +140,28 @@ namespace py_backend
 
     bool PyUtils::is_short_cmd(const string &s)
     {
-	    return (s.length() == 2 && s[0] == '-' && isalpha(s[1]));
+        return (s.length() == 2 && s[0] == '-' && isalpha(s[1]));
     }
 
     bool PyUtils::is_long_cmd(const string &s)
     {
-	    if (s.length() > 2) {
-		    if (!s[0] == '-' || !s[1] == '-')
-			    return false;
-		    auto it = s.begin();
-		    advance(it, 2);
+        if (s.length() > 2) {
+            if (!s[0] == '-' || !s[1] == '-')
+                return false;
+            auto it = s.begin();
+            advance(it, 2);
 
-		    for ( ; it != s.end(); ++it)
-			    if (!isalpha((*it)))
-				    return false;
-		    return true;
-	    }
-	    return false;
+            for ( ; it != s.end(); ++it)
+                if (!isalpha((*it)))
+                    return false;
+            return true;
+        }
+        return false;
     }
 
     bool PyUtils::valid_cmd_format(const string &s)
     {
-	    return is_short_cmd(s) || is_long_cmd(s);
+        return is_short_cmd(s) || is_long_cmd(s);
     }
 
     ostream &PyWriter::indent()
@@ -612,8 +612,8 @@ namespace py_backend
 
         /* Add "output file" argument */
         indent() << "parser.add_argument('-o', type=argparse.FileType('w'), "
-            "default=sys.stdout, help='output to file instead of stdout', "
-            "dest='_file')\n";
+                 "default=sys.stdout, help='output to file instead of stdout', "
+                 "dest='_file')\n";
 
         for (auto a : args) {
             generate_opt(a);

@@ -48,16 +48,16 @@ ostream &warning(void)
 
 void generate(ostream &os, const string &backend)
 {
-        if (backend == "py") {
-            py_backend::PyBackend b;
-            b.generate(os, arguments, body);
-        } else if (backend.empty()) {
-            warning() << "no backend specified, defaulting to python\n";
-            py_backend::PyBackend b;
-            b.generate(os, arguments, body);
-        } else {
-            throw UnknownBackend("unknown backend '" + backend  + "'");
-        }
+    if (backend == "py") {
+        py_backend::PyBackend b;
+        b.generate(os, arguments, body);
+    } else if (backend.empty()) {
+        warning() << "no backend specified, defaulting to python\n";
+        py_backend::PyBackend b;
+        b.generate(os, arguments, body);
+    } else {
+        throw UnknownBackend("unknown backend '" + backend  + "'");
+    }
 }
 
 int main(int argc, char **argv)
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
                 return 1;
             } else {
                 error() << "couldn't open '" << inpath << "': "
-                    << strerror(errno) << "\n";
+                        << strerror(errno) << "\n";
                 return 1;
             }
         }
@@ -158,9 +158,9 @@ int main(int argc, char **argv)
 
             /* Set the file permission to 0775 */
             if (chmod(outpath.c_str(), S_IRWXU | S_IRGRP | S_IXGRP |
-                    S_IROTH | S_IXOTH) != 0) {
+                      S_IROTH | S_IXOTH) != 0) {
                 warning() << "couldn't set file permission ("
-                    << strerror(errno) << ")\n";
+                          << strerror(errno) << ")\n";
             }
         } else {
             /* Output to stdout */

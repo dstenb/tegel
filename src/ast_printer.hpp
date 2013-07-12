@@ -127,8 +127,8 @@ namespace ast_printer {
             virtual void visit(SymbolRef *p) {
                 print_ws();
                 cerr << "SymbolRef(" << p->symbol()->get_name()
-                    << ", " << p->symbol()->get_type()->str()
-                    << ", " << p->symbol() << ")\n";
+                     << ", " << p->symbol()->get_type()->str()
+                     << ", " << p->symbol() << ")\n";
             }
 
             virtual void visit(FieldRef *p) {
