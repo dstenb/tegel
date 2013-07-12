@@ -145,16 +145,27 @@ class GUI:
     def create_top(self):
         self.top = gtk.MenuBar()
 
+        accelg = gtk.AccelGroup()
+        self.window.add_accel_group(accelg)
+
         filemenu = gtk.Menu()
         file = gtk.MenuItem("File")
         file.set_submenu(filemenu)
 
-        save = gtk.ImageMenuItem(gtk.STOCK_SAVE, "Save")
+        save = gtk.ImageMenuItem(gtk.STOCK_SAVE, accelg)
         save.connect('activate', self.save_callback)
-        save_as = gtk.ImageMenuItem(gtk.STOCK_SAVE_AS, "Save As")
+        k, m = gtk.accelerator_parse("<Control>S")
+        save.add_accelerator("activate", accelg, k, m, gtk.ACCEL_VISIBLE)
+
+        save_as = gtk.ImageMenuItem(gtk.STOCK_SAVE_AS, accelg)
         save_as.connect('activate', self.save_as_callback)
-        exit = gtk.ImageMenuItem(gtk.STOCK_QUIT, "Exit")
+        k, m = gtk.accelerator_parse("<Shift><Control>S")
+        save_as.add_accelerator("activate", accelg, k, m, gtk.ACCEL_VISIBLE)
+
+        exit = gtk.ImageMenuItem(gtk.STOCK_QUIT, accelg)
         exit.connect('activate', self.destroy)
+        k, m = gtk.accelerator_parse("<Control>Q")
+        exit.add_accelerator("activate", accelg, k, m, gtk.ACCEL_VISIBLE)
 
         for o in [ save, save_as, gtk.SeparatorMenuItem(), exit ]:
             filemenu.append(o)
@@ -166,6 +177,8 @@ class GUI:
         preview = gtk.CheckMenuItem("Preview")
         preview.connect("activate", self.toggle_preview)
         viewmenu.append(preview)
+        k, m = gtk.accelerator_parse("<Control>P")
+        preview.add_accelerator("activate", accelg, k, m, gtk.ACCEL_VISIBLE)
 
         self.top.append(file)
         self.top.append(view)
@@ -179,7 +192,7 @@ class GUI:
         gtk.main_quit()
 
     def toggle_preview(self, w, data=None):
-        self.preview.set_visible(not self.preview.get_visible())
+        self.p_scrolled.set_visible(not self.p_scrolled.get_visible())
 
     def save_dialog(self):
         dialog = gtk.FileChooserDialog('Save',
