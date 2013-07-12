@@ -150,9 +150,9 @@ class GUI:
         file.set_submenu(filemenu)
 
         save = gtk.ImageMenuItem(gtk.STOCK_SAVE, "Save")
-        save.connect('activate', self.destroy) # TODO
+        save.connect('activate', self.save_callback)
         save_as = gtk.ImageMenuItem(gtk.STOCK_SAVE_AS, "Save As")
-        save_as.connect('activate', self.destroy) # TODO
+        save_as.connect('activate', self.save_as_callback)
         exit = gtk.ImageMenuItem(gtk.STOCK_QUIT, "Exit")
         exit.connect('activate', self.destroy)
 
@@ -181,33 +181,42 @@ class GUI:
     def toggle_preview(self, w, data=None):
         self.preview.set_visible(not self.preview.get_visible())
 
-    def generate(self, w, data=None):
+    def save_dialog(self):
         dialog = gtk.FileChooserDialog('Save',
                 None, gtk.FILE_CHOOSER_ACTION_SAVE,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                     gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
         dialog.set_do_overwrite_confirmation(True)
         dialog.set_modal(True)
-        dialog.connect('response', self.save)
+        dialog.connect('response', self.save_dialog_response)
 
         if self.filename:
             dialog.set_filename(self.filename)
         else:
             dialog.set_current_name('Untitled')
-        r = dialog.run()
+        dialog.run()
 
-    def save(self, dialog, response):
+    def save_dialog_response(self, dialog, response):
         if response == gtk.RESPONSE_ACCEPT:
             self.filename = dialog.get_filename()
-            print(self.filename)
+            self.write_to_file()
         dialog.destroy()
+
+    def save_callback(self, w, data=None):
+        if self.filename:
+            self.write_to_file()
+        else:
+            self.save_dialog()
+
+    def save_as_callback(self, w, data=None):
+        self.save_dialog()
+
+    def write_to_file(self):
+        print("Writing to " + self.filename)
 
     def main(self):
         gtk.main()
-import  pprint
+
 if __name__ == '__main__':
     gui = GUI(args)
-    pp = pprint.PrettyPrinter()
-    pp.pprint(gtk.stock_list_ids())
     gui.main()
-
