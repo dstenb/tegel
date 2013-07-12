@@ -143,20 +143,28 @@ class GUI:
 
     # Create the top box (buttons)
     def create_top(self):
-        self.top = gtk.HButtonBox()
-        self.top.set_layout(gtk.BUTTONBOX_END)
+        self.top = gtk.MenuBar()
 
-        # Create preview button
-        self.preview_button = gtk.CheckButton('Preview')
-        self.preview_button.connect('toggled', self.toggle_preview, None)
+        filemenu = gtk.Menu()
+        file = gtk.MenuItem("File")
+        file.set_submenu(filemenu)
 
-        self.generate_button = gtk.Button('Generate')
-        self.generate_button.connect('clicked', self.generate, None)
+        exit = gtk.MenuItem("Exit")
+        exit.connect("activate", self.destroy)
+        filemenu.append(exit)
 
-        for o in [ self.preview_button, self.generate_button ]:
-            o.show()
-            self.top.add(o)
-        self.top.show()
+        viewmenu = gtk.Menu()
+        view = gtk.MenuItem("View")
+        view.set_submenu(viewmenu)
+
+        preview = gtk.CheckMenuItem("Preview")
+        preview.connect("activate", self.toggle_preview)
+        viewmenu.append(preview)
+
+        self.top.append(file)
+        self.top.append(view)
+
+        self.top.show_all()
 
     def delete(self, w, e, data=None):
         return False
@@ -190,7 +198,10 @@ class GUI:
 
     def main(self):
         gtk.main()
-
+import  pprint
 if __name__ == '__main__':
     gui = GUI(args)
+    pp = pprint.PrettyPrinter()
+    pp.pprint(gtk.stock_list_ids())
     gui.main()
+
