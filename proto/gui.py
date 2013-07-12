@@ -149,9 +149,15 @@ class GUI:
         file = gtk.MenuItem("File")
         file.set_submenu(filemenu)
 
-        exit = gtk.MenuItem("Exit")
-        exit.connect("activate", self.destroy)
-        filemenu.append(exit)
+        save = gtk.ImageMenuItem(gtk.STOCK_SAVE, "Save")
+        save.connect('activate', self.destroy) # TODO
+        save_as = gtk.ImageMenuItem(gtk.STOCK_SAVE_AS, "Save As")
+        save_as.connect('activate', self.destroy) # TODO
+        exit = gtk.ImageMenuItem(gtk.STOCK_QUIT, "Exit")
+        exit.connect('activate', self.destroy)
+
+        for o in [ save, save_as, gtk.SeparatorMenuItem(), exit ]:
+            filemenu.append(o)
 
         viewmenu = gtk.Menu()
         view = gtk.MenuItem("View")
