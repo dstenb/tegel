@@ -9,6 +9,7 @@
 #include "ast.hpp"
 #include "ast_printer.hpp"
 #include "py_backend.hpp"
+#include "pygtk_backend.hpp"
 #include "type.hpp"
 
 using namespace std;
@@ -32,6 +33,7 @@ void usage(ostream &os, const char *cmd)
     os << "\n";
     os << "Available backends\n";
     os << " py                  Python (2.7+) backend\n";
+    os << " pygtk               PyGTK backend\n";
 }
 
 ostream &error(void)
@@ -50,6 +52,9 @@ void generate(ostream &os, const string &backend)
 {
     if (backend == "py") {
         py_backend::PyBackend b;
+        b.generate(os, arguments, body);
+    } else if (backend == "pygtk") {
+        pygtk_backend::PyGtkBackend b;
         b.generate(os, arguments, body);
     } else if (backend.empty()) {
         warning() << "no backend specified, defaulting to python\n";

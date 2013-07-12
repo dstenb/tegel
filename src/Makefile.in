@@ -92,7 +92,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_tegel_OBJECTS = ast.$(OBJEXT) constant.$(OBJEXT) lexical.$(OBJEXT) \
 	main.$(OBJEXT) parser.$(OBJEXT) py_backend.$(OBJEXT) \
-	symbol.$(OBJEXT) type.$(OBJEXT)
+	symbol.$(OBJEXT) type.$(OBJEXT) pygtk_backend.$(OBJEXT)
 tegel_OBJECTS = $(am_tegel_OBJECTS)
 tegel_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -265,7 +265,7 @@ tegel_SOURCES = ast.cpp ast_factories.hpp ast.hpp ast_printer.hpp \
 		backend.hpp common.hpp constant.cpp constant.hpp \
 		lexical.cpp main.cpp parser.cpp parser.hpp \
 		py_backend.cpp py_backend.hpp symbol.cpp symbol.hpp \
-		type.cpp type.hpp
+		type.cpp type.hpp pygtk_backend.cpp pygtk_backend.hpp
 
 all: all-am
 
@@ -360,6 +360,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/py_backend.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pygtk_backend.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/symbol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/type.Po@am__quote@
 
