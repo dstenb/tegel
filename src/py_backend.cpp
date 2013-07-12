@@ -190,7 +190,8 @@ namespace py_backend
 
     void PyHeader::generate(const vector<symbol::Argument *> &args)
     {
-        unindent() << "#! /usr/bin/env python\n\n";
+        unindent() << "#! /usr/bin/env python\n";
+        unindent() << "# -*- coding: utf-8 -*-\n\n";
         unindent() << "import argparse\n";
         unindent() << "import sys\n";
         unindent() << "from collections import namedtuple\n\n";
