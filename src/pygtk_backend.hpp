@@ -18,7 +18,11 @@ namespace pygtk_backend {
     /* Writes the GUI class */
     class PyGuiWriter : public PyWriter
     {
+        public:
+            PyGuiWriter(ostream &os)
+                : PyWriter(os, 0) {}
 
+            void generate(const vector<symbol::Argument *> &);
     };
 
     class PyGtkBackend : public Backend
