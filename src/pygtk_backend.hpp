@@ -23,6 +23,12 @@ namespace pygtk_backend {
                 : PyWriter(os, 0) {}
 
             void generate(const vector<symbol::Argument *> &);
+        private:
+            void gen_init();
+            void gen_delete();
+            void gen_destroy();
+            void gen_main();
+            void gen_primitive_methods();
     };
 
     class PyGtkBackend : public Backend
