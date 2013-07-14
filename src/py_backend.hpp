@@ -19,6 +19,7 @@ namespace py_backend {
         static bool is_short_cmd(const string &);
         static bool is_long_cmd(const string &);
         static bool valid_cmd_format(const string &);
+        static void generate_opt(ostream &, symbol::Argument *);
     };
 
     /** PyWriter class
@@ -116,7 +117,6 @@ namespace py_backend {
             void generate_arg_dict(const vector<symbol::Argument *> &);
             void generate_arg_list(const vector<symbol::Argument *> &);
             void generate_opts(const vector<symbol::Argument *> &);
-            void generate_opt(symbol::Argument *);
     };
 
     class PyBackend : public Backend

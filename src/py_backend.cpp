@@ -164,6 +164,58 @@ namespace py_backend
         return is_short_cmd(s) || is_long_cmd(s);
     }
 
+    void PyUtils::generate_opt(ostream &os, symbol::Argument *a)
+    {
+        /* Get the command line identifier */
+        auto p = a->get("cmd");
+        auto cd = static_cast<const StringConstantData *>(p->get());
+        auto cs = cd->value();
+
+        os << "parser.add_argument(\"" << cs << "\"";
+
+        /* Get the help (information) string */
+        p = a->get("info");
+        auto id = static_cast<const StringConstantData *>(p->get());
+        auto is = Escaper()(id->value());
+
+        /* Get the default value */
+        auto dd = a->get("default")->get();
+
+        const Type *t = dd->type();
+
+        if (t == TypeFactory::get("bool")) {
+            os << ", type=parse_bool";
+        } else if (t == TypeFactory::get("int")) {
+            os << ", type=int";
+        } else if (t == TypeFactory::get("string")) {
+            os << ", type=str";
+        } else if (t->list()) {
+            auto e = t->list()->elem();
+
+            if (e == TypeFactory::get("bool")) {
+                os << ", nargs=\"+\", type=parse_bool";
+            } else if (e == TypeFactory::get("int")) {
+                os << ", nargs=\"+\", type=int";
+            } else if (e == TypeFactory::get("string")) {
+                os << ", nargs=\"+\", type=str";
+            } else if (e->record()) {
+                os << ", nargs=\"+\", type=parse_"
+                           << PyUtils::record_name(e->record());
+            }
+        } else if (t->record()) {
+            os << ", type=parse_"
+                       << PyUtils::record_name(t->record());
+        }
+
+        PyConstToStream pcs(os);
+        os << ", default=";
+        dd->accept(pcs);
+
+        os << ", help=\"" << is << "\"";
+        os << ", dest=\"" << a->get_name() << "\"";
+        os << ")\n";
+    }
+
     ostream &PyWriter::indent()
     {
         for (unsigned i = 0; i < indentation_; i++)
@@ -617,63 +669,10 @@ namespace py_backend
                  "dest='_file')\n";
 
         for (auto a : args) {
-            generate_opt(a);
+            PyUtils::generate_opt(indent(), a);
         }
 
         indent() << "args = parser.parse_args()\n";
-    }
-
-    void PyMain::generate_opt(symbol::Argument *a)
-    {
-        /* Get the command line identifier */
-        auto p = a->get("cmd");
-        auto cd = static_cast<const StringConstantData *>(p->get());
-        auto cs = cd->value();
-
-        indent() << "parser.add_argument(\"" << cs << "\"";
-
-        /* Get the help (information) string */
-        p = a->get("info");
-        auto id = static_cast<const StringConstantData *>(p->get());
-        auto is = Escaper()(id->value());
-
-        /* Get the default value */
-        auto dd = a->get("default")->get();
-
-        const Type *t = dd->type();
-
-        if (t == TypeFactory::get("bool")) {
-            unindent() << ", type=parse_bool";
-        } else if (t == TypeFactory::get("int")) {
-            unindent() << ", type=int";
-        } else if (t == TypeFactory::get("string")) {
-            unindent() << ", type=str";
-        } else if (t->list()) {
-            auto e = t->list()->elem();
-
-            if (e == TypeFactory::get("bool")) {
-                unindent() << ", nargs=\"+\", type=parse_bool";
-            } else if (e == TypeFactory::get("int")) {
-                unindent() << ", nargs=\"+\", type=int";
-            } else if (e == TypeFactory::get("string")) {
-                unindent() << ", nargs=\"+\", type=str";
-            } else if (e->record()) {
-                unindent() << ", nargs=\"+\", type=parse_"
-                           << PyUtils::record_name(e->record());
-            }
-        } else if (t->record()) {
-            unindent() << ", type=parse_"
-                       << PyUtils::record_name(t->record());
-        }
-
-        PyConstToStream pcs(unindent());
-        unindent() << ", default=";
-        dd->accept(pcs);
-
-        unindent() << ", help=\"" << is << "\"";
-        unindent() << ", dest=\"" << a->get_name() << "\"";
-        unindent() << ")\n";
-
     }
 
     void PyBackend::generate(ostream &os,
