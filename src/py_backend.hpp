@@ -114,8 +114,6 @@ namespace py_backend {
 
             void generate(const vector<symbol::Argument *> &);
         private:
-            void generate_arg_dict(const vector<symbol::Argument *> &);
-            void generate_arg_list(const vector<symbol::Argument *> &);
             void generate_opts(const vector<symbol::Argument *> &);
     };
 
