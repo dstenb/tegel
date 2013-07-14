@@ -216,6 +216,45 @@ namespace py_backend
         os << ")\n";
     }
 
+    void PyUtils::check_cmd(const vector<symbol::Argument *> &args,
+            const vector<string> &reserved)
+    {
+        vector<string> handled = reserved;
+
+        for (auto a : args) {
+            auto p = a->get("cmd");
+            auto s = (StringConstantData *)p->get();
+
+            string c = s->value();
+
+            if (c.size() == 0) {
+                throw BackendException(
+                    "no command line name given for argument '" +
+                    a->get_name() + "'");
+            }
+
+            if (!PyUtils::valid_cmd_format(c)) {
+                throw BackendException(
+                    "invalid command line name: '" + c +
+                    "' given for argument '" + a->get_name() + "' (valid "
+                    "types: '-X', '--XYZ')");
+            }
+            if (find(reserved.begin(), reserved.end(), c)
+                    != reserved.end()) {
+                throw BackendException(
+                    "reserved command line name: " + c +
+                    " given for argument '" + a->get_name());
+            }
+            if (find(handled.begin(), handled.end(),
+                     c) != handled.end()) {
+                throw BackendException("multiple command "
+                                       "line arguments named " + c);
+            }
+
+            handled.push_back(c);
+        }
+    }
+
     ostream &PyWriter::indent()
     {
         for (unsigned i = 0; i < indentation_; i++)
@@ -698,39 +737,6 @@ namespace py_backend
     void PyBackend::check_cmd(const vector<symbol::Argument *> &args)
     {
         vector<string> reserved = { "-h", "-o", "--help" };
-        vector<string> handled = reserved;
-
-        for (auto a : args) {
-            auto p = a->get("cmd");
-            auto s = (StringConstantData *)p->get();
-
-            string c = s->value();
-
-            if (c.size() == 0) {
-                throw BackendException(
-                    "no command line name given for argument '" +
-                    a->get_name() + "'");
-            }
-
-            if (!PyUtils::valid_cmd_format(c)) {
-                throw BackendException(
-                    "invalid command line name: '" + c +
-                    "' given for argument '" + a->get_name() + "' (valid "
-                    "types: '-X', '--XYZ')");
-            }
-            if (find(reserved.begin(), reserved.end(), c)
-                    != reserved.end()) {
-                throw BackendException(
-                    "reserved command line name: " + c +
-                    " given for argument '" + a->get_name());
-            }
-            if (find(handled.begin(), handled.end(),
-                     c) != handled.end()) {
-                throw BackendException("multiple command "
-                                       "line arguments named " + c);
-            }
-
-            handled.push_back(c);
-        }
+        PyUtils::check_cmd(args, reserved);
     }
 }

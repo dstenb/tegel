@@ -20,6 +20,8 @@ namespace py_backend {
         static bool is_long_cmd(const string &);
         static bool valid_cmd_format(const string &);
         static void generate_opt(ostream &, symbol::Argument *);
+        static void check_cmd(const vector<symbol::Argument *> &,
+                const vector<string> &);
     };
 
     /** PyWriter class
