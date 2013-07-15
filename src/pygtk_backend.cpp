@@ -60,9 +60,18 @@ namespace pygtk_backend
         indent() << "self.bottom.show()\n\n";
 
         //PyGuiArgumentGenerator g(unindent(), 2);
-
+        //
+        indent() << "for o in [\n";
         for (symbol::Argument *a : args) {
+
         }
+        /* FIXME: remove dummy code */
+        indent() << "self.create_bool('Bool', 'b'),\n";
+        indent() << "self.create_int('Integer', 'h'),\n";
+        indent() << "self.create_string('String', 's')\n";
+        indent() << "]:\n";
+        indent() << "    self.argument_box.pack_start(o, expand=False)\n";
+        indent() << "    o.show()\n\n";
 
         /* TODO: Generate arguments */
     }
