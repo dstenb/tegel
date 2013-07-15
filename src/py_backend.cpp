@@ -200,11 +200,11 @@ namespace py_backend
                 os << ", nargs=\"+\", type=str";
             } else if (e->record()) {
                 os << ", nargs=\"+\", type=parse_"
-                           << PyUtils::record_name(e->record());
+                   << PyUtils::record_name(e->record());
             }
         } else if (t->record()) {
             os << ", type=parse_"
-                       << PyUtils::record_name(t->record());
+               << PyUtils::record_name(t->record());
         }
 
         PyConstToStream pcs(os);
@@ -217,7 +217,7 @@ namespace py_backend
     }
 
     void PyUtils::check_cmd(const vector<symbol::Argument *> &args,
-            const vector<string> &reserved)
+                            const vector<string> &reserved)
     {
         vector<string> handled = reserved;
 
