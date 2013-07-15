@@ -135,6 +135,7 @@ namespace pygtk_backend
         indent() << "    out = cStringIO.StringIO()\n";
         indent() << "    generate(self.args, out)\n";
         indent() << "    self.preview.get_buffer().set_text(out.getvalue())\n";
+        indent() << "    out.close()\n";
     }
 
     void PyGuiWriter::gen_delete()
