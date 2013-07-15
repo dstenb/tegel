@@ -6,7 +6,7 @@ namespace pygtk_backend
     {
         indent() << "class GUI:\n";
         indent_inc();
-        gen_init();
+        gen_init(args);
         gen_delete();
         gen_destroy();
         gen_save_methods();
@@ -15,7 +15,7 @@ namespace pygtk_backend
         gen_primitive_methods();
     }
 
-    void PyGuiWriter::gen_init()
+    void PyGuiWriter::gen_init(const vector<symbol::Argument *> &args)
     {
         indent() << "def __init__(self, args):\n";
         indent_inc();
@@ -26,7 +26,7 @@ namespace pygtk_backend
         indent() << "self.window.show()\n\n";
         indent() << "self.filename = None\n\n";
         gen_top();
-        gen_bottom();
+        gen_bottom(args);
         indent() << "self.vbox = gtk.VBox()\n";
         indent() << "self.vbox.pack_start(self.top, expand=False)\n";
         indent() << "self.vbox.add(self.bottom)\n";
@@ -35,7 +35,7 @@ namespace pygtk_backend
         indent_dec();
     }
 
-    void PyGuiWriter::gen_bottom()
+    void PyGuiWriter::gen_bottom(const vector<symbol::Argument *> &args)
     {
         indent() << "self.bottom = gtk.HBox()\n";
         indent() << "self.a_scrolled = gtk.ScrolledWindow()\n";
@@ -58,6 +58,11 @@ namespace pygtk_backend
         indent() << "self.p_scrolled.set_visible(self.args._preview)\n";
         indent() << "self.bottom.add(self.p_scrolled)\n";
         indent() << "self.bottom.show()\n\n";
+
+        //PyGuiArgumentGenerator g(unindent(), 2);
+
+        for (symbol::Argument *a : args) {
+        }
 
         /* TODO: Generate arguments */
     }
@@ -199,10 +204,10 @@ namespace pygtk_backend
 
         indent() << "def create_bool(self, label, arg_name):\n";
         indent_inc();
-        indent() << "b = gtk.CheckButton(label)\n";
+        indent() << "b = gtk.CheckButton(None)\n";
         indent() << "b.set_active(getattr(self.args, arg_name))\n";
         indent() << "b.connect('toggled', self.bool_toggled, arg_name)\n";
-        indent() << "return b\n\n";
+        indent() << "return self.create_labeled(label, (b, False))\n\n";
         indent_dec();
 
         indent() << "def create_int(self, label, arg_name):\n";
