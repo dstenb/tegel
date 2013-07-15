@@ -27,6 +27,7 @@ namespace pygtk_backend {
             void gen_init(const vector<symbol::Argument *> &);
             void gen_bottom(const vector<symbol::Argument *> &);
             void gen_top();
+            void gen_update();
             void gen_delete();
             void gen_destroy();
             void gen_main();

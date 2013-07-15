@@ -7,6 +7,7 @@ namespace pygtk_backend
         indent() << "class GUI:\n";
         indent_inc();
         gen_init(args);
+        gen_update();
         gen_delete();
         gen_destroy();
         gen_save_methods();
@@ -32,6 +33,8 @@ namespace pygtk_backend
         indent() << "self.vbox.add(self.bottom)\n";
         indent() << "self.vbox.show()\n";
         indent() << "self.window.add(self.vbox)\n\n";
+        indent() << "if self.args._preview:\n";
+        indent() << "    self.update()\n\n";
         indent_dec();
     }
 
@@ -124,6 +127,14 @@ namespace pygtk_backend
         indent() << "self.top.append(view)\n";
 
         indent() << "self.top.show_all()\n";
+    }
+
+    void PyGuiWriter::gen_update()
+    {
+        indent() << "def update(self):\n";
+        indent() << "    out = cStringIO.StringIO()\n";
+        indent() << "    generate(self.args, out)\n";
+        indent() << "    self.preview.get_buffer().set_text(out.getvalue())\n";
     }
 
     void PyGuiWriter::gen_delete()
@@ -261,10 +272,12 @@ namespace pygtk_backend
 
     void PyGtkMain::generate(const vector<symbol::Argument *> &args)
     {
+        /* TODO */
         indent() << "import gobject\n";
         indent() << "import pygtk\n";
         indent() << "pygtk.require('2.0')\n";
-        indent() << "import gtk\n\n";
+        indent() << "import gtk\n";
+        indent() << "import cStringIO\n\n";
         indent() << "def main(argv=None):\n";
         indent_inc();
         indent() << "if argv is None:\n";
