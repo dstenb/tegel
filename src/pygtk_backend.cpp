@@ -102,12 +102,14 @@ namespace pygtk_backend
                             r->accept(c);
                             unindent() << "], \n";
                             indent() << "'header': True,\n";
+                            indent() << "'record': True,\n";
                         } else {
                             indent() << "'columns': [";
                             PyGtkColumn c(unindent());
                             l->elem()->accept(c);
                             unindent() << "], \n";
                             indent() << "'header': False,\n";
+                            indent() << "'record': False,\n";
                         }
 
                         indent_dec();
@@ -399,7 +401,7 @@ namespace pygtk_backend
         indent() << "cell = gtk.CellRendererText()\n";
         indent() << "cell.set_property('editable', True)\n";
         indent() << "cell.connect('edited', self.text_cell_edited, store, i)\n";
-        indent() << "return gtk.TreeviewColumn(c['label'], cell)\n";
+        indent() << "return gtk.TreeViewColumn(c['label'], cell, text=i)\n";
         indent_dec();
         indent() << "elif c['type'] == 'toggle':\n";
         /* TODO */
@@ -412,10 +414,17 @@ namespace pygtk_backend
         indent() << "def create_list(self, label, arg_name):\n";
         indent_inc();
         indent() << "store = gtk.ListStore(*list_decl[arg_name]['types'])\n";
+        indent() << "if list_decl[arg_name]['record']:\n";
+        indent() << "    for v in getattr(self.args, arg_name):\n";
+        indent() << "        store.append(list(v))\n";
+        indent() << "else:\n";
+        indent() << "    for v in getattr(self.args, arg_name):\n";
+        indent() << "        store.append([v])\n";
         indent() << "view = gtk.TreeView(store)\n";
         indent() << "for i, c in enumerate(list_decl[arg_name]['columns']):\n";
         indent() << "    view.append_column(self.create_column(i, c, store))\n";
-        indent() << "return view\n\n";
+        /* TODO: add/remove buttons */
+        indent() << "return self.create_labeled(label, (view, True))\n\n";
         indent_dec();
 
         indent() << "def bool_toggled(self, w, name):\n";
@@ -434,7 +443,9 @@ namespace pygtk_backend
 
         indent() << "def text_cell_edited(self, w, path, text, model, i):\n";
         indent_inc();
-        indent() << "model[path][i] = text\n\n";
+        indent() << "model[path][i] = text\n";
+        /* TODO: update self.args */
+        indent() << "self.update()\n\n";
         indent_dec();
 
         indent() << "def string_changed(self, w, name):\n";
