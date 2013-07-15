@@ -31,12 +31,24 @@ namespace pygtk_backend {
             void gen_primitive_methods();
     };
 
+    class PyGtkMain : public PyWriter
+    {
+        public:
+            PyGtkMain(ostream &os)
+                : PyWriter(os, 0) {}
+
+            void generate(const vector<symbol::Argument *> &);
+        private:
+            void generate_opts(const vector<symbol::Argument *> &);
+    };
+
     class PyGtkBackend : public Backend
     {
         public:
             void generate(ostream &, const vector<symbol::Argument *> &,
                           ast::Statements *);
         private:
+            void check_cmd(const vector<symbol::Argument *> &);
     };
 }
 
