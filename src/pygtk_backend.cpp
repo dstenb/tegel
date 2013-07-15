@@ -9,6 +9,7 @@ namespace pygtk_backend
         gen_init();
         gen_delete();
         gen_destroy();
+        gen_save_methods();
         gen_menu_callbacks();
         gen_main();
         gen_primitive_methods();
@@ -129,10 +130,32 @@ namespace pygtk_backend
         indent() << "    gtk.main()\n\n";
     }
 
-void PyGuiWriter::gen_save_methods()
-{
+    void PyGuiWriter::gen_save_methods()
+    {
+        indent() << "def save_dialog(self):\n";
+        indent_inc();
+        indent() << "dialog = gtk.FileChooserDialog('Save', None, "
+                 "gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, "
+                 "gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))\n";
+        indent() << "dialog.set_do_overwrite_confirmation(True)\n";
+        indent() << "dialog.set_modal(True)\n";
+        indent() << "dialog.connect('response', self.save_dialog_response)\n";
+        indent() << "if self.filename:\n";
+        indent() << "    dialog.set_filename(self.filename)\n";
+        indent() << "else:\n";
+        indent() << "    dialog.set_current_name('Untitled')\n";
+        indent() << "dialog.run()\n\n";
+        indent_dec();
 
-}
+        indent() << "def save_dialog_response(self, dialog, response):\n";
+        indent() << "    if response == gtk.RESPONSE_ACCEPT:\n";
+        indent() << "        self.filename = dialog.get_filename()\n";
+        indent() << "        self.write_to_file()\n";
+        indent() << "    dialog.destroy()\n\n";
+
+        indent() << "def write_to_file(self):\n";
+        indent() << "    print('Writing to ' + self.filename)\n\n";
+    }
 
     void PyGuiWriter::gen_menu_callbacks()
     {
