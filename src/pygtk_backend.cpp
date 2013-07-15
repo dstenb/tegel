@@ -9,6 +9,7 @@ namespace pygtk_backend
         gen_init();
         gen_delete();
         gen_destroy();
+        gen_menu_callbacks();
         gen_main();
         gen_primitive_methods();
     }
@@ -28,7 +29,7 @@ namespace pygtk_backend
         indent() << "self.vbox = gtk.VBox()\n";
         indent() << "self.vbox.pack_start(self.top, expand=False)\n";
         indent() << "self.vbox.add(self.bottom)\n";
-        indent() << "self.vbox.show_all()\n";
+        indent() << "self.vbox.show()\n";
         indent() << "self.window.add(self.vbox)\n\n";
         indent_dec();
     }
@@ -51,9 +52,10 @@ namespace pygtk_backend
 		indent() << "self.preview.show()\n";
 		indent() << "self.p_scrolled.add_with_viewport(self.preview)\n\n";
 
-		indent() << "for b in [ self.a_scrolled, self.p_scrolled ]:\n";
-		indent() << "    self.bottom.add(b)\n";
-		indent() << "    b.show()\n";
+		indent() << "self.a_scrolled.show()\n";
+        indent() << "self.bottom.add(self.a_scrolled)\n";
+        indent() << "self.p_scrolled.set_visible(self.args._preview)\n";
+        indent() << "self.bottom.add(self.p_scrolled)\n";
 		indent() << "self.bottom.show()\n\n";
 
         /* TODO: Generate arguments */
@@ -70,15 +72,13 @@ namespace pygtk_backend
 		indent() << "file.set_submenu(filemenu)\n";
 
 		indent() << "save = gtk.ImageMenuItem(gtk.STOCK_SAVE, accelg)\n";
-		/* TODO indent() << "save.connect('activate', self.save_callback)\n";
-         * */
+		indent() << "save.connect('activate', self.save_callback)\n";
 		indent() << "k, m = gtk.accelerator_parse('<Control>S')\n";
 		indent() << "save.add_accelerator('activate', accelg, k, m, "
             "gtk.ACCEL_VISIBLE)\n";
 
 		indent() << "save_as = gtk.ImageMenuItem(gtk.STOCK_SAVE_AS, accelg)\n";
-		/* indent() << "save_as.connect('activate', self.save_as_callback)\n";
-         * */
+		indent() << "save_as.connect('activate', self.save_as_callback)\n";
 		indent() << "k, m = gtk.accelerator_parse('<Shift><Control>S')\n";
 		indent() << "save_as.add_accelerator('activate', accelg, k, m, "
             "gtk.ACCEL_VISIBLE)\n";
@@ -98,7 +98,8 @@ namespace pygtk_backend
 		indent() << "view.set_submenu(viewmenu)\n";
 
 		indent() << "preview = gtk.CheckMenuItem('Preview')\n";
-		/* indent() << "preview.connect('activate', self.toggle_preview)\n"; */
+        indent() << "preview.set_active(self.args._preview)\n";
+		indent() << "preview.connect('activate', self.toggle_preview)\n";
 		indent() << "viewmenu.append(preview)\n";
 		indent() << "k, m = gtk.accelerator_parse('<Control>P')\n";
 		indent() << "preview.add_accelerator('activate', accelg, k, m, "
@@ -126,6 +127,27 @@ namespace pygtk_backend
     {
         indent() << "def main(self):\n";
         indent() << "    gtk.main()\n\n";
+    }
+
+    /* TODO: gen_save_methods() */
+
+    void PyGuiWriter::gen_menu_callbacks()
+    {
+        /* Preview toggle button callback */
+		indent() << "def toggle_preview(self, w, data=None):\n";
+		indent() << "    self.p_scrolled.set_visible(not "
+            "self.p_scrolled.get_visible())\n\n";
+
+        /* "save" callback */
+		indent() << "def save_callback(self, w, data=None):\n";
+		indent() << "    if self.filename:\n";
+		indent() << "        self.write_to_file()\n";
+		indent() << "    else:\n";
+		indent() << "        self.save_dialog()\n\n";
+
+        /* "save as" callback */
+		indent() << "def save_as_callback(self, w, data=None):\n";
+		indent() << "    self.save_dialog()\n\n";
     }
 
     void PyGuiWriter::gen_primitive_methods()
