@@ -129,7 +129,10 @@ namespace pygtk_backend
         indent() << "    gtk.main()\n\n";
     }
 
-    /* TODO: gen_save_methods() */
+void PyGuiWriter::gen_save_methods()
+{
+
+}
 
     void PyGuiWriter::gen_menu_callbacks()
     {
