@@ -23,13 +23,91 @@ namespace pygtk_backend
         indent() << "self.window.connect('destroy', self.destroy)\n";
         indent() << "self.window.show()\n\n";
         indent() << "self.filename = None\n\n";
-        indent() << "self.create_top()\n";
-        indent() << "self.create_bottom()\n\n";
+        gen_top();
+        gen_bottom();
         indent() << "self.vbox = gtk.VBox()\n";
         indent() << "self.vbox.pack_start(self.top, expand=False)\n";
+        indent() << "self.vbox.add(self.bottom)\n";
         indent() << "self.vbox.show_all()\n";
         indent() << "self.window.add(self.vbox)\n\n";
         indent_dec();
+    }
+
+    void PyGuiWriter::gen_bottom()
+    {
+        indent() << "self.bottom = gtk.HBox()\n";
+        indent() << "self.a_scrolled = gtk.ScrolledWindow()\n";
+        indent() << "self.a_scrolled.set_policy(gtk.POLICY_AUTOMATIC, "
+            "gtk.POLICY_ALWAYS)\n";
+        indent() << "self.argument_box = gtk.VBox()\n";
+        indent() << "self.a_scrolled.add_with_viewport(self.argument_box)\n";
+        indent() << "self.argument_box.show()\n";
+
+		indent() << "self.p_scrolled = gtk.ScrolledWindow()\n";
+		indent() << "self.p_scrolled.set_policy(gtk.POLICY_AUTOMATIC, "
+            "gtk.POLICY_ALWAYS)\n\n";
+        indent() << "self.preview = gtk.TextView()\n";
+		indent() << "self.preview.set_editable(False)\n";
+		indent() << "self.preview.show()\n";
+		indent() << "self.p_scrolled.add_with_viewport(self.preview)\n\n";
+
+		indent() << "for b in [ self.a_scrolled, self.p_scrolled ]:\n";
+		indent() << "    self.bottom.add(b)\n";
+		indent() << "    b.show()\n";
+		indent() << "self.bottom.show()\n\n";
+
+        /* TODO: Generate arguments */
+    }
+
+    void PyGuiWriter::gen_top()
+    {
+		indent() << "self.top = gtk.MenuBar()\n";
+		indent() << "accelg = gtk.AccelGroup()\n";
+		indent() << "self.window.add_accel_group(accelg)\n";
+
+		indent() << "filemenu = gtk.Menu()\n";
+		indent() << "file = gtk.MenuItem('File')\n";
+		indent() << "file.set_submenu(filemenu)\n";
+
+		indent() << "save = gtk.ImageMenuItem(gtk.STOCK_SAVE, accelg)\n";
+		/* TODO indent() << "save.connect('activate', self.save_callback)\n";
+         * */
+		indent() << "k, m = gtk.accelerator_parse('<Control>S')\n";
+		indent() << "save.add_accelerator('activate', accelg, k, m, "
+            "gtk.ACCEL_VISIBLE)\n";
+
+		indent() << "save_as = gtk.ImageMenuItem(gtk.STOCK_SAVE_AS, accelg)\n";
+		/* indent() << "save_as.connect('activate', self.save_as_callback)\n";
+         * */
+		indent() << "k, m = gtk.accelerator_parse('<Shift><Control>S')\n";
+		indent() << "save_as.add_accelerator('activate', accelg, k, m, "
+            "gtk.ACCEL_VISIBLE)\n";
+
+		indent() << "exit = gtk.ImageMenuItem(gtk.STOCK_QUIT, accelg)\n";
+		indent() << "exit.connect('activate', self.destroy)\n";
+		indent() << "k, m = gtk.accelerator_parse('<Control>Q')\n";
+		indent() << "exit.add_accelerator('activate', accelg, k, m, "
+            "gtk.ACCEL_VISIBLE)\n";
+
+		indent() << "for o in [ save, save_as, gtk.SeparatorMenuItem(), "
+            "exit ]:\n";
+		indent() << "    filemenu.append(o)\n";
+
+		indent() << "viewmenu = gtk.Menu()\n";
+		indent() << "view = gtk.MenuItem('View')\n";
+		indent() << "view.set_submenu(viewmenu)\n";
+
+		indent() << "preview = gtk.CheckMenuItem('Preview')\n";
+		/* indent() << "preview.connect('activate', self.toggle_preview)\n"; */
+		indent() << "viewmenu.append(preview)\n";
+		indent() << "k, m = gtk.accelerator_parse('<Control>P')\n";
+		indent() << "preview.add_accelerator('activate', accelg, k, m, "
+                "gtk.ACCEL_VISIBLE)\n";
+
+		indent() << "self.top.append(file)\n";
+		indent() << "self.top.append(view)\n";
+
+		indent() << "self.top.show_all()\n";
     }
 
     void PyGuiWriter::gen_delete()
@@ -41,7 +119,7 @@ namespace pygtk_backend
     void PyGuiWriter::gen_destroy()
     {
         indent() << "def destroy(self, w, d=None):\n";
-        indent() << "    gt.main_quit()\n\n";
+        indent() << "    gtk.main_quit()\n\n";
     }
 
     void PyGuiWriter::gen_main()
@@ -134,7 +212,8 @@ namespace pygtk_backend
         generate_opts(args);
         unindent() << "\n";
 
-        indent() << "generate(args, args._file)\n\n";
+        indent() << "g = GUI(args)\n";
+        indent() << "g.main()\n";
 
         indent_dec();
 
