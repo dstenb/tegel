@@ -2,6 +2,124 @@
 
 namespace pygtk_backend
 {
+    class PyGtkGobjectList : public TypeVisitor
+    {
+        public:
+            PyGtkGobjectList(ostream &os)
+                : os_(os) {}
+
+            virtual void visit(const RecordType *p) {
+                auto it = p->begin();
+                while (it != p->end()) {
+                    (*it).type->accept(*this);
+                    if (++it != p->end())
+                        os_ << ", ";
+                }
+            }
+
+            virtual void visit(const BoolType *) {
+                os_ << "gobject.TYPE_BOOLEAN";
+            }
+
+            virtual void visit(const IntType *) {
+                os_ << "gobject.TYPE_INT";
+            }
+
+            virtual void visit(const StringType *) {
+                os_ << "gobject.TYPE_STRING";
+            }
+
+            virtual void visit(const ListType *l) {
+                l->elem()->accept(*this);
+            }
+        private:
+            ostream &os_;
+    };
+
+    class PyGtkColumn : public TypeVisitor
+    {
+        public:
+            PyGtkColumn(ostream &os)
+                : os_(os) {}
+
+            virtual void visit(const RecordType *p) {
+                auto it = p->begin();
+                while (it != p->end()) {
+                    os_ << "{'type': ";
+                    (*it).type->accept(*this);
+                    os_ << "' 'label': '" << (*it).name << "'}";
+                    if (++it != p->end())
+                        os_ << ", ";
+                }
+            }
+
+            virtual void visit(const BoolType *) {
+                os_ << "{'type': 'toggle', 'label': ''}";
+            }
+
+            virtual void visit(const IntType *) {
+                os_ << "{'type': 'spin', 'label': ''}";
+            }
+
+            virtual void visit(const StringType *) {
+                os_ << "{'type': 'text', 'label': ''}";
+            }
+
+            virtual void visit(const ListType *l) { }
+        private:
+            ostream &os_;
+    };
+
+    class PyGtkHeader : public PyWriter
+    {
+        public:
+            PyGtkHeader(ostream &os)
+                : PyWriter(os, 0) {}
+
+            void generate(const vector<symbol::Argument *> &args) {
+                indent() << "import gobject\n";
+                indent() << "import pygtk\n";
+                indent() << "pygtk.require('2.0')\n";
+                indent() << "import gtk\n";
+                indent() << "import cStringIO\n\n";
+
+                indent() << "list_decl = {\n";
+                indent_inc();
+                for (symbol::Argument *a : args) {
+                    auto l = a->get_type()->list();
+                    if (l != nullptr) {
+                        indent() << "'" << a->get_name() << "': {\n";
+                        indent_inc();
+                        indent() << "'types': (";
+                        PyGtkGobjectList g(unindent());
+                        a->get_type()->accept(g);
+                        unindent() << ", ),\n";
+
+                        auto r = l->elem()->record();
+                        if (r != nullptr) {
+                            indent() << "'columns': [";
+                            PyGtkColumn c(unindent());
+                            r->accept(c);
+                            unindent() << "], \n";
+                            indent() << "'header': True,\n";
+                        } else {
+                            indent() << "'columns': [";
+                            PyGtkColumn c(unindent());
+                            l->elem()->accept(c);
+                            unindent() << "], \n";
+                            indent() << "'header': False,\n";
+                        }
+
+                        indent_dec();
+                        indent() << "},\n";
+                    }
+                }
+                indent_dec();
+                indent() << "}\n\n";
+            }
+    };
+
+
     void PyGuiWriter::generate(const vector<symbol::Argument *> &args)
     {
         indent() << "class GUI:\n";
@@ -13,7 +131,7 @@ namespace pygtk_backend
         gen_save_methods();
         gen_menu_callbacks();
         gen_main();
-        gen_primitive_methods();
+        gen_create_methods();
     }
 
     void PyGuiWriter::gen_init(const vector<symbol::Argument *> &args)
@@ -62,16 +180,40 @@ namespace pygtk_backend
         indent() << "self.bottom.add(self.p_scrolled)\n";
         indent() << "self.bottom.show()\n\n";
 
-        //PyGuiArgumentGenerator g(unindent(), 2);
-        //
         indent() << "for o in [\n";
         for (symbol::Argument *a : args) {
+            auto p = a->get("info");
+            auto id = static_cast<const StringConstantData *>(p->get());
+            auto is = Escaper()(id->value());
 
+            if (is.empty())
+                is = a->get_name();
+
+            /* Get the default value */
+            auto dd = a->get("default")->get();
+
+            const Type *t = dd->type();
+
+            /* TODO */
+
+            if (t == TypeFactory::get("bool")) {
+                indent() << "self.create_bool(\"" << is << "\", \""
+                         << a->get_name() << "\"),\n";
+            } else if (t == TypeFactory::get("int")) {
+                indent() << "self.create_int(\"" << is << "\", \""
+                         << a->get_name() << "\"),\n";
+            } else if (t == TypeFactory::get("string")) {
+                indent() << "self.create_string(\"" << is << "\", \""
+                         << a->get_name() << "\"),\n";
+            } else if (t->list()) {
+                indent() << "self.create_list(\"" << is << "\", \""
+                         << a->get_name() << "\"),\n";
+            } else if (t->record()) {
+                indent() << "self.create_record(\"" << is << "\", \""
+                         << a->get_name() << "\"),\n";
+            }
         }
-        /* FIXME: remove dummy code */
-        indent() << "self.create_bool('Bool', 'b'),\n";
-        indent() << "self.create_int('Integer', 'h'),\n";
-        indent() << "self.create_string('String', 's')\n";
+
         indent() << "]:\n";
         indent() << "    self.argument_box.pack_start(o, expand=False)\n";
         indent() << "    o.show()\n\n";
@@ -202,7 +344,7 @@ namespace pygtk_backend
         indent() << "    self.save_dialog()\n\n";
     }
 
-    void PyGuiWriter::gen_primitive_methods()
+    void PyGuiWriter::gen_create_methods()
     {
         indent() << "def create_label(self, string):\n";
         indent_inc();
@@ -249,6 +391,33 @@ namespace pygtk_backend
         indent() << "return self.create_labeled(label, (e, False))\n\n";
         indent_dec();
 
+        indent() << "def create_column(self, i, c, store):\n";
+        indent_inc();
+        indent() << "print('c = ' + repr(c))\n";
+        indent() << "if c['type'] == 'text':\n";
+        indent_inc();
+        indent() << "cell = gtk.CellRendererText()\n";
+        indent() << "cell.set_property('editable', True)\n";
+        indent() << "cell.connect('edited', self.text_cell_edited, store, i)\n";
+        indent() << "return gtk.TreeviewColumn(c['label'], cell)\n";
+        indent_dec();
+        indent() << "elif c['type'] == 'toggle':\n";
+        /* TODO */
+        indent_inc();
+        indent() << "pass\n";
+        indent_dec();
+        indent_dec();
+        unindent() << "\n";
+
+        indent() << "def create_list(self, label, arg_name):\n";
+        indent_inc();
+        indent() << "store = gtk.ListStore(*list_decl[arg_name]['types'])\n";
+        indent() << "view = gtk.TreeView(store)\n";
+        indent() << "for i, c in enumerate(list_decl[arg_name]['columns']):\n";
+        indent() << "    view.append_column(self.create_column(i, c, store))\n";
+        indent() << "return view\n\n";
+        indent_dec();
+
         indent() << "def bool_toggled(self, w, name):\n";
         indent_inc();
         indent() << "setattr(self.args, name, w.get_active())\n";
@@ -263,6 +432,11 @@ namespace pygtk_backend
         indent() << "self.update()\n\n";
         indent_dec();
 
+        indent() << "def text_cell_edited(self, w, path, text, model, i):\n";
+        indent_inc();
+        indent() << "model[path][i] = text\n\n";
+        indent_dec();
+
         indent() << "def string_changed(self, w, name):\n";
         indent_inc();
         indent() << "setattr(self.args, name, w.get_text())\n";
@@ -273,12 +447,7 @@ namespace pygtk_backend
 
     void PyGtkMain::generate(const vector<symbol::Argument *> &args)
     {
-        /* TODO */
-        indent() << "import gobject\n";
-        indent() << "import pygtk\n";
-        indent() << "pygtk.require('2.0')\n";
-        indent() << "import gtk\n";
-        indent() << "import cStringIO\n\n";
+
         indent() << "def main(argv=None):\n";
         indent_inc();
         indent() << "if argv is None:\n";
@@ -305,6 +474,7 @@ namespace pygtk_backend
         /* Add "output file" argument */
         indent() << "parser.add_argument('-o', type=argparse.FileType('w'), "
                  "default=sys.stdout, help='output to file instead of stdout', "
+
                  "dest='_file')\n";
         indent() << "parser.add_argument('--no-preview', action='store_false',"
                  " default=True, help='hide the preview window', "
@@ -324,8 +494,13 @@ namespace pygtk_backend
                                 ast::Statements *body)
     {
         if (body) {
+            check_cmd(args);
+
             PyHeader h(os);
             h.generate(args);
+
+            PyGtkHeader hg(os);
+            hg.generate(args);
 
             PyGuiWriter g(os);
             g.generate(args);

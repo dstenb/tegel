@@ -31,7 +31,7 @@ namespace pygtk_backend {
             void gen_delete();
             void gen_destroy();
             void gen_main();
-            void gen_primitive_methods();
+            void gen_create_methods();
             void gen_menu_callbacks();
             void gen_save_methods();
     };
