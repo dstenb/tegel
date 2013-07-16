@@ -294,9 +294,7 @@ namespace pygtk_backend
                 is = a->get_name();
 
             /* Get the default value */
-            auto dd = a->get("default")->get();
-
-            const Type *t = dd->type();
+            auto t = a->get("default")->get()->type();
 
             /* TODO */
 
@@ -314,10 +312,9 @@ namespace pygtk_backend
                          << a->get_name() << "\"),\n";
             } else if (t->record()) {
                 auto r = t->record();
-                indent() << "self.create_record('" << a->get_name() << "', [\n";
+                indent() << "self.create_record('" << a->get_name() << "', '"
+                         << is << "', [\n";
                 PyGtkRendererType rt(unindent());
-
-                /* TODO: add info */
 
                 indent_inc();
                 auto it = r->begin();
@@ -737,7 +734,7 @@ namespace pygtk_backend
         indent_dec();
 
         /* Generate create_record(). Used to create a record argument */
-        indent() << "def create_record(self, name, fields):\n";
+        indent() << "def create_record(self, name, label, fields):\n";
         indent() << "    table = gtk.Table(len(fields), 2)\n";
         indent() << "    d = { 'text': (self.create_text, "
                  "self.string_field_changed),\n";
@@ -754,7 +751,7 @@ namespace pygtk_backend
                  "xpadding=9)\n";
         indent() << "        table.attach(w, 1, 2, i, i+1)\n";
         indent() << "    table.show_all()\n";
-        indent() << "    return self.create_labeled(name, (table, True))\n";
+        indent() << "    return self.create_labeled(label, (table, True))\n";
     }
 
     void PyGtkMain::generate(const vector<symbol::Argument *> &args)
