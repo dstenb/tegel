@@ -398,7 +398,20 @@ namespace pygtk_backend
         indent() << "    dialog.destroy()\n\n";
 
         indent() << "def write_to_file(self):\n";
-        indent() << "    print('Writing to ' + self.filename)\n\n";
+        indent_inc();
+        indent() << "try:\n";
+        indent() << "    f = open(self.filename, 'w')\n";
+        indent() << "    try:\n";
+        indent() << "        generate(self.args, f)\n";
+        indent() << "    finally:\n";
+        indent() << "        f.close()\n";
+        indent() << "except IOError:\n";
+        indent() << "    dialog = gtk.MessageDialog(self.window, "
+                 "gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, "
+                 "gtk.BUTTONS_CLOSE, 'Couldn\\'t write to %s' % self.filename)\n";
+        indent() << "    dialog.run()\n";
+        indent() << "    dialog.destroy()\n";
+        indent_dec();
     }
 
     void PyGuiWriter::gen_menu_callbacks()
