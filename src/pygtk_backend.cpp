@@ -515,6 +515,42 @@ namespace pygtk_backend
         indent() << "        new_item = value\n";
         indent() << "    getattr(self.args, name)[row] = new_item\n";
         indent() << "    self.update()\n\n";
+
+        /* Generate the CellRendererText column method */
+        indent() << "def create_text_column(self, l, i, store, name):\n";
+        indent() << "    cell = gtk.CellRendererText()\n";
+        indent() << "    cell.set_property('editable', True)\n";
+        indent() << "    cell.connect('edited', self.text_cell_edited, "
+                 "store, i, name)\n";
+        indent() << "    return gtk.TreeViewColumn(l, cell, text=i)\n";
+
+        /* Generate the CellRendererToggle column method */
+        indent() << "def create_toggle_column(self, l, i, store, name):\n";
+        indent() << "    cell = gtk.CellRendererToggle()\n";
+        indent() << "    cell.set_property('activatable', True)\n";
+        indent() << "    cell.connect('toggled', self.toggle_cell_edited, "
+                 "store, i, name)\n";
+        indent() << "    col = gtk.TreeViewColumn(l, active=i)\n";
+        indent() << "    col.pack_start(cell, False)\n";
+        indent() << "    col.add_attribute(cell, 'active', i)\n";
+        indent() << "    return col\n\n";
+
+        /* Generate the CellRendererSpin column method */
+        indent() << "def create_spin_column(self, l, i, store, name):\n";
+        indent() << "    cell = gtk.CellRendererSpin()\n";
+        indent() << "    cell.set_property('editable', True)\n";
+        indent() << "    a = gtk.Adjustment(0, -65535, 65535, 1)\n";
+        indent() << "    cell.set_property('adjustment', a)\n";
+        indent() << "    cell.connect('edited', self.spin_cell_edited, "
+                 "store, i, name)\n";
+        indent() << "    return gtk.TreeViewColumn(l, cell, text=i)\n\n";
+
+        /* Generate create_column() */
+        indent() << "def create_column(self, i, c, store, name):\n";
+        indent() << "    d = { 'text': self.create_text_column,\n";
+        indent() << "          'toggle': self.create_toggle_column, \n";
+        indent() << "          'spin': self.create_spin_column }\n";
+        indent() << "    return d[c['type']](c['label'], i, store, name)\n\n";
     }
 
     /** Generates all the callback functions for the argument boxes
@@ -578,90 +614,48 @@ namespace pygtk_backend
         gen_arg_helpers();
         gen_arg_callbacks();
 
-        indent() << "def create_bool(self, label, arg_name):\n";
-        indent_inc();
-        indent() << "b = gtk.CheckButton(None)\n";
-        indent() << "b.set_active(getattr(self.args, arg_name))\n";
-        indent() << "b.connect('toggled', self.bool_toggled, arg_name)\n";
-        indent() << "return self.create_labeled(label, (b, False))\n\n";
-        indent_dec();
+        /* Generate create_bool(). Used to create a bool argument */
+        indent() << "def create_bool(self, label, name):\n";
+        indent() << "    b = gtk.CheckButton(None)\n";
+        indent() << "    b.set_active(getattr(self.args, name))\n";
+        indent() << "    b.connect('toggled', self.bool_toggled, name)\n";
+        indent() << "    return self.create_labeled(label, (b, False))\n\n";
 
-        indent() << "def create_int(self, label, arg_name):\n";
-        indent_inc();
-        indent() << "a = gtk.Adjustment(getattr(self.args, arg_name), "
-                 "-65535, 65535, 1)\n";
-        indent() << "i = gtk.SpinButton(a)\n";
-        indent() << "i.set_value(getattr(self.args, arg_name))\n";
-        indent() << "i.connect('value-changed', self.int_changed, arg_name)\n";
-        indent() << "return self.create_labeled(label, (i, False))\n\n";
-        indent_dec();
+        /* Generate create_int(). Used to create an int argument */
+        indent() << "def create_int(self, label, name):\n";
+        indent() << "    a = gtk.Adjustment(0, -65535, 65535, 1)\n";
+        indent() << "    i = gtk.SpinButton(a)\n";
+        indent() << "    i.set_value(getattr(self.args, name))\n";
+        indent() << "    i.connect('value-changed', self.int_changed, name)\n";
+        indent() << "    return self.create_labeled(label, (i, False))\n\n";
 
-        indent() << "def create_string(self, label, arg_name):\n";
-        indent_inc();
-        indent() << "e = gtk.Entry()\n";
-        indent() << "e.set_text(getattr(self.args, arg_name))\n";
-        indent() << "e.connect('changed', self.string_changed, arg_name)\n";
-        indent() << "return self.create_labeled(label, (e, False))\n\n";
-        indent_dec();
+        /* Generate create_string(). Used to create a string argument */
+        indent() << "def create_string(self, label, name):\n";
+        indent() << "    e = gtk.Entry()\n";
+        indent() << "    e.set_text(getattr(self.args, name))\n";
+        indent() << "    e.connect('changed', self.string_changed, name)\n";
+        indent() << "    return self.create_labeled(label, (e, False))\n\n";
 
-        indent() << "def create_column(self, i, c, store, arg):\n";
+        indent() << "def create_list(self, label, name):\n";
         indent_inc();
-        indent() << "print('c = ' + repr(c))\n";
-        indent() << "if c['type'] == 'text':\n";
-        indent_inc();
-        indent() << "cell = gtk.CellRendererText()\n";
-        indent() << "cell.set_property('editable', True)\n";
-        indent() << "cell.connect('edited', self.text_cell_edited, "
-                 "store, i, arg)\n";
-        indent() << "return gtk.TreeViewColumn(c['label'], cell, text=i)\n";
-        indent_dec();
-        indent() << "elif c['type'] == 'toggle':\n";
-        indent_inc();
-        indent() << "cell = gtk.CellRendererToggle()\n";
-        indent() << "cell.set_property('activatable', True)\n";
-        indent() << "cell.connect('toggled', self.toggle_cell_edited, "
-                 "store, i, arg)\n";
-        indent() << "col = gtk.TreeViewColumn(c['label'], active=i)\n";
-        indent() << "col.pack_start(cell, False)\n";
-        indent() << "col.add_attribute(cell, 'active', i)\n";
-        indent() << "return col\n";
-        indent_dec();
-        indent() << "elif c['type'] == 'spin':\n";
-        indent_inc();
-        indent() << "cell = gtk.CellRendererSpin()\n";
-        indent() << "cell.set_property('editable', True)\n";
-        indent() << "a = gtk.Adjustment(0, -65535, 65535, 1)\n";
-        indent() << "cell.set_property('adjustment', a)\n";
-        indent() << "cell.connect('edited', self.spin_cell_edited, "
-                 "store, i, arg)\n";
-        indent() << "return gtk.TreeViewColumn(c['label'], cell, text=i)\n";
-        indent_dec();
-        /* TODO */
-        indent_inc();
-        indent_dec();
-        indent_dec();
-        unindent() << "\n";
-
-        indent() << "def create_list(self, label, arg_name):\n";
-        indent_inc();
-        indent() << "store = gtk.ListStore(*list_decl[arg_name]['types'])\n";
-        indent() << "if list_decl[arg_name]['record']:\n";
-        indent() << "    for v in getattr(self.args, arg_name):\n";
+        indent() << "store = gtk.ListStore(*list_decl[name]['types'])\n";
+        indent() << "if list_decl[name]['record']:\n";
+        indent() << "    for v in getattr(self.args, name):\n";
         indent() << "        store.append(list(v))\n";
         indent() << "else:\n";
-        indent() << "    for v in getattr(self.args, arg_name):\n";
+        indent() << "    for v in getattr(self.args, name):\n";
         indent() << "        store.append([v])\n";
         indent() << "view = gtk.TreeView(store)\n";
-        indent() << "for i, c in enumerate(list_decl[arg_name]['columns']):\n";
+        indent() << "for i, c in enumerate(list_decl[name]['columns']):\n";
         indent() << "    view.append_column(self.create_column(i, c, "
-                 "store, arg_name))\n";
+                 "store, name))\n";
         indent() << "b = gtk.HButtonBox()\n";
         indent() << "b.set_layout(gtk.BUTTONBOX_END)\n";
         indent() << "ab = gtk.Button(None, 'gtk-add')\n";
-        indent() << "ab.connect('clicked', self.add_row, view, arg_name)\n";
+        indent() << "ab.connect('clicked', self.add_row, view, name)\n";
         indent() << "rb = gtk.Button(None, 'gtk-remove')\n";
         indent() << "rb.connect('clicked', self.remove_selected, "
-                 "view, arg_name)\n";
+                 "view, name)\n";
         indent() << "for w in [ rb, ab ]:\n";
         indent() << "    w.show()\n";
         indent() << "    b.add(w)\n";
