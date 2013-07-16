@@ -140,8 +140,8 @@ namespace pygtk_backend
             ostream &os_;
     };
 
-    /** PyGtkHeader is used to generate the additional header information used
-     * for pygtk related things
+    /** PyGtkHeader is used to generate the additional header data and
+     * functions for pygtk related things
      *
      */
     class PyGtkHeader : public PyWriter
@@ -157,61 +157,62 @@ namespace pygtk_backend
                 indent() << "import gtk\n";
                 indent() << "import cStringIO\n\n";
 
+                /* Generate information about the list arguments */
                 indent() << "list_decl = {\n";
                 indent_inc();
-                for (symbol::Argument *a : args) {
-                    auto l = a->get_type()->list();
-                    if (l != nullptr) {
-                        indent() << "'" << a->get_name() << "': {\n";
-                        indent_inc();
-                        indent() << "'types': (";
-                        PyGtkGobjectList g(unindent());
-                        a->get_type()->accept(g);
-                        unindent() << ", ),\n";
-
-                        auto r = l->elem()->record();
-                        if (r != nullptr) {
-                            indent() << "'columns': [";
-                            PyGtkColumn c(unindent());
-                            r->accept(c);
-                            unindent() << "], \n";
-                            indent() << "'header': True,\n";
-                            indent() << "'record': " <<
-                                     PyUtils::record_name(r) << ",\n";
-                        } else {
-                            indent() << "'columns': [";
-                            PyGtkColumn c(unindent());
-                            l->elem()->accept(c);
-                            unindent() << "], \n";
-                            indent() << "'header': False,\n";
-                            indent() << "'record': None,\n";
-                        }
-
-                        /* Generate the default value for an item in the list
-                         */
-                        indent() << "'default': ";
-                        PyDefaultDefault d(unindent());
-                        l->elem()->accept(d);
-                        unindent() << "\n";
-
-                        indent_dec();
-                        indent() << "},\n";
-                    }
-                }
+                for (symbol::Argument *a : args)
+                    generate_list_decl_item(a);
                 indent_dec();
                 indent() << "}\n\n";
 
                 indent() << "def create_default_item(arg_name):\n";
-                indent_inc();
-                indent() << "d = list_decl[arg_name]['default']\n";
-                indent() << "if list_decl[arg_name]['record']:\n";
-                indent() << "    return list(d), d\n";
-                indent() << "else:\n";
-                indent() << "    return [ d ], d\n";
-                indent_dec();
+                indent() << "    d = list_decl[arg_name]['default']\n";
+                indent() << "    if list_decl[arg_name]['record']:\n";
+                indent() << "        return list(d), d\n";
+                indent() << "    else:\n";
+                indent() << "        return [ d ], d\n";
+            }
+
+            void generate_list_decl_item(symbol::Argument *a) {
+                auto l = a->get_type()->list();
+                if (l != nullptr) {
+                    indent() << "'" << a->get_name() << "': {\n";
+                    indent_inc();
+                    indent() << "'types': (";
+                    PyGtkGobjectList g(unindent());
+                    a->get_type()->accept(g);
+                    unindent() << ", ),\n";
+
+                    auto r = l->elem()->record();
+                    if (r != nullptr) {
+                        indent() << "'columns': [";
+                        PyGtkColumn c(unindent());
+                        r->accept(c);
+                        unindent() << "], \n";
+                        indent() << "'header': True,\n";
+                        indent() << "'record': " <<
+                                 PyUtils::record_name(r) << ",\n";
+                    } else {
+                        indent() << "'columns': [";
+                        PyGtkColumn c(unindent());
+                        l->elem()->accept(c);
+                        unindent() << "], \n";
+                        indent() << "'header': False,\n";
+                        indent() << "'record': None,\n";
+                    }
+
+                    /* Generate the default value for an item in the list
+                     */
+                    indent() << "'default': ";
+                    PyDefaultDefault d(unindent());
+                    l->elem()->accept(d);
+                    unindent() << "\n";
+
+                    indent_dec();
+                    indent() << "},\n";
+                }
             }
     };
-
 
     /** Generates the GUI class
      *
@@ -312,8 +313,24 @@ namespace pygtk_backend
                 indent() << "self.create_list(\"" << is << "\", \""
                          << a->get_name() << "\"),\n";
             } else if (t->record()) {
-                indent() << "self.create_record(\"" << is << "\", \""
-                         << a->get_name() << "\"),\n";
+                auto r = t->record();
+                indent() << "self.create_record('" << a->get_name() << "', [\n";
+                PyGtkRendererType rt(unindent());
+
+                /* TODO: add info */
+
+                indent_inc();
+                auto it = r->begin();
+                while (it != r->end()) {
+                    indent() << "{'label': '" << (*it).name << "', 'type': '";
+                    (*it).type->accept(rt);
+                    unindent() << "', 'name': '" << (*it).name << "'}";
+                    if (++it != r->end())
+                        unindent() << ", ";
+                    unindent() << "\n";
+                }
+                indent_dec();
+                indent() << "]),\n";
             }
         }
 
@@ -647,29 +664,50 @@ namespace pygtk_backend
         gen_arg_helpers();
         gen_arg_callbacks();
 
+        /* Generate create_toggle(). It creates a check button and
+         * connects a callback function */
+        indent() << "def create_toggle(self, value, cb, *cb_args):\n";
+        indent() << "    b = gtk.CheckButton(None)\n";
+        indent() << "    b.set_active(value)\n";
+        indent() << "    b.connect('toggled', cb, *cb_args)\n";
+        indent() << "    return b\n\n";
+
+        /* Generate create_toggle(). It creates a spin field and
+         * connects a callback function */
+        indent() << "def create_spin(self, value, cb, *cb_args):\n";
+        indent() << "    a = gtk.Adjustment(0, -65535, 65535, 1)\n";
+        indent() << "    i = gtk.SpinButton(a)\n";
+        indent() << "    i.set_value(value)\n";
+        indent() << "    i.connect('value-changed', cb, *cb_args)\n";
+        indent() << "    return i\n\n";
+
+        /* Generate create_text(). It creates a text entry and
+         * connects a callback function */
+        indent() << "def create_text(self, value, cb, *cb_args):\n";
+        indent() << "    e = gtk.Entry()\n";
+        indent() << "    e.set_text(value)\n";
+        indent() << "    e.connect('changed', cb, *cb_args)\n";
+        indent() << "    return e\n\n";
+
         /* Generate create_bool(). Used to create a bool argument */
         indent() << "def create_bool(self, label, name):\n";
-        indent() << "    b = gtk.CheckButton(None)\n";
-        indent() << "    b.set_active(getattr(self.args, name))\n";
-        indent() << "    b.connect('toggled', self.bool_toggled, name)\n";
+        indent() << "    b = self.create_toggle(getattr(self.args, name), "
+                 "self.bool_toggled, name)\n";
         indent() << "    return self.create_labeled(label, (b, False))\n\n";
 
         /* Generate create_int(). Used to create an int argument */
         indent() << "def create_int(self, label, name):\n";
-        indent() << "    a = gtk.Adjustment(0, -65535, 65535, 1)\n";
-        indent() << "    i = gtk.SpinButton(a)\n";
-        indent() << "    i.set_value(getattr(self.args, name))\n";
-        indent() << "    i.connect('value-changed', self.int_changed, name)\n";
+        indent() << "    i = self.create_spin(getattr(self.args, name), "
+                 "self.int_changed, name)\n";
         indent() << "    return self.create_labeled(label, (i, False))\n\n";
 
         /* Generate create_string(). Used to create a string argument */
         indent() << "def create_string(self, label, name):\n";
-        indent() << "    e = gtk.Entry()\n";
-        indent() << "    e.set_text(getattr(self.args, name))\n";
-        indent() << "    e.connect('changed', self.string_changed, name)\n";
+        indent() << "    e = self.create_text(getattr(self.args, name), "
+                 "self.string_changed, name)\n";
         indent() << "    return self.create_labeled(label, (e, False))\n\n";
 
-
+        /* Generate create_string(). Used to create a list argument */
         indent() << "def create_list(self, label, name):\n";
         indent_inc();
         indent() << "view = self.create_view(name, self.create_store(name))\n";
@@ -677,6 +715,58 @@ namespace pygtk_backend
         indent() << "return self.create_labeled(label, "
                  "(view, True), (buttons, False))\n\n";
         indent_dec();
+
+        /* Generate register_change(). It is used to update a field in a record
+         */
+        indent() << "def register_change(self, name, i, v):\n";
+        indent() << "    rl = list(getattr(self.args, name))\n";
+        indent() << "    rl[i] = v\n";
+        indent() << "    setattr(self.args, name, type(getattr(self.args, "
+                 "name))(*rl))\n";
+        indent() << "    self.update()\n\n";
+
+        /* Generate bool_field_changed(). It is used to update a bool field in
+         * a record */
+        indent() << "def bool_field_changed(self, w, name, i):\n";
+        indent() << "    self.register_change(name, i, w.get_active())\n\n";
+
+        /* Generate bool_field_changed(). It is used to update a bool field in
+         * a record */
+        indent() << "def int_field_changed(self, w, name, i):\n";
+        indent() << "    self.register_change(name, i, int(w.get_value()))\n\n";
+
+        /* Generate string_field_changed(). It is used to update a string field in
+         * a record */
+        indent() << "def string_field_changed(self, w, name, i):\n";
+        indent() << "    self.register_change(name, i, w.get_text())\n\n";
+
+        /* Generate create_record(). Used to create a record argument */
+        indent() << "def create_record(self, name, fields):\n";
+        indent() << "    table = gtk.Table(len(fields), 2)\n";
+        indent() << "    for i, f in enumerate(fields):\n";
+        indent_inc();
+        indent_inc();
+        indent() << "if f['type'] == 'text':\n";
+        indent_inc();
+        indent() << "w = self.create_text(getattr(self.args, name)[i], "
+                 "self.string_field_changed, name, i)\n";
+        indent_dec();
+        indent() << "elif f['type'] == 'toggle':\n";
+        indent_inc();
+        indent() << "w = self.create_toggle(getattr(self.args, name)[i], "
+                 "self.bool_field_changed, name, i)\n";
+        indent_dec();
+        indent() << "elif f['type'] == 'spin':\n";
+        indent_inc();
+        indent() << "w = self.create_spin(getattr(self.args, name)[i], "
+                 "self.int_field_changed, name, i)\n";
+        indent_dec();
+        indent() << "l = gtk.Label(f['label'])\n";
+        indent() << "table.attach(l, 0, 1, i, i+1, xoptions=0, xpadding=9)\n";
+        indent() << "table.attach(w, 1, 2, i, i+1)\n";
+        indent_dec();
+        indent() << "table.show_all()\n";
+        indent() << "return self.create_labeled(name, (table, True))\n";
     }
 
     void PyGtkMain::generate(const vector<symbol::Argument *> &args)
