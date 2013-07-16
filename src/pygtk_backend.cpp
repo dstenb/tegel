@@ -424,24 +424,30 @@ namespace pygtk_backend
         indent_inc();
         indent() << "cell = gtk.CellRendererText()\n";
         indent() << "cell.set_property('editable', True)\n";
-        indent() << "cell.connect('edited', self.text_cell_edited, store, i, arg)\n";
+        indent() << "cell.connect('edited', self.text_cell_edited, "
+                 "store, i, arg)\n";
         indent() << "return gtk.TreeViewColumn(c['label'], cell, text=i)\n";
         indent_dec();
         indent() << "elif c['type'] == 'toggle':\n";
         indent_inc();
         indent() << "cell = gtk.CellRendererToggle()\n";
         indent() << "cell.set_property('activatable', True)\n";
-        indent() << "cell.connect('toggled', self.toggled_cell, store, i, arg)\n";
-        indent() << "col = gtk.TreeViewColumn(c['label'], cell, active=i)\n";
+        indent() << "cell.connect('toggled', self.toggled_cell, "
+                 "store, i, arg)\n";
+        indent() << "col = gtk.TreeViewColumn(c['label'], active=i)\n";
+        indent() << "col.pack_start(cell, False)\n";
         indent() << "col.add_attribute(cell, 'active', i)\n";
         indent() << "return col\n";
         indent_dec();
         indent() << "elif c['type'] == 'spin':\n";
         indent_inc();
-        indent() << "cell = gtk.CellRendererToggle()\n";
-        indent() << "cell.set_property('activatable', True)\n";
-        indent() << "cell.connect('toggled', self.toggled_cell, store, i, arg)\n";
-        indent() << "return gtk.TreeViewColumn(c['label'], cell, active=i)\n";
+        indent() << "cell = gtk.CellRendererSpin()\n";
+        indent() << "cell.set_property('editable', True)\n";
+        indent() << "a = gtk.Adjustment(0, -65535, 65535, 1)\n";
+        indent() << "cell.set_property('adjustment', a)\n";
+        indent() << "cell.connect('edited', self.spin_cell_edited, "
+                 "store, i, arg)\n";
+        indent() << "return gtk.TreeViewColumn(c['label'], cell, text=i)\n";
         indent_dec();
         /* TODO */
         indent_inc();
@@ -460,8 +466,8 @@ namespace pygtk_backend
         indent() << "        store.append([v])\n";
         indent() << "view = gtk.TreeView(store)\n";
         indent() << "for i, c in enumerate(list_decl[arg_name]['columns']):\n";
-        indent() <<
-                 "    view.append_column(self.create_column(i, c, store, arg_name))\n";
+        indent() << "    view.append_column(self.create_column(i, c, "
+                 "store, arg_name))\n";
         /* TODO: add/remove buttons */
         indent() << "return self.create_labeled(label, (view, True))\n\n";
         indent_dec();
@@ -481,16 +487,33 @@ namespace pygtk_backend
         indent_dec();
 
         /* TODO */
-        indent() << "def text_cell_edited(self, w, path, text, model, i, arg):\n";
+        indent() << "def text_cell_edited(self, w, path, text, "
+                 "model, i, arg):\n";
         indent_inc();
         indent() << "model[path][i] = text\n";
         indent() << "if list_decl[arg]['record']:\n";
         indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
         indent() << "    rl[i] = text\n";
-        indent() <<
-                 "    getattr(self.args, arg)[int(path)] = list_decl[arg]['r'](*rl)\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = "
+                 "list_decl[arg]['r'](*rl)\n";
         indent() << "else:\n";
         indent() << "    getattr(self.args, arg)[int(path)] = text\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+        /* TODO */
+        indent() << "def spin_cell_edited(self, w, path, value, "
+                 "model, i, arg):\n";
+        indent_inc();
+        indent() << "value = int(value)\n";
+        indent() << "model[path][i] = value\n";
+        indent() << "if list_decl[arg]['record']:\n";
+        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
+        indent() << "    rl[i] = value\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = "
+                 "list_decl[arg]['r'](*rl)\n";
+        indent() << "else:\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = value\n";
         indent() << "self.update()\n\n";
         indent_dec();
 
