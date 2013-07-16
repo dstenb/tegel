@@ -481,6 +481,9 @@ namespace pygtk_backend
         indent() << "    self.save_dialog()\n\n";
     }
 
+    /** Generates helper functions used by the argument boxes
+     *
+     */
     void PyGuiWriter::gen_arg_helpers()
     {
         /* Generate create_label(). Used to create gtk.Labels with an uniform
@@ -493,39 +496,46 @@ namespace pygtk_backend
         indent_dec();
 
         /** Generate create_labeled(). Used to create a labeled argument box */
-        indent() << "def create_labeled(self, label, *widgets):\n";
-        indent_inc();
-        indent() << "v = gtk.VBox()\n";
-        indent() << "v.pack_start(self.create_label(label), expand=False)\n";
-        indent() << "for w, e in widgets:\n";
-        indent_inc();
-        indent() << "v.pack_start(w, expand=e)\n";
-        indent() << "w.show()\n";
-        indent_dec();
-        indent() << "return v\n\n";
-        indent_dec();
+        indent() << "def create_labeled(self, l, *widgets):\n";
+        indent() << "    v = gtk.VBox()\n";
+        indent() << "    v.pack_start(self.create_label(l), expand=False)\n";
+        indent() << "    for w, e in widgets:\n";
+        indent() << "        v.pack_start(w, expand=e)\n";
+        indent() << "        w.show()\n";
+        indent() << "    return v\n\n";
+
+        /* Generate the shared update method for cell data */
+        indent() << "def update_list_item(self, name, value, row, i):\n";
+        indent() << "    new_item = None\n";
+        indent() << "    if list_decl[name]['record']:\n";
+        indent() << "        rl = list(getattr(self.args, name)[row])\n";
+        indent() << "        rl[i] = value\n";
+        indent() << "        new_item = list_decl[name]['record'](*rl)\n";
+        indent() << "    else:\n";
+        indent() << "        new_item = value\n";
+        indent() << "    getattr(self.args, name)[row] = new_item\n";
+        indent() << "    self.update()\n\n";
     }
 
+    /** Generates all the callback functions for the argument boxes
+     *
+     */
     void PyGuiWriter::gen_arg_callbacks()
     {
         /* Generate the callback function for the "add" button */
         indent() << "def add_row(self, w, view, name):\n";
-        indent_inc();
-        indent() << "sv, v = create_default_item(name)\n";
-        indent() << "view.get_model().append(sv)\n";
-        indent() << "getattr(self.args, name).append(v)\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
+        indent() << "    sv, v = create_default_item(name)\n";
+        indent() << "    view.get_model().append(sv)\n";
+        indent() << "    getattr(self.args, name).append(v)\n";
+        indent() << "    self.update()\n\n";
 
         /* Generate the callback function for the "remove" button */
         indent() << "def remove_selected(self, w, view, name):\n";
-        indent_inc();
-        indent() << "store, iter = view.get_selection().get_selected()\n";
-        indent() << "if iter:\n";
-        indent() << "    del getattr(self.args, name)[store.get_path(iter)[0]]\n";
-        indent() << "    store.remove(iter)\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
+        indent() << "    s, i = view.get_selection().get_selected()\n";
+        indent() << "    if i:\n";
+        indent() << "        del getattr(self.args, name)[s.get_path(i)[0]]\n";
+        indent() << "        s.remove(i)\n";
+        indent() << "    self.update()\n\n";
 
         /* Generate the callback function for a bool argument */
         indent() << "def bool_toggled(self, w, name):\n";
@@ -537,60 +547,27 @@ namespace pygtk_backend
         indent() << "    setattr(self.args, name, int(w.get_value()))\n";
         indent() << "    self.update()\n\n";
 
-        /* Generate the callback function a string argument */
+        /* Generate the callback function for a string argument */
         indent() << "def string_changed(self, w, name):\n";
-        indent_inc();
-        indent() << "setattr(self.args, name, w.get_text())\n";
-        indent() << "print(name + ' = ' + getattr(self.args, name))\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
+        indent() << "    setattr(self.args, name, w.get_text())\n";
+        indent() << "    self.update()\n\n";
 
-        /* TODO */
-        indent() << "def text_cell_edited(self, w, path, text, "
-                 "model, i, arg):\n";
-        indent_inc();
-        indent() << "model[path][i] = text\n";
-        indent() << "if list_decl[arg]['record']:\n";
-        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
-        indent() << "    rl[i] = text\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = "
-                 "list_decl[arg]['record'](*rl)\n";
-        indent() << "else:\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = text\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
+        /* Generate the callback function for a text cell */
+        indent() << "def text_cell_edited(self, w, path, text, m, i, name):\n";
+        indent() << "    m[path][i] = text\n";
+        indent() << "    self.update_list_item(name, text, int(path), i)\n";
 
-        /* TODO */
-        indent() << "def spin_cell_edited(self, w, path, value, "
-                 "model, i, arg):\n";
-        indent_inc();
-        indent() << "value = int(value)\n";
-        indent() << "model[path][i] = value\n";
-        indent() << "if list_decl[arg]['record']:\n";
-        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
-        indent() << "    rl[i] = value\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = "
-                 "list_decl[arg]['r'](*rl)\n";
-        indent() << "else:\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = value\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
+        /* Generate the callback function for a spin cell */
+        indent() << "def spin_cell_edited(self, w, path, v, m, i, name):\n";
+        indent() << "    value = int(v)\n";
+        indent() << "    m[path][i] = value\n";
+        indent() << "    self.update_list_item(name, value, int(path), i)\n";
 
-        /* TODO */
-        indent() << "def toggled_cell(self, w, path, model, i, arg):\n";
-        indent_inc();
-        indent() << "b = model[path][i] = not model[path][i]\n\n";
-        indent() << "if list_decl[arg]['record']:\n";
-        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
-        indent() << "    rl[i] = b\n";
-        indent() <<
-                 "    getattr(self.args, arg)[int(path)] = list_decl[arg]['r'](*rl)\n";
-        indent() << "else:\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = b\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
-
-
+        /* Generate the callback function for a toggle cell */
+        indent() << "def toggle_cell_edited(self, w, path, m, i, name):\n";
+        indent() << "    value = not m[path][i]\n";
+        indent() << "    m[path][i] = value\n";
+        indent() << "    self.update_list_item(name, value, int(path), i)\n";
     }
 
     /** Generates the methods used to create argument boxes
@@ -642,7 +619,7 @@ namespace pygtk_backend
         indent_inc();
         indent() << "cell = gtk.CellRendererToggle()\n";
         indent() << "cell.set_property('activatable', True)\n";
-        indent() << "cell.connect('toggled', self.toggled_cell, "
+        indent() << "cell.connect('toggled', self.toggle_cell_edited, "
                  "store, i, arg)\n";
         indent() << "col = gtk.TreeViewColumn(c['label'], active=i)\n";
         indent() << "col.pack_start(cell, False)\n";
