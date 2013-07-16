@@ -92,6 +92,40 @@ namespace pygtk_backend
             PyGtkColumnType type_;
     };
 
+    class PyGtkListDefault : public TypeVisitor
+    {
+        public:
+            PyGtkListDefault(ostream &os)
+                : os_(os) {}
+
+            virtual void visit(const RecordType *p) {
+                os_ << PyUtils::record_name(p) << "(";
+                auto it = p->begin();
+                while (it != p->end()) {
+                    (*it).type->accept(*this);
+                    if (++it != p->end())
+                        os_ << ", ";
+                }
+                os_ << ")";
+            }
+
+            virtual void visit(const BoolType *) {
+                os_ << "False";
+            }
+
+            virtual void visit(const IntType *) {
+                os_ << "0";
+            }
+
+            virtual void visit(const StringType *) {
+                os_ << "''";
+            }
+
+            virtual void visit(const ListType *l) { }
+        private:
+            ostream &os_;
+    };
+
     class PyGtkHeader : public PyWriter
     {
         public:
@@ -124,17 +158,23 @@ namespace pygtk_backend
                             r->accept(c);
                             unindent() << "], \n";
                             indent() << "'header': True,\n";
-                            indent() << "'record': True,\n";
-                            indent() << "'r': " << PyUtils::record_name(r) <<
-                                     ",\n";
+                            indent() << "'record': " <<
+                                     PyUtils::record_name(r) << ",\n";
                         } else {
                             indent() << "'columns': [";
                             PyGtkColumn c(unindent());
                             l->elem()->accept(c);
                             unindent() << "], \n";
                             indent() << "'header': False,\n";
-                            indent() << "'record': False,\n";
+                            indent() << "'record': None,\n";
                         }
+
+                        /* Generate the default value for an item in the list
+                         */
+                        indent() << "'default': ";
+                        PyGtkListDefault d(unindent());
+                        l->elem()->accept(d);
+                        unindent() << "\n";
 
                         indent_dec();
                         indent() << "},\n";
@@ -142,6 +182,15 @@ namespace pygtk_backend
                 }
                 indent_dec();
                 indent() << "}\n\n";
+
+                indent() << "def create_default_item(arg_name):\n";
+                indent_inc();
+                indent() << "d = list_decl[arg_name]['default']\n";
+                indent() << "if list_decl[arg_name]['record']:\n";
+                indent() << "    return list(d), d\n";
+                indent() << "else:\n";
+                indent() << "    return [ d ], d\n";
+                indent_dec();
             }
     };
 
@@ -168,6 +217,7 @@ namespace pygtk_backend
         indent() << "self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)\n";
         indent() << "self.window.connect('delete_event', self.delete)\n";
         indent() << "self.window.connect('destroy', self.destroy)\n";
+        indent() << "self.window.set_geometry_hints(min_width=800, min_height=600)\n\n";
         indent() << "self.window.show()\n\n";
         indent() << "self.filename = None\n\n";
         gen_top();
@@ -187,14 +237,14 @@ namespace pygtk_backend
         indent() << "self.bottom = gtk.HBox()\n";
         indent() << "self.a_scrolled = gtk.ScrolledWindow()\n";
         indent() << "self.a_scrolled.set_policy(gtk.POLICY_AUTOMATIC, "
-                 "gtk.POLICY_ALWAYS)\n";
+                 "gtk.POLICY_AUTOMATIC)\n";
         indent() << "self.argument_box = gtk.VBox()\n";
         indent() << "self.a_scrolled.add_with_viewport(self.argument_box)\n";
         indent() << "self.argument_box.show()\n";
 
         indent() << "self.p_scrolled = gtk.ScrolledWindow()\n";
         indent() << "self.p_scrolled.set_policy(gtk.POLICY_AUTOMATIC, "
-                 "gtk.POLICY_ALWAYS)\n\n";
+                 "gtk.POLICY_AUTOMATIC)\n\n";
         indent() << "self.preview = gtk.TextView()\n";
         indent() << "self.preview.set_editable(False)\n";
         indent() << "self.preview.show()\n";
@@ -468,8 +518,35 @@ namespace pygtk_backend
         indent() << "for i, c in enumerate(list_decl[arg_name]['columns']):\n";
         indent() << "    view.append_column(self.create_column(i, c, "
                  "store, arg_name))\n";
-        /* TODO: add/remove buttons */
-        indent() << "return self.create_labeled(label, (view, True))\n\n";
+        indent() << "b = gtk.HButtonBox()\n";
+        indent() << "b.set_layout(gtk.BUTTONBOX_END)\n";
+        indent() << "ab = gtk.Button(None, 'gtk-add')\n";
+        indent() << "ab.connect('clicked', self.add_row, view, arg_name)\n";
+        indent() << "rb = gtk.Button(None, 'gtk-remove')\n";
+        indent() << "rb.connect('clicked', self.remove_selected, "
+                 "view, arg_name)\n";
+        indent() << "for w in [ rb, ab ]:\n";
+        indent() << "    w.show()\n";
+        indent() << "    b.add(w)\n";
+        indent() << "return self.create_labeled(label, "
+                 "(view, True), (b, False))\n\n";
+        indent_dec();
+
+        indent() << "def add_row(self, w, view, name):\n";
+        indent_inc();
+        indent() << "sv, v = create_default_item(name)\n";
+        indent() << "view.get_model().append(sv)\n";
+        indent() << "getattr(self.args, name).append(v)\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+        indent() << "def remove_selected(self, w, view, name):\n";
+        indent_inc();
+        indent() << "store, iter = view.get_selection().get_selected()\n";
+        indent() << "if iter:\n";
+        indent() << "    del getattr(self.args, name)[store.get_path(iter)[0]]\n";
+        indent() << "    store.remove(iter)\n";
+        indent() << "self.update()\n\n";
         indent_dec();
 
         indent() << "def bool_toggled(self, w, name):\n";
@@ -495,7 +572,7 @@ namespace pygtk_backend
         indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
         indent() << "    rl[i] = text\n";
         indent() << "    getattr(self.args, arg)[int(path)] = "
-                 "list_decl[arg]['r'](*rl)\n";
+                 "list_decl[arg]['record'](*rl)\n";
         indent() << "else:\n";
         indent() << "    getattr(self.args, arg)[int(path)] = text\n";
         indent() << "self.update()\n\n";
