@@ -551,6 +551,39 @@ namespace pygtk_backend
         indent() << "          'toggle': self.create_toggle_column, \n";
         indent() << "          'spin': self.create_spin_column }\n";
         indent() << "    return d[c['type']](c['label'], i, store, name)\n\n";
+
+        /* Generate create_store(). Used to create a store and fill it */
+        indent() << "def create_store(self, name):\n";
+        indent() << "    store = gtk.ListStore(*list_decl[name]['types'])\n";
+        indent() << "    if list_decl[name]['record']:\n";
+        indent() << "        for v in getattr(self.args, name):\n";
+        indent() << "            store.append(list(v))\n";
+        indent() << "    else:\n";
+        indent() << "        for v in getattr(self.args, name):\n";
+        indent() << "            store.append([v])\n";
+        indent() << "    return store\n\n";
+
+        /* Generate create_view(). Used to create a view and its columns */
+        indent() << "def create_view(self, name, store):\n";
+        indent() << "    view = gtk.TreeView(store)\n";
+        indent() << "    for i, c in enumerate(list_decl[name]['columns']):\n";
+        indent() << "        view.append_column(self.create_column(i, c, "
+                 "store, name))\n";
+        indent() << "    return view\n\n";
+
+        /* Generate create_list_buttons(). used to create add/remove buttons */
+        indent() << "def create_list_buttons(self, name, view):\n";
+        indent() << "    box = gtk.HButtonBox()\n";
+        indent() << "    box.set_layout(gtk.BUTTONBOX_END)\n";
+        indent() << "    add = gtk.Button(None, 'gtk-add')\n";
+        indent() << "    add.connect('clicked', self.add_row, view, name)\n";
+        indent() << "    remove = gtk.Button(None, 'gtk-remove')\n";
+        indent() << "    remove.connect('clicked', self.remove_selected, "
+                 "view, name)\n";
+        indent() << "    for w in [ remove, add ]:\n";
+        indent() << "        w.show()\n";
+        indent() << "        box.add(w)\n";
+        indent() << "    return box\n\n";
     }
 
     /** Generates all the callback functions for the argument boxes
@@ -636,37 +669,18 @@ namespace pygtk_backend
         indent() << "    e.connect('changed', self.string_changed, name)\n";
         indent() << "    return self.create_labeled(label, (e, False))\n\n";
 
+
         indent() << "def create_list(self, label, name):\n";
         indent_inc();
-        indent() << "store = gtk.ListStore(*list_decl[name]['types'])\n";
-        indent() << "if list_decl[name]['record']:\n";
-        indent() << "    for v in getattr(self.args, name):\n";
-        indent() << "        store.append(list(v))\n";
-        indent() << "else:\n";
-        indent() << "    for v in getattr(self.args, name):\n";
-        indent() << "        store.append([v])\n";
-        indent() << "view = gtk.TreeView(store)\n";
-        indent() << "for i, c in enumerate(list_decl[name]['columns']):\n";
-        indent() << "    view.append_column(self.create_column(i, c, "
-                 "store, name))\n";
-        indent() << "b = gtk.HButtonBox()\n";
-        indent() << "b.set_layout(gtk.BUTTONBOX_END)\n";
-        indent() << "ab = gtk.Button(None, 'gtk-add')\n";
-        indent() << "ab.connect('clicked', self.add_row, view, name)\n";
-        indent() << "rb = gtk.Button(None, 'gtk-remove')\n";
-        indent() << "rb.connect('clicked', self.remove_selected, "
-                 "view, name)\n";
-        indent() << "for w in [ rb, ab ]:\n";
-        indent() << "    w.show()\n";
-        indent() << "    b.add(w)\n";
+        indent() << "view = self.create_view(name, self.create_store(name))\n";
+        indent() << "buttons = self.create_list_buttons(name, view)\n";
         indent() << "return self.create_labeled(label, "
-                 "(view, True), (b, False))\n\n";
+                 "(view, True), (buttons, False))\n\n";
         indent_dec();
     }
 
     void PyGtkMain::generate(const vector<symbol::Argument *> &args)
     {
-
         indent() << "def main(argv=None):\n";
         indent_inc();
         indent() << "if argv is None:\n";
@@ -700,12 +714,10 @@ namespace pygtk_backend
                  " default=True, help='hide the preview window', "
                  "dest='_preview')\n";
 
-        for (auto a : args) {
+        for (auto a : args)
             PyUtils::generate_opt(indent(), a);
-        }
 
         indent() << "args = parser.parse_args()\n";
-        indent() << "print(args)\n"; /* TODO */
     }
 
 
