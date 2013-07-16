@@ -36,18 +36,39 @@ namespace pygtk_backend
             ostream &os_;
     };
 
+    class PyGtkColumnType : public TypeVisitor
+    {
+        public:
+            PyGtkColumnType(ostream &os)
+                : os_(os) {}
+
+            virtual void visit(const BoolType *) {
+                os_ << "toggle";
+            }
+            virtual void visit(const IntType *) {
+                os_ << "spin";
+            }
+            virtual void visit(const StringType *) {
+                os_ << "text";
+            }
+            virtual void visit(const ListType *) { }
+            virtual void visit(const RecordType *) { }
+        private:
+            ostream &os_;
+    };
+
     class PyGtkColumn : public TypeVisitor
     {
         public:
             PyGtkColumn(ostream &os)
-                : os_(os) {}
+                : os_(os), type_(os) {}
 
             virtual void visit(const RecordType *p) {
                 auto it = p->begin();
                 while (it != p->end()) {
-                    os_ << "{'type': ";
-                    (*it).type->accept(*this);
-                    os_ << "' 'label': '" << (*it).name << "'}";
+                    os_ << "{'type': '";
+                    (*it).type->accept(type_);
+                    os_ << "', 'label': '" << (*it).name << "'}";
                     if (++it != p->end())
                         os_ << ", ";
                 }
@@ -68,6 +89,7 @@ namespace pygtk_backend
             virtual void visit(const ListType *l) { }
         private:
             ostream &os_;
+            PyGtkColumnType type_;
     };
 
     class PyGtkHeader : public PyWriter
@@ -103,6 +125,8 @@ namespace pygtk_backend
                             unindent() << "], \n";
                             indent() << "'header': True,\n";
                             indent() << "'record': True,\n";
+                            indent() << "'r': " << PyUtils::record_name(r) <<
+                                     ",\n";
                         } else {
                             indent() << "'columns': [";
                             PyGtkColumn c(unindent());
@@ -393,20 +417,34 @@ namespace pygtk_backend
         indent() << "return self.create_labeled(label, (e, False))\n\n";
         indent_dec();
 
-        indent() << "def create_column(self, i, c, store):\n";
+        indent() << "def create_column(self, i, c, store, arg):\n";
         indent_inc();
         indent() << "print('c = ' + repr(c))\n";
         indent() << "if c['type'] == 'text':\n";
         indent_inc();
         indent() << "cell = gtk.CellRendererText()\n";
         indent() << "cell.set_property('editable', True)\n";
-        indent() << "cell.connect('edited', self.text_cell_edited, store, i)\n";
+        indent() << "cell.connect('edited', self.text_cell_edited, store, i, arg)\n";
         indent() << "return gtk.TreeViewColumn(c['label'], cell, text=i)\n";
         indent_dec();
         indent() << "elif c['type'] == 'toggle':\n";
+        indent_inc();
+        indent() << "cell = gtk.CellRendererToggle()\n";
+        indent() << "cell.set_property('activatable', True)\n";
+        indent() << "cell.connect('toggled', self.toggled_cell, store, i, arg)\n";
+        indent() << "col = gtk.TreeViewColumn(c['label'], cell, active=i)\n";
+        indent() << "col.add_attribute(cell, 'active', i)\n";
+        indent() << "return col\n";
+        indent_dec();
+        indent() << "elif c['type'] == 'spin':\n";
+        indent_inc();
+        indent() << "cell = gtk.CellRendererToggle()\n";
+        indent() << "cell.set_property('activatable', True)\n";
+        indent() << "cell.connect('toggled', self.toggled_cell, store, i, arg)\n";
+        indent() << "return gtk.TreeViewColumn(c['label'], cell, active=i)\n";
+        indent_dec();
         /* TODO */
         indent_inc();
-        indent() << "pass\n";
         indent_dec();
         indent_dec();
         unindent() << "\n";
@@ -422,7 +460,8 @@ namespace pygtk_backend
         indent() << "        store.append([v])\n";
         indent() << "view = gtk.TreeView(store)\n";
         indent() << "for i, c in enumerate(list_decl[arg_name]['columns']):\n";
-        indent() << "    view.append_column(self.create_column(i, c, store))\n";
+        indent() <<
+                 "    view.append_column(self.create_column(i, c, store, arg_name))\n";
         /* TODO: add/remove buttons */
         indent() << "return self.create_labeled(label, (view, True))\n\n";
         indent_dec();
@@ -441,10 +480,31 @@ namespace pygtk_backend
         indent() << "self.update()\n\n";
         indent_dec();
 
-        indent() << "def text_cell_edited(self, w, path, text, model, i):\n";
+        /* TODO */
+        indent() << "def text_cell_edited(self, w, path, text, model, i, arg):\n";
         indent_inc();
         indent() << "model[path][i] = text\n";
-        /* TODO: update self.args */
+        indent() << "if list_decl[arg]['record']:\n";
+        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
+        indent() << "    rl[i] = text\n";
+        indent() <<
+                 "    getattr(self.args, arg)[int(path)] = list_decl[arg]['r'](*rl)\n";
+        indent() << "else:\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = text\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+        /* TODO */
+        indent() << "def toggled_cell(self, w, path, model, i, arg):\n";
+        indent_inc();
+        indent() << "b = model[path][i] = not model[path][i]\n\n";
+        indent() << "if list_decl[arg]['record']:\n";
+        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
+        indent() << "    rl[i] = b\n";
+        indent() <<
+                 "    getattr(self.args, arg)[int(path)] = list_decl[arg]['r'](*rl)\n";
+        indent() << "else:\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = b\n";
         indent() << "self.update()\n\n";
         indent_dec();
 
