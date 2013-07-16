@@ -521,6 +521,31 @@ namespace pygtk_backend
         indent() << "        w.show()\n";
         indent() << "    return v\n\n";
 
+        /* Generate create_toggle(). It creates a check button and
+         * connects a callback function */
+        indent() << "def create_toggle(self, value, cb, *cb_args):\n";
+        indent() << "    b = gtk.CheckButton(None)\n";
+        indent() << "    b.set_active(value)\n";
+        indent() << "    b.connect('toggled', cb, *cb_args)\n";
+        indent() << "    return b\n\n";
+
+        /* Generate create_toggle(). It creates a spin field and
+         * connects a callback function */
+        indent() << "def create_spin(self, value, cb, *cb_args):\n";
+        indent() << "    a = gtk.Adjustment(0, -65535, 65535, 1)\n";
+        indent() << "    i = gtk.SpinButton(a)\n";
+        indent() << "    i.set_value(value)\n";
+        indent() << "    i.connect('value-changed', cb, *cb_args)\n";
+        indent() << "    return i\n\n";
+
+        /* Generate create_text(). It creates a text entry and
+         * connects a callback function */
+        indent() << "def create_text(self, value, cb, *cb_args):\n";
+        indent() << "    e = gtk.Entry()\n";
+        indent() << "    e.set_text(value)\n";
+        indent() << "    e.connect('changed', cb, *cb_args)\n";
+        indent() << "    return e\n\n";
+
         /* Generate the shared update method for cell data */
         indent() << "def update_list_item(self, name, value, row, i):\n";
         indent() << "    new_item = None\n";
@@ -601,6 +626,14 @@ namespace pygtk_backend
         indent() << "        w.show()\n";
         indent() << "        box.add(w)\n";
         indent() << "    return box\n\n";
+
+        /* Generate the shared function for updating records */
+        indent() << "def register_change(self, name, i, v):\n";
+        indent() << "    rl = list(getattr(self.args, name))\n";
+        indent() << "    rl[i] = v\n";
+        indent() << "    setattr(self.args, name, type(getattr(self.args, "
+                 "name))(*rl))\n";
+        indent() << "    self.update()\n\n";
     }
 
     /** Generates all the callback functions for the argument boxes
@@ -654,6 +687,18 @@ namespace pygtk_backend
         indent() << "    value = not m[path][i]\n";
         indent() << "    m[path][i] = value\n";
         indent() << "    self.update_list_item(name, value, int(path), i)\n";
+
+        /* Generate the callback function for a bool field in a record */
+        indent() << "def bool_field_changed(self, w, name, i):\n";
+        indent() << "    self.register_change(name, i, w.get_active())\n\n";
+
+        /* Generate the callback function for an int field in a record */
+        indent() << "def int_field_changed(self, w, name, i):\n";
+        indent() << "    self.register_change(name, i, int(w.get_value()))\n\n";
+
+        /* Generate the callback function for a string field in a record */
+        indent() << "def string_field_changed(self, w, name, i):\n";
+        indent() << "    self.register_change(name, i, w.get_text())\n\n";
     }
 
     /** Generates the methods used to create argument boxes
@@ -663,31 +708,6 @@ namespace pygtk_backend
     {
         gen_arg_helpers();
         gen_arg_callbacks();
-
-        /* Generate create_toggle(). It creates a check button and
-         * connects a callback function */
-        indent() << "def create_toggle(self, value, cb, *cb_args):\n";
-        indent() << "    b = gtk.CheckButton(None)\n";
-        indent() << "    b.set_active(value)\n";
-        indent() << "    b.connect('toggled', cb, *cb_args)\n";
-        indent() << "    return b\n\n";
-
-        /* Generate create_toggle(). It creates a spin field and
-         * connects a callback function */
-        indent() << "def create_spin(self, value, cb, *cb_args):\n";
-        indent() << "    a = gtk.Adjustment(0, -65535, 65535, 1)\n";
-        indent() << "    i = gtk.SpinButton(a)\n";
-        indent() << "    i.set_value(value)\n";
-        indent() << "    i.connect('value-changed', cb, *cb_args)\n";
-        indent() << "    return i\n\n";
-
-        /* Generate create_text(). It creates a text entry and
-         * connects a callback function */
-        indent() << "def create_text(self, value, cb, *cb_args):\n";
-        indent() << "    e = gtk.Entry()\n";
-        indent() << "    e.set_text(value)\n";
-        indent() << "    e.connect('changed', cb, *cb_args)\n";
-        indent() << "    return e\n\n";
 
         /* Generate create_bool(). Used to create a bool argument */
         indent() << "def create_bool(self, label, name):\n";
@@ -716,57 +736,25 @@ namespace pygtk_backend
                  "(view, True), (buttons, False))\n\n";
         indent_dec();
 
-        /* Generate register_change(). It is used to update a field in a record
-         */
-        indent() << "def register_change(self, name, i, v):\n";
-        indent() << "    rl = list(getattr(self.args, name))\n";
-        indent() << "    rl[i] = v\n";
-        indent() << "    setattr(self.args, name, type(getattr(self.args, "
-                 "name))(*rl))\n";
-        indent() << "    self.update()\n\n";
-
-        /* Generate bool_field_changed(). It is used to update a bool field in
-         * a record */
-        indent() << "def bool_field_changed(self, w, name, i):\n";
-        indent() << "    self.register_change(name, i, w.get_active())\n\n";
-
-        /* Generate bool_field_changed(). It is used to update a bool field in
-         * a record */
-        indent() << "def int_field_changed(self, w, name, i):\n";
-        indent() << "    self.register_change(name, i, int(w.get_value()))\n\n";
-
-        /* Generate string_field_changed(). It is used to update a string field in
-         * a record */
-        indent() << "def string_field_changed(self, w, name, i):\n";
-        indent() << "    self.register_change(name, i, w.get_text())\n\n";
-
         /* Generate create_record(). Used to create a record argument */
         indent() << "def create_record(self, name, fields):\n";
         indent() << "    table = gtk.Table(len(fields), 2)\n";
+        indent() << "    d = { 'text': (self.create_text, "
+                 "self.string_field_changed),\n";
+        indent() << "          'toggle': (self.create_toggle, "
+                 "self.bool_field_changed),\n";
+        indent() << "          'spin': (self.create_spin, "
+                 "self.int_field_changed) }\n";
         indent() << "    for i, f in enumerate(fields):\n";
-        indent_inc();
-        indent_inc();
-        indent() << "if f['type'] == 'text':\n";
-        indent_inc();
-        indent() << "w = self.create_text(getattr(self.args, name)[i], "
-                 "self.string_field_changed, name, i)\n";
-        indent_dec();
-        indent() << "elif f['type'] == 'toggle':\n";
-        indent_inc();
-        indent() << "w = self.create_toggle(getattr(self.args, name)[i], "
-                 "self.bool_field_changed, name, i)\n";
-        indent_dec();
-        indent() << "elif f['type'] == 'spin':\n";
-        indent_inc();
-        indent() << "w = self.create_spin(getattr(self.args, name)[i], "
-                 "self.int_field_changed, name, i)\n";
-        indent_dec();
-        indent() << "l = gtk.Label(f['label'])\n";
-        indent() << "table.attach(l, 0, 1, i, i+1, xoptions=0, xpadding=9)\n";
-        indent() << "table.attach(w, 1, 2, i, i+1)\n";
-        indent_dec();
-        indent() << "table.show_all()\n";
-        indent() << "return self.create_labeled(name, (table, True))\n";
+        indent() << "        t = d[f['type']]\n";
+        indent() << "        w = t[0](getattr(self.args, name)[i], "
+                 "t[1], name, i)\n";
+        indent() << "        l = gtk.Label(f['label'])\n";
+        indent() << "        table.attach(l, 0, 1, i, i+1, xoptions=0, "
+                 "xpadding=9)\n";
+        indent() << "        table.attach(w, 1, 2, i, i+1)\n";
+        indent() << "    table.show_all()\n";
+        indent() << "    return self.create_labeled(name, (table, True))\n";
     }
 
     void PyGtkMain::generate(const vector<symbol::Argument *> &args)
