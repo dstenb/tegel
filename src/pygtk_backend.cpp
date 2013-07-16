@@ -2,6 +2,9 @@
 
 namespace pygtk_backend
 {
+    /** Type visitor that generates a comma delimited list of gobject types
+     *
+     */
     class PyGtkGobjectList : public TypeVisitor
     {
         public:
@@ -36,10 +39,14 @@ namespace pygtk_backend
             ostream &os_;
     };
 
-    class PyGtkColumnType : public TypeVisitor
+    /** Type visitor that generates a cell renderer identifier from a
+     * primitive type
+     *
+     */
+    class PyGtkRendererType : public TypeVisitor
     {
         public:
-            PyGtkColumnType(ostream &os)
+            PyGtkRendererType(ostream &os)
                 : os_(os) {}
 
             virtual void visit(const BoolType *) {
@@ -57,6 +64,10 @@ namespace pygtk_backend
             ostream &os_;
     };
 
+    /** Type visitor that generates a comma delimited list of column
+     * information dictionaries
+     *
+     */
     class PyGtkColumn : public TypeVisitor
     {
         public:
@@ -89,13 +100,16 @@ namespace pygtk_backend
             virtual void visit(const ListType *l) { }
         private:
             ostream &os_;
-            PyGtkColumnType type_;
+            PyGtkRendererType type_;
     };
 
-    class PyGtkListDefault : public TypeVisitor
+    /** Type visitor that generates a default value from a type
+     *
+     */
+    class PyDefaultDefault : public TypeVisitor
     {
         public:
-            PyGtkListDefault(ostream &os)
+            PyDefaultDefault(ostream &os)
                 : os_(os) {}
 
             virtual void visit(const RecordType *p) {
@@ -126,6 +140,10 @@ namespace pygtk_backend
             ostream &os_;
     };
 
+    /** PyGtkHeader is used to generate the additional header information used
+     * for pygtk related things
+     *
+     */
     class PyGtkHeader : public PyWriter
     {
         public:
@@ -172,7 +190,7 @@ namespace pygtk_backend
                         /* Generate the default value for an item in the list
                          */
                         indent() << "'default': ";
-                        PyGtkListDefault d(unindent());
+                        PyDefaultDefault d(unindent());
                         l->elem()->accept(d);
                         unindent() << "\n";
 
@@ -195,6 +213,9 @@ namespace pygtk_backend
     };
 
 
+    /** Generates the GUI class
+     *
+     */
     void PyGuiWriter::generate(const vector<symbol::Argument *> &args)
     {
         indent() << "class GUI:\n";
@@ -209,6 +230,9 @@ namespace pygtk_backend
         gen_create_methods();
     }
 
+    /** Generates GUI.__init__()
+     *
+     */
     void PyGuiWriter::gen_init(const vector<symbol::Argument *> &args)
     {
         indent() << "def __init__(self, args):\n";
@@ -232,6 +256,9 @@ namespace pygtk_backend
         indent_dec();
     }
 
+    /** Generate the argument/preview code
+     *
+     */
     void PyGuiWriter::gen_bottom(const vector<symbol::Argument *> &args)
     {
         indent() << "self.bottom = gtk.HBox()\n";
@@ -297,6 +324,9 @@ namespace pygtk_backend
         /* TODO: Generate arguments */
     }
 
+    /** Generates the menubar code
+     *
+     */
     void PyGuiWriter::gen_top()
     {
         indent() << "self.top = gtk.MenuBar()\n";
@@ -347,6 +377,9 @@ namespace pygtk_backend
         indent() << "self.top.show_all()\n";
     }
 
+    /** Generates GUI.update()
+     *
+     */
     void PyGuiWriter::gen_update()
     {
         indent() << "def update(self):\n";
@@ -356,24 +389,36 @@ namespace pygtk_backend
         indent() << "    out.close()\n";
     }
 
+    /** Generates GUI.delete()
+     *
+     */
     void PyGuiWriter::gen_delete()
     {
         indent() << "def delete(self, w, e, d=None):\n";
         indent() << "    return False\n\n";
     }
 
+    /** Generates GUI.destroy()
+     *
+     */
     void PyGuiWriter::gen_destroy()
     {
         indent() << "def destroy(self, w, d=None):\n";
         indent() << "    gtk.main_quit()\n\n";
     }
 
+    /** Generates GUI.main()
+     *
+     */
     void PyGuiWriter::gen_main()
     {
         indent() << "def main(self):\n";
         indent() << "    gtk.main()\n\n";
     }
 
+    /** Generates all the save functionality
+     *
+     */
     void PyGuiWriter::gen_save_methods()
     {
         indent() << "def save_dialog(self):\n";
@@ -414,6 +459,9 @@ namespace pygtk_backend
         indent_dec();
     }
 
+    /** Generates the callback functions used by the menu buttons
+     *
+     */
     void PyGuiWriter::gen_menu_callbacks()
     {
         /* Preview toggle button callback */
@@ -433,8 +481,10 @@ namespace pygtk_backend
         indent() << "    self.save_dialog()\n\n";
     }
 
-    void PyGuiWriter::gen_create_methods()
+    void PyGuiWriter::gen_arg_helpers()
     {
+        /* Generate create_label(). Used to create gtk.Labels with an uniform
+         * appearance */
         indent() << "def create_label(self, string):\n";
         indent_inc();
         indent() << "l = gtk.Label(string)\n";
@@ -442,6 +492,7 @@ namespace pygtk_backend
         indent() << "return l\n\n";
         indent_dec();
 
+        /** Generate create_labeled(). Used to create a labeled argument box */
         indent() << "def create_labeled(self, label, *widgets):\n";
         indent_inc();
         indent() << "v = gtk.VBox()\n";
@@ -453,6 +504,102 @@ namespace pygtk_backend
         indent_dec();
         indent() << "return v\n\n";
         indent_dec();
+    }
+
+    void PyGuiWriter::gen_arg_callbacks()
+    {
+        /* Generate the callback function for the "add" button */
+        indent() << "def add_row(self, w, view, name):\n";
+        indent_inc();
+        indent() << "sv, v = create_default_item(name)\n";
+        indent() << "view.get_model().append(sv)\n";
+        indent() << "getattr(self.args, name).append(v)\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+        /* Generate the callback function for the "remove" button */
+        indent() << "def remove_selected(self, w, view, name):\n";
+        indent_inc();
+        indent() << "store, iter = view.get_selection().get_selected()\n";
+        indent() << "if iter:\n";
+        indent() << "    del getattr(self.args, name)[store.get_path(iter)[0]]\n";
+        indent() << "    store.remove(iter)\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+        /* Generate the callback function for a bool argument */
+        indent() << "def bool_toggled(self, w, name):\n";
+        indent() << "    setattr(self.args, name, w.get_active())\n";
+        indent() << "    self.update()\n\n";
+
+        /* Generate the callback function for an int argument */
+        indent() << "def int_changed(self, w, name):\n";
+        indent() << "    setattr(self.args, name, int(w.get_value()))\n";
+        indent() << "    self.update()\n\n";
+
+        /* Generate the callback function a string argument */
+        indent() << "def string_changed(self, w, name):\n";
+        indent_inc();
+        indent() << "setattr(self.args, name, w.get_text())\n";
+        indent() << "print(name + ' = ' + getattr(self.args, name))\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+        /* TODO */
+        indent() << "def text_cell_edited(self, w, path, text, "
+                 "model, i, arg):\n";
+        indent_inc();
+        indent() << "model[path][i] = text\n";
+        indent() << "if list_decl[arg]['record']:\n";
+        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
+        indent() << "    rl[i] = text\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = "
+                 "list_decl[arg]['record'](*rl)\n";
+        indent() << "else:\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = text\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+        /* TODO */
+        indent() << "def spin_cell_edited(self, w, path, value, "
+                 "model, i, arg):\n";
+        indent_inc();
+        indent() << "value = int(value)\n";
+        indent() << "model[path][i] = value\n";
+        indent() << "if list_decl[arg]['record']:\n";
+        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
+        indent() << "    rl[i] = value\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = "
+                 "list_decl[arg]['r'](*rl)\n";
+        indent() << "else:\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = value\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+        /* TODO */
+        indent() << "def toggled_cell(self, w, path, model, i, arg):\n";
+        indent_inc();
+        indent() << "b = model[path][i] = not model[path][i]\n\n";
+        indent() << "if list_decl[arg]['record']:\n";
+        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
+        indent() << "    rl[i] = b\n";
+        indent() <<
+                 "    getattr(self.args, arg)[int(path)] = list_decl[arg]['r'](*rl)\n";
+        indent() << "else:\n";
+        indent() << "    getattr(self.args, arg)[int(path)] = b\n";
+        indent() << "self.update()\n\n";
+        indent_dec();
+
+
+    }
+
+    /** Generates the methods used to create argument boxes
+     *
+     */
+    void PyGuiWriter::gen_create_methods()
+    {
+        gen_arg_helpers();
+        gen_arg_callbacks();
 
         indent() << "def create_bool(self, label, arg_name):\n";
         indent_inc();
@@ -544,89 +691,6 @@ namespace pygtk_backend
         indent() << "return self.create_labeled(label, "
                  "(view, True), (b, False))\n\n";
         indent_dec();
-
-        indent() << "def add_row(self, w, view, name):\n";
-        indent_inc();
-        indent() << "sv, v = create_default_item(name)\n";
-        indent() << "view.get_model().append(sv)\n";
-        indent() << "getattr(self.args, name).append(v)\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
-
-        indent() << "def remove_selected(self, w, view, name):\n";
-        indent_inc();
-        indent() << "store, iter = view.get_selection().get_selected()\n";
-        indent() << "if iter:\n";
-        indent() << "    del getattr(self.args, name)[store.get_path(iter)[0]]\n";
-        indent() << "    store.remove(iter)\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
-
-        indent() << "def bool_toggled(self, w, name):\n";
-        indent_inc();
-        indent() << "setattr(self.args, name, w.get_active())\n";
-        indent() << "print(name + ' = ' + str(getattr(self.args, name)))\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
-
-        indent() << "def int_changed(self, w, name):\n";
-        indent_inc();
-        indent() << "setattr(self.args, name, int(w.get_value()))\n";
-        indent() << "print(name + ' = ' + str(getattr(self.args, name)))\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
-
-        /* TODO */
-        indent() << "def text_cell_edited(self, w, path, text, "
-                 "model, i, arg):\n";
-        indent_inc();
-        indent() << "model[path][i] = text\n";
-        indent() << "if list_decl[arg]['record']:\n";
-        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
-        indent() << "    rl[i] = text\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = "
-                 "list_decl[arg]['record'](*rl)\n";
-        indent() << "else:\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = text\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
-
-        /* TODO */
-        indent() << "def spin_cell_edited(self, w, path, value, "
-                 "model, i, arg):\n";
-        indent_inc();
-        indent() << "value = int(value)\n";
-        indent() << "model[path][i] = value\n";
-        indent() << "if list_decl[arg]['record']:\n";
-        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
-        indent() << "    rl[i] = value\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = "
-                 "list_decl[arg]['r'](*rl)\n";
-        indent() << "else:\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = value\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
-
-        /* TODO */
-        indent() << "def toggled_cell(self, w, path, model, i, arg):\n";
-        indent_inc();
-        indent() << "b = model[path][i] = not model[path][i]\n\n";
-        indent() << "if list_decl[arg]['record']:\n";
-        indent() << "    rl = list(getattr(self.args, arg)[int(path)])\n";
-        indent() << "    rl[i] = b\n";
-        indent() <<
-                 "    getattr(self.args, arg)[int(path)] = list_decl[arg]['r'](*rl)\n";
-        indent() << "else:\n";
-        indent() << "    getattr(self.args, arg)[int(path)] = b\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
-
-        indent() << "def string_changed(self, w, name):\n";
-        indent_inc();
-        indent() << "setattr(self.args, name, w.get_text())\n";
-        indent() << "print(name + ' = ' + getattr(self.args, name))\n";
-        indent() << "self.update()\n\n";
-        indent_dec();
     }
 
     void PyGtkMain::generate(const vector<symbol::Argument *> &args)
@@ -660,6 +724,7 @@ namespace pygtk_backend
                  "default=sys.stdout, help='output to file instead of stdout', "
 
                  "dest='_file')\n";
+        /* Add "hide preview window" argument */
         indent() << "parser.add_argument('--no-preview', action='store_false',"
                  " default=True, help='hide the preview window', "
                  "dest='_preview')\n";

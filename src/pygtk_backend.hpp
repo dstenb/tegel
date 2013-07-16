@@ -34,6 +34,8 @@ namespace pygtk_backend {
             void gen_create_methods();
             void gen_menu_callbacks();
             void gen_save_methods();
+            void gen_arg_callbacks();
+            void gen_arg_helpers();
     };
 
     class PyGtkMain : public PyWriter
