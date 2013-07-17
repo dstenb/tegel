@@ -71,6 +71,8 @@ namespace ast {
     class Else;
     class Text;
     class InlinedExpression;
+    class VariableDeclaration;
+    class VariableAssignment;
 
     /** Abstract expression base class
      *
@@ -901,6 +903,68 @@ namespace ast {
             Expression *expression_;
     };
 
+    /** TODO
+     *
+     */
+    class VariableAssignment : public Statement
+    {
+        public:
+            VariableAssignment(symbol::Variable *v, Expression *e)
+                : variable_(v), expression_(e) {}
+
+            ~VariableAssignment() {
+                delete expression_;
+            }
+
+            symbol::Variable *variable() {
+                return variable_;
+            }
+
+            Expression *expression() {
+                return expression_;
+            }
+
+            virtual void accept(AST_Visitor &);
+        private:
+            VariableAssignment(const VariableAssignment &) = delete;
+            VariableAssignment &operator=(
+                const VariableAssignment &) = delete;
+
+            symbol::Variable *variable_;
+            Expression *expression_;
+    };
+
+    /** TODO
+    *
+    */
+    class VariableDeclaration : public Statement
+    {
+        public:
+            VariableDeclaration(symbol::Variable *v, Expression *e)
+                : variable_(v), assignment_(new VariableAssignment(v, e)) {}
+
+            ~VariableDeclaration() {
+                delete assignment_;
+            }
+
+            symbol::Variable *variable() {
+                return variable_;
+            }
+
+            VariableAssignment *assignment() {
+                return assignment_;
+            }
+
+            virtual void accept(AST_Visitor &);
+        private:
+            VariableDeclaration(const VariableDeclaration &) = delete;
+            VariableDeclaration &operator=(
+                const VariableDeclaration &) = delete;
+
+            symbol::Variable *variable_;
+            VariableAssignment *assignment_;
+    };
+
     /** Statements class
      *
      * Statements represents a list of statements. A Statements object holds a
@@ -976,6 +1040,9 @@ namespace ast {
             virtual void visit(Else *) = 0;
             virtual void visit(Text *) = 0;
             virtual void visit(InlinedExpression *) = 0;
+            /* TODO */
+            virtual void visit(VariableDeclaration *) {}
+            virtual void visit(VariableAssignment *) {}
     };
 }
 
