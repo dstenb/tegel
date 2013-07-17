@@ -729,8 +729,18 @@ namespace ast {
             Statements *statements_;
     };
 
-    /**
+    /** ForEach class
      *
+     * ForEach represents a for each statement in the language:
+     *   ~~~
+     *   % for [identifier] in [expression]
+     *     [statements]
+     *   % endfor
+     *   ~~~
+     *
+     * @details The loop variable can be modified in the statements, therefore
+     * the backend must ensure that any eventual modification doesn't mess up
+     * the loop.
      */
     class ForEach : public Scope
     {
@@ -758,6 +768,19 @@ namespace ast {
             symbol::Variable *variable_;
     };
 
+    /** ForEachEnum class
+     *
+     * ForEachEnum represents an enumerated for each statement in the language:
+     *   ~~~
+     *   % for [index-identifier], [value-identifier] in [expression]
+     *     [statements]
+     *   % endfor
+     *   ~~~
+     *
+     * @details The loop variables can be modified in the statements, therefore
+     * the backend must ensure that any eventual modification doesn't mess up
+     * the loop.
+     */
     class ForEachEnum : public Scope
     {
         public:
