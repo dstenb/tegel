@@ -617,12 +617,12 @@ variable_decl
                 $2, sstr.str().c_str());
             YYERROR;
         }
-        cout << $2 << ":=" << $4->type()->str() << endl;
         free($2);
     }
 
 variable_assign
-    : IDENTIFIER '=' expression {
+    : IDENTIFIER '=' expression
+    {
         try {
             Symbol *s = current_table->lookup($1);
 
@@ -642,7 +642,6 @@ variable_assign
             vyyerror("no such symbol: %s\n", e.what());
             YYERROR;
         }
-        cout << $1 << "=" << $3->type()->str() << endl;
         free($1);
     }
 
