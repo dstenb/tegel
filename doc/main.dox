@@ -27,5 +27,6 @@
   - [Types](@ref tegel_types)
   - [Syntax](@ref syntax)
   - [Example](@ref example)
+  - [Backends](@ref backends)
   - [Design](@ref design)
 */

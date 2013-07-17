@@ -181,6 +181,18 @@
   {{ "{{" }}
   ~~~
 
+  \subsubsection comments Inlining comments
+  Comments can be inlined using the `{# text #}` syntax. An inlined comment can
+  only span one line.
+
+  For example
+
+  ~~~
+  {# this will be removed #}test
+  ~~~
+
+  Generates "test"
+
   \subsubsection newline Suppressing newlines
   Newlines can be suppressed by adding `\\` to the end of a text line. For
   example
