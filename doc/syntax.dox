@@ -76,6 +76,34 @@
 
   \section body Body
 
+  \subsection variable Variables
+
+  Variables can be declared and assigned to using the following syntax
+
+  ~~~
+  % with [assignment/declaration], ...
+  ~~~
+
+  Where `[assignment]` is
+
+  ~~~
+  [identifier] = [expression]
+  ~~~
+
+  and `[declaration]` is
+
+  ~~~
+  [type] [identifier] = [expression]
+  ~~~
+
+  For example
+
+  ~~~
+  % with string y = "1 and ", int x = 2, y = y + x.str()
+  ~~~
+
+  Sets y to "1 and 2" and x to 2
+
   \subsection for For loops
 
   \subsubsection foreach For Each loops
