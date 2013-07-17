@@ -53,7 +53,8 @@ namespace py_backend
             ostream &os_;
     };
 
-    /**
+    /** Outputs a colon delimited list of field type information (used for the
+     * command-line error message)
      *
      */
     class PyRecordColonDelim : public TypeVisitor
@@ -126,6 +127,9 @@ namespace py_backend
             ostream &os_;
     };
 
+    /** Helper function for PyConstToStream
+     *
+     */
     ostream &PyUtils::constant_to_stream(ostream &os, const ConstantData *c)
     {
         PyConstToStream cs(os);
@@ -133,6 +137,9 @@ namespace py_backend
         return os;
     }
 
+    /** Returns the record name (the name used for the named tuples)
+     *
+     */
     string PyUtils::record_name(const RecordType *r)
     {
         return "tuple_" + r->str();
@@ -164,6 +171,9 @@ namespace py_backend
         return is_short_cmd(s) || is_long_cmd(s);
     }
 
+    /** Outputs an argparse line from an argument
+     *
+     */
     void PyUtils::generate_opt(ostream &os, symbol::Argument *a)
     {
         /* Get the command line identifier */
@@ -279,6 +289,9 @@ namespace py_backend
     }
 
 
+    /** Generates the header section of the file
+     *
+     */
     void PyHeader::generate(const vector<symbol::Argument *> &args)
     {
         unindent() << "#! /usr/bin/env python\n";
@@ -294,6 +307,9 @@ namespace py_backend
         generate_records(args);
     }
 
+    /** Generates the record declarations
+     *
+     */
     void PyHeader::generate_records(const vector<symbol::Argument *> &args)
     {
         for (symbol::Argument *a : args) {
@@ -305,6 +321,9 @@ namespace py_backend
         }
     }
 
+    /** Generates a record declaration using collections.namedtuple
+     *
+     */
     void PyHeader::generate_record(const RecordType *r)
     {
         string name = PyUtils::record_name(r);
@@ -314,8 +333,7 @@ namespace py_backend
         auto it = r->begin();
 
         while (it != r->end()) {
-            unindent() << "\"" << (*it).name
-                       << "\"";
+            unindent() << "\"" << (*it).name << "\"";
             if (++it != r->end())
                 unindent() << ", ";
         }
@@ -698,6 +716,9 @@ namespace py_backend
         unindent() << ")";
     }
 
+    /** Generates main() and the main method call
+     *
+     */
     void PyMain::generate(const vector<symbol::Argument *> &args)
     {
         indent() << "def main(argv=None):\n";
@@ -717,6 +738,9 @@ namespace py_backend
         indent() << "    main()\n";
     }
 
+    /** Generates all argparse functionality
+     *
+     */
     void PyMain::generate_opts(const vector<symbol::Argument *> &args)
     {
         indent() << "parser = argparse.ArgumentParser(description="
@@ -756,7 +780,6 @@ namespace py_backend
 
     void PyBackend::check_cmd(const vector<symbol::Argument *> &args)
     {
-        vector<string> reserved = { "-h", "-o", "--help" };
-        PyUtils::check_cmd(args, reserved);
+        PyUtils::check_cmd(args, { "-h", "-o", "--help" } );
     }
 }
