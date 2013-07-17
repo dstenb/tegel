@@ -91,6 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li class="level2"><a href="#conditional">Conditional statements</a></li>
 <li class="level2"><a href="#text">Text</a><ul><li class="level3"><a href="#inline">Inlining expressions</a></li>
+<li class="level3"><a href="#comments">Inlining comments</a></li>
 <li class="level3"><a href="#newline">Suppressing newlines</a></li>
 </ul>
 </li>
@@ -224,7 +225,13 @@ Text</h2>
 Inlining expressions</h3>
 <p>Expressions can be inlined using the <code>{{ [expression] }}</code> syntax. If you need to add "{{" to a text line, this can easiest be done by escaping it</p>
 <div class="fragment"><div class="line">{{ <span class="stringliteral">&quot;{{&quot;</span> }}</div>
-</div><!-- fragment --><h3><a class="anchor" id="newline"></a>
+</div><!-- fragment --><h3><a class="anchor" id="comments"></a>
+Inlining comments</h3>
+<p>Comments can be inlined using the <code>{# text #}</code> syntax. An inlined comment can only span one line.</p>
+<p>For example</p>
+<div class="fragment"><div class="line">{# <span class="keyword">this</span> will be removed #}test</div>
+</div><!-- fragment --><p>Generates "test"</p>
+<h3><a class="anchor" id="newline"></a>
 Suppressing newlines</h3>
 <p>Newlines can be suppressed by adding <code>\\</code> to the end of a text line. For example</p>
 <div class="fragment"><div class="line">Hello, \\</div>
@@ -255,7 +262,7 @@ List Concatenation</h2>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 16 2013 17:23:11 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 10:49:46 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
