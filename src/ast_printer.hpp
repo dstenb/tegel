@@ -240,6 +240,28 @@ namespace ast_printer {
                 indent--;
             }
 
+            virtual void visit(VariableAssignment *p) {
+                print_ws();
+                cerr << "VariableAssignment\n";
+                indent++;
+                print_ws();
+                p->variable()->print(cerr);
+                cerr <<"\n";
+                p->expression()->accept(*this);
+                indent--;
+            }
+
+            virtual void visit(VariableDeclaration *p) {
+                print_ws();
+                cerr << "VariableDeclaration\n";
+                indent++;
+                print_ws();
+                p->variable()->print(cerr);
+                cerr <<"\n";
+                p->assignment()->accept(*this);
+                indent--;
+            }
+
         private:
             void binary(const string &s, BinaryExpression *e)
             {
