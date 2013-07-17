@@ -358,8 +358,6 @@ namespace type {
             static void add_record(const string &n,
                                    const RecordType::field_vector &m)
             {
-                // TODO: check n [a-zA-Z]...
-                //
                 RecordType *t = new RecordType(n, m);
 
                 auto it = map_.find(t->str());

@@ -917,7 +917,6 @@ namespace ast {
                 if (next_)
                     delete next_;
             }
-            // TODO: add destructor
 
             virtual void accept(AST_Visitor &);
 

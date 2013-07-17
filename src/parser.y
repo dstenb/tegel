@@ -486,7 +486,6 @@ elif_start
 end_if
     : ENDIF { }
 
- /* TODO: loop and for_each in dire need of cleanup */
 loop
     : for_each statements end_for
     {
