@@ -240,6 +240,16 @@ namespace ast_printer {
                 indent--;
             }
 
+            virtual void visit(VariableList *p) {
+                print_ws();
+                cerr << "VariableList\n";
+                indent++;
+                p->statement->accept(*this);
+                if (p->next)
+                    p->next->accept(*this);
+                indent--;
+            }
+
             virtual void visit(VariableAssignment *p) {
                 print_ws();
                 cerr << "VariableAssignment\n";
