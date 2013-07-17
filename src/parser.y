@@ -73,6 +73,8 @@ void vyyerror(const char *, ...);
 
     ast::List *list;
     ast::ExpressionList *expression_list;
+    ast::VariableList *variable_list;
+    ast::VariableStatement *variable_stmt;
 }
 
 %token END 0 "end of file"
@@ -83,6 +85,7 @@ void vyyerror(const char *, ...);
 %token FOR "for" IN "in" ENDFOR "endfor"
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
 %token AND "and" OR "or" NOT "not"
+%token WITH "with"
 %token L_INLINE "{{" R_INLINE "}}"
 %token LE "<=" EQ "==" NEQ "!=" GE ">="
 %token<string> TEXT
@@ -114,6 +117,9 @@ void vyyerror(const char *, ...);
 %type<if_node> if if_start
 %type<elif_node> elif_start elifs elif
 %type<else_node> else_start else
+
+%type<variable_list> with variable_list
+%type<variable_stmt> variable_decl variable_assign
 
 %type<expression> expression condition
 
@@ -396,6 +402,7 @@ text
 control
     : conditional { $$ = $1; }
     | loop { $$ = $1; }
+    | with { $$ = $1; }
 
 conditional
     : if end_if
@@ -566,6 +573,77 @@ end_for
     {
         /* Go back to symbol table before the for loop */
         current_table = current_table->parent()->parent();
+    }
+
+with
+    : WITH variable_list { $$ = $2; }
+
+variable_list
+    : variable_decl ',' variable_list
+    {
+        $$ = new ast::VariableList($1, $3);
+    }
+    | variable_decl
+    {
+        $$ = new ast::VariableList($1, nullptr);
+    }
+    | variable_assign ',' variable_list
+    {
+        $$ = new ast::VariableList($1, $3);
+    }
+    | variable_assign
+    {
+        $$ = new ast::VariableList($1, nullptr);
+    }
+
+variable_decl
+    : type IDENTIFIER '=' expression
+    {
+        try {
+            auto v = new Variable($2, $1);
+            current_table->add(v);
+
+            if ($1 != $4->type()) {
+                vyyerror("invalid type for assignment to %s (got %s, "
+                    "expected)%s", $2, $1->str().c_str(),
+                    $4->type()->str().c_str());
+                YYERROR;
+            }
+            $$ = new ast::VariableDeclaration(v, $4);
+        } catch(const SymTabAlreadyDefinedError &e) {
+            stringstream sstr;
+            current_table->lookup($2)->print(sstr);
+            vyyerror("'%s' is already defined (as %s)\n",
+                $2, sstr.str().c_str());
+            YYERROR;
+        }
+        cout << $2 << ":=" << $4->type()->str() << endl;
+        free($2);
+    }
+
+variable_assign
+    : IDENTIFIER '=' expression {
+        try {
+            Symbol *s = current_table->lookup($1);
+
+            if (!s->variable()) {
+                vyyerror("%s is not a variable\n", $1);
+                YYERROR;
+            }
+
+            if (s->get_type() != $3->type()) {
+                vyyerror("invalid type for assignment to %s (got %s, "
+                    "expected %s)", $1, s->get_type()->str().c_str(),
+                    $3->type()->str().c_str());
+                YYERROR;
+            }
+            $$ = new ast::VariableAssignment(s->variable(), $3); 
+        } catch (const SymTabNoSuchSymbolError &e) {
+            vyyerror("no such symbol: %s\n", e.what());
+            YYERROR;
+        }
+        cout << $1 << "=" << $3->type()->str() << endl;
+        free($1);
     }
 
 inlined

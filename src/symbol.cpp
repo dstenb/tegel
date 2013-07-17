@@ -63,7 +63,7 @@ namespace symbol {
     void Variable::print(ostream &os) const
     {
         os << "Variable(\"" << get_name() << "\", "
-           << get_type()->str() << ")";
+           << get_type()->str() << ", " << this << ")"; /* TODO: -this */
     }
 
     void SymbolTable::add(Symbol *s)
