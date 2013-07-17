@@ -279,15 +279,27 @@ namespace type {
             typedef vector<RecordField> field_vector;
             typedef field_vector::const_iterator iterator;
 
+            /** Dot action resolution
+             *
+             * Returns the resulting type for a field lookup
+             *
+             * @return The resulting type.
+             * @throw NoSuchFieldError if no field with the given name is found
+             */
             virtual const PrimitiveType *dot(const string &) const;
+
             virtual string str() const {
                 return str_;
             }
+
             virtual void print(ostream &os) const;
 
             iterator begin() const;
             iterator end() const;
 
+            /** Returns the number of fields in the record
+             *
+             */
             size_t no_of_fields() const {
                 return fields_.size();
             }
@@ -313,6 +325,9 @@ namespace type {
             friend class TypeFactory;
 
         public:
+            /** Returns the list's element type
+             *
+             */
             virtual const SingleType *elem() const {
                 return elem_;
             }
@@ -347,14 +362,18 @@ namespace type {
                                 " is already defined") {}
     };
 
-    /**
-     * The TypeFactory class is a singleton that handles the declared types in the
-     * language. The class is responsible for the allocation and indexing of the
-     * types.
+    /** The TypeFactory class is a singleton that handles the declared types in
+     * the language. The class is responsible for the allocation and indexing
+     * of the types.
+     *
      */
     class TypeFactory
     {
         public:
+            /** Add a record type to the factory. A corresponding list type
+             * will also be created and added
+             *
+             */
             static void add_record(const string &n,
                                    const RecordType::field_vector &m)
             {
@@ -373,6 +392,10 @@ namespace type {
                 setup_record_list_methods(l);
             }
 
+            /** Lookup a type from a string
+             *
+             * @return The type if found, else nullptr
+             */
             static const Type *get(const string &s) {
                 if (!initialized_)
                     init();
@@ -380,6 +403,10 @@ namespace type {
                 return (it != map_.end()) ? it->second : nullptr;
             }
 
+            /** Returns the corresponding list type from a single type
+             *
+             * @return The type if found, else nullptr
+             */
             static const ListType *get_list(const SingleType *t) {
                 if (!initialized_)
                     init();
@@ -388,6 +415,9 @@ namespace type {
                        it->second->list() : nullptr;
             }
 
+            /** Prints the type map to the given stream
+             *
+             */
             static void print(ostream &os) {
                 if (!initialized_)
                     init();
