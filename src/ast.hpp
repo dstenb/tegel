@@ -1095,10 +1095,9 @@ namespace ast {
             virtual void visit(Else *) = 0;
             virtual void visit(Text *) = 0;
             virtual void visit(InlinedExpression *) = 0;
-            /* TODO */
-            virtual void visit(VariableList *) {}
-            virtual void visit(VariableDeclaration *) {}
-            virtual void visit(VariableAssignment *) {}
+            virtual void visit(VariableList *) = 0;
+            virtual void visit(VariableDeclaration *) = 0;
+            virtual void visit(VariableAssignment *) = 0;
     };
 }
 
