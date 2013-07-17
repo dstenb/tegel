@@ -155,6 +155,7 @@ namespace pygtk_backend
                 indent() << "import pygtk\n";
                 indent() << "pygtk.require('2.0')\n";
                 indent() << "import gtk\n";
+                indent() << "import pango\n";
                 indent() << "import cStringIO\n\n";
 
                 /* Generate information about the list arguments */
@@ -276,6 +277,8 @@ namespace pygtk_backend
         indent() << "self.preview = gtk.TextView()\n";
         indent() << "self.preview.set_editable(False)\n";
         indent() << "self.preview.show()\n";
+        indent() << "font = pango.FontDescription('monospace')\n";
+        indent() << "self.preview.modify_font(font)\n";
         indent() << "self.p_scrolled.add_with_viewport(self.preview)\n\n";
 
         indent() << "self.a_scrolled.show()\n";
