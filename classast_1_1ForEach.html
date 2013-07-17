@@ -93,6 +93,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">ast::ForEach Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="ast_8hpp_source.html">ast.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for ast::ForEach:</div>
 <div class="dyncontent">
@@ -133,13 +135,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>set_statements</b> (<
 <a class="el" href="classsymbol_1_1SymbolTable.html">symbol::SymbolTable</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>table</b> ()</td></tr>
 <tr class="separator:a269b47f21646ad4ac3e5011a672d6cf2 inherit pub_methods_classast_1_1Scope"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classast_1_1ForEach.html">ForEach</a> class</p>
+<p><a class="el" href="classast_1_1ForEach.html">ForEach</a> represents a for each statement in the language: </p>
+<div class="fragment"><div class="line">% <span class="keywordflow">for</span> [identifier] in [expression]</div>
+<div class="line">  [statements]</div>
+<div class="line">% endfor</div>
+</div><!-- fragment --><p>The loop variable can be modified in the statements, therefore the backend must ensure that any eventual modification doesn't mess up the loop. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/<a class="el" href="ast_8hpp_source.html">ast.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 17 2013 10:49:46 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 16:43:51 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

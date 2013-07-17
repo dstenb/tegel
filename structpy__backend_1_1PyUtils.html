@@ -96,11 +96,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af062b641583943d8b8c4c7d57ec0157c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af062b641583943d8b8c4c7d57ec0157c"></a>
-static ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>constant_to_stream</b> (ostream &amp;, const <a class="el" href="classconstant_1_1ConstantData.html">ConstantData</a> *)</td></tr>
+<tr class="memitem:af062b641583943d8b8c4c7d57ec0157c"><td class="memItemLeft" align="right" valign="top">static ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpy__backend_1_1PyUtils.html#af062b641583943d8b8c4c7d57ec0157c">constant_to_stream</a> (ostream &amp;, const <a class="el" href="classconstant_1_1ConstantData.html">ConstantData</a> *)</td></tr>
 <tr class="separator:af062b641583943d8b8c4c7d57ec0157c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7cc32895d4cd5cdbf51a375b24d4302"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae7cc32895d4cd5cdbf51a375b24d4302"></a>
-static string&#160;</td><td class="memItemRight" valign="bottom"><b>record_name</b> (const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> *)</td></tr>
+<tr class="memitem:ae7cc32895d4cd5cdbf51a375b24d4302"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpy__backend_1_1PyUtils.html#ae7cc32895d4cd5cdbf51a375b24d4302">record_name</a> (const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> *)</td></tr>
 <tr class="separator:ae7cc32895d4cd5cdbf51a375b24d4302"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab481583c340aeeba04ba572fb2b4d9d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab481583c340aeeba04ba572fb2b4d9d8"></a>
 static bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_short_cmd</b> (const string &amp;)</td></tr>
@@ -111,13 +109,108 @@ static bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_long_cmd</b
 <tr class="memitem:aff0e6ed2e44aad3494b53c3010954314"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aff0e6ed2e44aad3494b53c3010954314"></a>
 static bool&#160;</td><td class="memItemRight" valign="bottom"><b>valid_cmd_format</b> (const string &amp;)</td></tr>
 <tr class="separator:aff0e6ed2e44aad3494b53c3010954314"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac999f53fe5dca83ea82c92c645fc6a84"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac999f53fe5dca83ea82c92c645fc6a84"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>generate_opt</b> (ostream &amp;, <a class="el" href="classsymbol_1_1Argument.html">symbol::Argument</a> *)</td></tr>
+<tr class="memitem:ac999f53fe5dca83ea82c92c645fc6a84"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpy__backend_1_1PyUtils.html#ac999f53fe5dca83ea82c92c645fc6a84">generate_opt</a> (ostream &amp;, <a class="el" href="classsymbol_1_1Argument.html">symbol::Argument</a> *)</td></tr>
 <tr class="separator:ac999f53fe5dca83ea82c92c645fc6a84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e051a170d765979c4114112d8203300"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e051a170d765979c4114112d8203300"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>check_cmd</b> (const vector&lt; <a class="el" href="classsymbol_1_1Argument.html">symbol::Argument</a> * &gt; &amp;, const vector&lt; string &gt; &amp;)</td></tr>
 <tr class="separator:a3e051a170d765979c4114112d8203300"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="af062b641583943d8b8c4c7d57ec0157c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ostream &amp; py_backend::PyUtils::constant_to_stream </td>
+          <td>(</td>
+          <td class="paramtype">ostream &amp;&#160;</td>
+          <td class="paramname"><em>os</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classconstant_1_1ConstantData.html">ConstantData</a> *&#160;</td>
+          <td class="paramname"><em>c</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Helper function for <a class="el" href="classpy__backend_1_1PyConstToStream.html">PyConstToStream</a> </p>
+
+</div>
+</div>
+<a class="anchor" id="ac999f53fe5dca83ea82c92c645fc6a84"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void py_backend::PyUtils::generate_opt </td>
+          <td>(</td>
+          <td class="paramtype">ostream &amp;&#160;</td>
+          <td class="paramname"><em>os</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classsymbol_1_1Argument.html">symbol::Argument</a> *&#160;</td>
+          <td class="paramname"><em>a</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Outputs an argparse line from an argument </p>
+
+</div>
+</div>
+<a class="anchor" id="ae7cc32895d4cd5cdbf51a375b24d4302"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">string py_backend::PyUtils::record_name </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> *&#160;</td>
+          <td class="paramname"><em>r</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns the record name (the name used for the named tuples) </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
 <li>src/<a class="el" href="py__backend_8hpp_source.html">py_backend.hpp</a></li>
 <li>src/py_backend.cpp</li>
@@ -125,7 +218,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>check_cmd</b> 
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 17 2013 10:49:46 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 16:43:51 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

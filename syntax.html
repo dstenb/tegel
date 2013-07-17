@@ -84,7 +84,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li class="level2"><a href="#argument">Argument</a></li>
 </ul>
 </li>
-<li class="level1"><a href="#body">Body</a><ul><li class="level2"><a href="#for">For loops</a><ul><li class="level3"><a href="#foreach">For Each loops</a></li>
+<li class="level1"><a href="#body">Body</a><ul><li class="level2"><a href="#variable">Variables</a></li>
+<li class="level2"><a href="#for">For loops</a><ul><li class="level3"><a href="#foreach">For Each loops</a></li>
 <li class="level3"><a href="#enumerated">Enumerated For Each loops</a></li>
 <li class="level3"><a href="#range">Loop over ranges</a></li>
 </ul>
@@ -165,6 +166,17 @@ Argument</h2>
 <div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="body"></a>
 Body</h1>
+<h2><a class="anchor" id="variable"></a>
+Variables</h2>
+<p>Variables can be declared and assigned to using the following syntax</p>
+<div class="fragment"><div class="line">% with [assignment/declaration], ...</div>
+</div><!-- fragment --><p>Where <code>[assignment]</code> is</p>
+<div class="fragment"><div class="line">[identifier] = [expression]</div>
+</div><!-- fragment --><p>and <code>[declaration]</code> is</p>
+<div class="fragment"><div class="line">[type] [identifier] = [expression]</div>
+</div><!-- fragment --><p>For example</p>
+<div class="fragment"><div class="line">% with <span class="keywordtype">string</span> y = <span class="stringliteral">&quot;1 and &quot;</span>, <span class="keywordtype">int</span> x = 2, y = y + x.str()</div>
+</div><!-- fragment --><p>Sets y to "1 and 2" and x to 2</p>
 <h2><a class="anchor" id="for"></a>
 For loops</h2>
 <h3><a class="anchor" id="foreach"></a>
@@ -262,7 +274,7 @@ List Concatenation</h2>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 17 2013 10:49:46 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 16:43:51 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>
