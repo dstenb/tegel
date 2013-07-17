@@ -929,6 +929,7 @@ namespace ast {
             VariableStatement *statement;
             VariableList *next;
 
+            virtual void accept(AST_Visitor &);
         private:
             VariableList(const VariableList &) = delete;
             VariableList &operator=(const VariableList &) = delete;
@@ -1072,6 +1073,7 @@ namespace ast {
             virtual void visit(Text *) = 0;
             virtual void visit(InlinedExpression *) = 0;
             /* TODO */
+            virtual void visit(VariableList *) {}
             virtual void visit(VariableDeclaration *) {}
             virtual void visit(VariableAssignment *) {}
     };

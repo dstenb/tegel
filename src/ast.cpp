@@ -40,6 +40,7 @@ namespace ast {
     GENERATE_ACCEPT(Else)
     GENERATE_ACCEPT(Text)
     GENERATE_ACCEPT(InlinedExpression)
+    GENERATE_ACCEPT(VariableList)
     GENERATE_ACCEPT(VariableDeclaration)
     GENERATE_ACCEPT(VariableAssignment)
 
