@@ -37,6 +37,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 %x pre_inline
 %x str
 %x text
+%x comment
 
 %%
 
@@ -108,6 +109,14 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
                             return L_INLINE;
                          }
                        }
+<text>"{#"             {
+                         BEGIN(comment);
+                         if (string_builder) {
+                            yylval.string = string_builder;
+                            string_builder = NULL;
+                            return TEXT;
+                         }
+                       }
 <text>"\\\\\n"         { string_builder_append(yytext);
                          yylval.string = string_builder;
                          string_builder = NULL;
@@ -159,6 +168,12 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <inline,control,INITIAL>{UANYN} { vyyerror("unexpected character `%s`",
                                   yytext);
                                   yyterminate(); }
+
+ /* comment rules */
+<comment><<EOF>>         { yyerror("syntax error, unmatched '#}'"); yyterminate(); }
+<comment>"#}"            { BEGIN(text); }
+<comment>"\\n"           { yyerror("comments can't span over multiple lines"); yyterminate(); }
+<comment>{UANYN}         // Eat up everything else
 %%
 
 void string_builder_append(const char *s)
