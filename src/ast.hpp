@@ -71,6 +71,8 @@ namespace ast {
     class Else;
     class Text;
     class InlinedExpression;
+    class VariableStatement;
+    class VariableList;
     class VariableDeclaration;
     class VariableAssignment;
 
@@ -906,7 +908,36 @@ namespace ast {
     /** TODO
      *
      */
-    class VariableAssignment : public Statement
+    class VariableStatement : public Statement
+    {
+    };
+
+    /** TODO
+     *
+     */
+    struct VariableList : public Statement
+    {
+            VariableList(VariableStatement *s, VariableList *n)
+                : statement(s), next(n) {}
+
+            ~VariableList() {
+                delete statement;
+                if (next)
+                    delete next;
+            }
+
+            VariableStatement *statement;
+            VariableList *next;
+
+        private:
+            VariableList(const VariableList &) = delete;
+            VariableList &operator=(const VariableList &) = delete;
+    };
+
+    /** TODO
+     *
+     */
+    class VariableAssignment : public VariableStatement
     {
         public:
             VariableAssignment(symbol::Variable *v, Expression *e)
@@ -937,7 +968,7 @@ namespace ast {
     /** TODO
     *
     */
-    class VariableDeclaration : public Statement
+    class VariableDeclaration : public VariableStatement
     {
         public:
             VariableDeclaration(symbol::Variable *v, Expression *e)
