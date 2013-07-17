@@ -104,6 +104,9 @@ namespace py_backend {
             virtual void visit(ast::Else *);
             virtual void visit(ast::Text *);
             virtual void visit(ast::InlinedExpression *);
+            virtual void visit(ast::VariableList *);
+            virtual void visit(ast::VariableAssignment *);
+            virtual void visit(ast::VariableDeclaration *);
         private:
             void binary(const string &s, ast::BinaryExpression *e);
     };

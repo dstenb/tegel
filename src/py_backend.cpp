@@ -669,6 +669,26 @@ namespace py_backend
         unindent() << ")\n";
     }
 
+    void PyBody::visit(ast::VariableList *p)
+    {
+        p->statement->accept(*this);
+        if (p->next)
+            p->next->accept(*this);
+    }
+
+    void PyBody::visit(ast::VariableAssignment *p)
+    {
+        indent() << p->variable()->get_name() << " = ";
+        p->expression()->accept(*this);
+        unindent() << "\n";
+    }
+
+    void PyBody::visit(ast::VariableDeclaration *p)
+    {
+        /* Just generate the assignment */
+        p->assignment()->accept(*this);
+    }
+
     void PyBody::binary(const string &s, ast::BinaryExpression *e)
     {
         unindent() << "(";
