@@ -158,8 +158,8 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 <inline>[ \t]*            // Eat up all whitespace
 <inline>"}}"              { BEGIN(text); return R_INLINE; }
-<inline>"\n"              { vyyerror("Newline is not allowed in inlined "
-                            "expressions", '\\', yytext);
+<inline>"\n"              { vyyerror("inlined expressions can't span over "
+                            "multiple lines ", '\\', yytext);
                             yyterminate(); }
 <inline>"\""              { str_caller = inline; string_builder_append("");
                             BEGIN(str); }
@@ -170,9 +170,11 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
                                   yyterminate(); }
 
  /* comment rules */
-<comment><<EOF>>         { yyerror("syntax error, unmatched '#}'"); yyterminate(); }
+<comment><<EOF>>         { yyerror("syntax error, unmatched '#}'");
+                           yyterminate(); }
 <comment>"#}"            { BEGIN(text); }
-<comment>"\\n"           { yyerror("comments can't span over multiple lines"); yyterminate(); }
+<comment>"\\n"           { yyerror("comments can't span over multiple lines");
+                           yyterminate(); }
 <comment>{UANYN}         // Eat up everything else
 %%
 
