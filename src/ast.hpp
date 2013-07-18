@@ -34,6 +34,7 @@ namespace ast {
     class Expression;
     class BinaryExpression;
     class UnaryExpression;
+    class TernaryIf;
     class And;
     class Or;
     class Not;
@@ -144,6 +145,50 @@ namespace ast {
             BinaryBoolExpression(const BinaryBoolExpression &) = delete;
             BinaryBoolExpression &operator=(
                 const BinaryBoolExpression &) = delete;
+            const Type *type_;
+    };
+
+    /** TernaryIf class
+     *
+     *   ~~~
+     *   [expression] ? [expression] : [expression]
+     *   ~~~
+     *
+     * @details `condition` must be an expression of type bool.
+     *
+     */
+    class TernaryIf : public Expression
+    {
+        public:
+            TernaryIf(Expression *condition, Expression *tv, Expression *fv)
+                : cond_(condition), if_true_(tv), if_false_(fv),
+                  type_(tv->type()) {
+                assert(condition->type() == TypeFactory::get("bool"));
+                assert(tv->type() == fv->type());
+            }
+
+            virtual void accept(AST_Visitor &) = 0;
+            virtual const Type *type() const {
+                return type_;
+            }
+
+            Expression *condition() {
+                return cond_;
+            }
+
+            Expression *if_true() {
+                return if_true_;
+            }
+
+            Expression *if_false() {
+                return if_false_;
+            }
+        private:
+            TernaryIf(const TernaryIf &) = delete;
+            TernaryIf &operator=(const TernaryIf &) = delete;
+            Expression *cond_;
+            Expression *if_true_;
+            Expression *if_false_;
             const Type *type_;
     };
 
