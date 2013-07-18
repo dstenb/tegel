@@ -131,8 +131,7 @@ iterator&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> () cons
 <tr class="memitem:a7cefe6e4ea99fdaded09bd4c4ce2bc6a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7cefe6e4ea99fdaded09bd4c4ce2bc6a"></a>
 iterator&#160;</td><td class="memItemRight" valign="bottom"><b>end</b> () const </td></tr>
 <tr class="separator:a7cefe6e4ea99fdaded09bd4c4ce2bc6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad57f39945638631998b1e2d0000c615"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad57f39945638631998b1e2d0000c615"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>no_of_fields</b> () const </td></tr>
+<tr class="memitem:aad57f39945638631998b1e2d0000c615"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1RecordType.html#aad57f39945638631998b1e2d0000c615">no_of_fields</a> () const </td></tr>
 <tr class="separator:aad57f39945638631998b1e2d0000c615"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeffb7ad5d6ba88ba7f1dec7184e3eb43"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classtype_1_1RecordType.html">RecordType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtype_1_1RecordType.html#aeffb7ad5d6ba88ba7f1dec7184e3eb43">record</a> () const </td></tr>
 <tr class="separator:aeffb7ad5d6ba88ba7f1dec7184e3eb43"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,7 +177,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFactory</b></td>
           <td class="memname">const <a class="el" href="classtype_1_1PrimitiveType.html">PrimitiveType</a> * type::RecordType::dot </td>
           <td>(</td>
           <td class="paramtype">const string &amp;&#160;</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -189,10 +188,40 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFactory</b></td>
 </table>
 </div><div class="memdoc">
 <p>Dot action resolution</p>
-<p>Returns the resulting type when the dot action is applied to a type (e.g. field access in a record)</p>
-<dl class="section return"><dt>Returns</dt><dd>The resulting type. Returns nullptr if not applicable to the type </dd></dl>
+<p>Returns the resulting type for a field lookup</p>
+<dl class="section return"><dt>Returns</dt><dd>The resulting type. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classtype_1_1NoSuchFieldError.html">NoSuchFieldError</a></td><td>if no field with the given name is found </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p>Reimplemented from <a class="el" href="classtype_1_1Type.html#ae985fee456c411834027102ee31c9f33">type::Type</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aad57f39945638631998b1e2d0000c615"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t type::RecordType::no_of_fields </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns the number of fields in the record </p>
 
 </div>
 </div>
@@ -283,7 +312,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFactory</b></td>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 17 2013 16:43:51 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jul 18 2013 14:59:36 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

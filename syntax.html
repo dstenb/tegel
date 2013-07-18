@@ -98,7 +98,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 </ul>
 </li>
-<li class="level1"><a href="#expression">Expressions</a><ul><li class="level2"><a href="#string_concat">String concatenation</a></li>
+<li class="level1"><a href="#expression">Expressions</a><ul><li class="level2"><a href="#conditional_op">Conditional operator</a></li>
+<li class="level2"><a href="#string_concat">String concatenation</a></li>
 <li class="level2"><a href="#string_repeat">String repetition</a></li>
 <li class="level2"><a href="#list_concat">List Concatenation</a></li>
 </ul>
@@ -253,28 +254,34 @@ Suppressing newlines</h3>
 <div class="fragment"><div class="line">{{ <span class="stringliteral">&quot;\\\\&quot;</span> }}</div>
 </div><!-- fragment --><h1><a class="anchor" id="expression"></a>
 Expressions</h1>
+<h2><a class="anchor" id="conditional_op"></a>
+Conditional operator</h2>
+<p><code>?:</code> operator as found in many programming languages.</p>
+<p>For example</p>
+<div class="fragment"><div class="line">b ? s : <span class="stringliteral">&quot;empty&quot;</span></div>
+</div><!-- fragment --><p>returns <code>s</code> when <code>b</code> is true, else <code>"empty"</code>.</p>
 <h2><a class="anchor" id="string_concat"></a>
 String concatenation</h2>
-<p>Two string expressions can be concatenated by using the <code>+</code> operand.</p>
+<p>Two string expressions can be concatenated by using the <code>+</code> operator.</p>
 <div class="fragment"><div class="line"><span class="stringliteral">&quot;abc&quot;</span> + <span class="stringliteral">&quot;def&quot;</span></div>
 </div><!-- fragment --><p>Translates to</p>
 <div class="fragment"><div class="line"><span class="stringliteral">&quot;abcdef&quot;</span></div>
 </div><!-- fragment --><h2><a class="anchor" id="string_repeat"></a>
 String repetition</h2>
-<p>A string expression can be repeated by using the <code>*</code> operand with an integer expression</p>
+<p>A string expression can be repeated by using the <code>*</code> operator with an integer expression</p>
 <div class="fragment"><div class="line"><span class="stringliteral">&quot;x&quot;</span> * 5</div>
 </div><!-- fragment --><p>Translates to</p>
 <div class="fragment"><div class="line"><span class="stringliteral">&quot;xxxxx&quot;</span></div>
 </div><!-- fragment --><h2><a class="anchor" id="list_concat"></a>
 List Concatenation</h2>
-<p>Two list expressions can be concatenated by using the <code>+</code> operand.</p>
+<p>Two list expressions can be concatenated by using the <code>+</code> operator.</p>
 <div class="fragment"><div class="line">[ 1, 2, 3] + [ 4, 5, 6 ]</div>
 </div><!-- fragment --><p>Translates to</p>
 <div class="fragment"><div class="line">[ 1, 2, 3, 4, 5, 6 ]</div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 17 2013 16:43:51 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jul 18 2013 14:59:36 for TeGeL by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

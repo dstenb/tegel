@@ -2,6 +2,8 @@ var searchData=
 [
   ['tegel_20_2d_20template_20generator_20language',['TeGeL - Template Generator Language',['../index.html',1,'']]],
   ['types',['Types',['../tegel_types.html',1,'']]],
+  ['ternaryif',['TernaryIf',['../classast_1_1TernaryIf.html',1,'ast']]],
+  ['ternaryiffactory',['TernaryIfFactory',['../structast__factory_1_1TernaryIfFactory.html',1,'ast_factory']]],
   ['text',['Text',['../classast_1_1Text.html',1,'ast']]],
   ['times',['Times',['../classast_1_1Times.html',1,'ast']]],
   ['timesbinaryfactory',['TimesBinaryFactory',['../structast__factory_1_1TimesBinaryFactory.html',1,'ast_factory']]],
