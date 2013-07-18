@@ -1,4 +1,5 @@
 #include "ast.hpp"
+#include "common.hpp"
 
 namespace ast_printer {
 
@@ -11,15 +12,9 @@ namespace ast_printer {
     {
         public:
             virtual void visit(Statements *p) {
-                print_ws();
-                cerr << "Statements\n";
-                indent++;
-
                 p->statement()->accept(*this);
                 if (p->next())
                     p->next()->accept(*this);
-
-                indent--;
             }
 
             virtual void visit(TernaryIf *p) {
@@ -242,7 +237,7 @@ namespace ast_printer {
 
             virtual void visit(Text *p) {
                 print_ws();
-                cerr << "Text('" << p->text() << "')\n";
+                cerr << "Text('" << Escaper()(p->text()) << "')\n";
             }
 
             virtual void visit(InlinedExpression *p) {
