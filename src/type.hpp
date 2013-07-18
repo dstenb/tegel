@@ -469,6 +469,7 @@ namespace type {
                 vector<const Type *> b_v = { b };
                 vector<const Type *> i_v = { i };
                 vector<const Type *> s_v = { s };
+                vector<const Type *> ss_v = { s, s };
 
                 /* bool methods */
                 b->add_method(TypeMethod("str", s, e_v));
@@ -485,6 +486,7 @@ namespace type {
                 s->add_method(TypeMethod("ralign", s, i_v));
                 s->add_method(TypeMethod("upper", s, e_v));
                 s->add_method(TypeMethod("title", s, e_v));
+                s->add_method(TypeMethod("replace", s, ss_v));
 
                 /* bool[] methods */
                 bl->add_method(TypeMethod("size", i, e_v));

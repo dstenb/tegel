@@ -546,6 +546,13 @@ namespace py_backend
             } else if (name == "upper") {
                 p->expression()->accept(*this);
                 unindent() << ".upper()";
+            } else if (name == "replace") {
+                p->expression()->accept(*this);
+                unindent() << ".replace(";
+                p->arguments()->expression->accept(*this);
+                unindent() << ", ";
+                p->arguments()->next->expression->accept(*this);
+                unindent() << ")";
             }
         } else if (t->list()) {
             auto tl = t->list();
