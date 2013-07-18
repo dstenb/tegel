@@ -1,7 +1,38 @@
+record function {
+	string name;
+	string returns;
+	string parameters;
+}
+
+record author {
+	string name;
+	string mail;
+}
+
+arg author author {
+	cmd = "--author";
+	info = "Author information";
+}
+
+arg string version {
+	cmd = "-v";
+	info = "Program version";
+}
+
+arg string description {
+	cmd = "-d";
+	info = "Program description";
+}
+
+arg function[] functions {
+	cmd = "-f";
+	info = "List of functions";
+}
+
 arg string[] global_includes {
 	info = "Global includes";
 	cmd = "-g";
-	default = string[];
+	default = [ "stdlib.h", "stdio.h" ];
 }
 
 arg string[] relative_includes {
@@ -16,8 +47,34 @@ arg bool main {
 	default = true;
 }
 
+arg bool main_a {
+    info = "Include main() arguments?";
+    cmd = "-a";
+    default = true;
+}
+
 %%
-% for h in [ "stdlib.h", "stdio.h" ] + global_includes
+/**
+ * @file
+% if author.name
+ % with string mail = " <" + author.mail + ">"
+ % if mail == " <>"
+ % with mail = ""
+ % endif
+ * @author {{ author.name + mail }}
+% endif
+% if version
+ * @version {{ version }}
+% endif
+ *
+% if description
+ * @section DESCRIPTION
+ *
+ * {{ description }}
+% endif
+ */
+
+% for h in global_includes
 #include <{{ h }}>
 % endfor
 
@@ -25,8 +82,26 @@ arg bool main {
 #include "{{ h }}"
 % endfor
 
+% for f in functions
+/**
+ * TODO
+ *
+% if f.returns != "void"
+ * @return TODO
+% endif
+ */
+{{ f.returns }} {{ f.name }}({{ f.parameters }})
+{
+
+}
+% endfor
+
 % if main
+% if main_a
 int main(int argc, char **argv)
+% else
+int main(void)
+% endif
 {
 	return 0;
 }
