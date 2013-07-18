@@ -141,7 +141,7 @@ namespace ast_printer {
 
             virtual void visit(FieldRef *p) {
                 print_ws();
-                cerr << "FieldRef";
+                cerr << "FieldRef\n";
                 indent++;
                 p->record()->accept(*this);
                 print_ws();
