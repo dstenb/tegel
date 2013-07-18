@@ -207,6 +207,21 @@ namespace ast_factory {
         }
     };
 
+    struct TernaryIfFactory
+    {
+        static TernaryIf *create(Expression *cond,
+                                 Expression *if_true, Expression *if_false)
+        {
+            if (if_true->type() == if_false->type()) {
+                return new TernaryIf(BoolUnaryFactory::create(cond),
+                                     if_true, if_false);
+            }
+            throw InvalidTypeError("unmatching types for '?:' operator (got "
+                                   + if_true->type()->str() + " and " +
+                                   if_false->type()->str() + ")");
+        }
+    };
+
 }
 
 #endif
