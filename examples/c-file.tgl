@@ -66,8 +66,9 @@ arg bool main_a {
  *
 % if description
  * @section DESCRIPTION
- *
- * {{ description }}{# TODO: add wrap() #}
+ % for line in description.wrap(50)
+ * {{ line }}
+ % endfor
 % endif
  */
 
