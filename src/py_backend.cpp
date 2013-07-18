@@ -496,25 +496,26 @@ namespace py_backend
         /* TODO */
         auto t = p->expression()->type();
         auto m = p->method();
+        auto name = m.name();
 
         if (t == type::TypeFactory::get("bool")) {
-            if (m.name() == "str") {
+            if (name == "str") {
                 unindent() << "\"true\" if ";
                 p->expression()->accept(*this);
                 unindent() << " else \"false\"";
             }
         } else if (t == type::TypeFactory::get("int")) {
-            if (m.name() == "downto") {
+            if (name == "downto") {
                 unindent() << "list(reversed(range(";
                 p->arguments()->expression->accept(*this);
                 unindent() << ", ";
                 p->expression()->accept(*this);
                 unindent() << "+ 1)))";
-            } else if (m.name() == "str") {
+            } else if (name == "str") {
                 unindent() << "str(";
                 p->expression()->accept(*this);
                 unindent() << ")";
-            } else if (m.name() == "upto") {
+            } else if (name == "upto") {
                 unindent() << "list(range(";
                 p->expression()->accept(*this);
                 unindent() << ", ";
@@ -522,38 +523,38 @@ namespace py_backend
                 unindent() << "+ 1))";
             }
         } else if (t == type::TypeFactory::get("string")) {
-            if (m.name() == "lalign") {
+            if (name == "lalign") {
                 p->expression()->accept(*this);
                 unindent() << ".ljust(";
                 p->arguments()->expression->accept(*this);
                 unindent() << ")";
-            } else if (m.name() == "length") {
+            } else if (name == "length") {
                 unindent() << "len(";
                 p->expression()->accept(*this);
                 unindent() << ")";
-            } else if (m.name() == "lower") {
+            } else if (name == "lower") {
                 p->expression()->accept(*this);
                 unindent() << ".lower()";
-            } else if (m.name() == "ralign") {
+            } else if (name == "ralign") {
                 p->expression()->accept(*this);
                 unindent() << ".rjust(";
                 p->arguments()->expression->accept(*this);
                 unindent() << ")";
-            } else if (m.name() == "title") {
+            } else if (name == "title") {
                 p->expression()->accept(*this);
                 unindent() << ".title()";
-            } else if (m.name() == "upper") {
+            } else if (name == "upper") {
                 p->expression()->accept(*this);
                 unindent() << ".upper()";
             }
         } else if (t->list()) {
             auto tl = t->list();
 
-            if (m.name() == "size") {
+            if (name == "size") {
                 unindent() << "len(";
                 p->expression()->accept(*this);
                 unindent() << ")";
-            } else if (m.name() == "sort") {
+            } else if (name == "sort") {
                 if (tl->elem()->primitive()) {
                     unindent() << "sorted(";
                     p->expression()->accept(*this);
@@ -573,7 +574,7 @@ namespace py_backend
                     key->accept(*this);
                     unindent() << "))";
                 }
-            } else if (m.name() == "join") {
+            } else if (name == "join") {
                 p->arguments()->expression->accept(*this);
                 unindent() << ".join(";
                 p->expression()->accept(*this);
@@ -603,10 +604,8 @@ namespace py_backend
     void PyBody::visit(ast::List *p)
     {
         unindent() << "[";
-        for (auto e = p->elements(); e != nullptr;
-                e = e->next) {
+        for (auto e = p->elements(); e != nullptr; e = e->next) {
             e->expression->accept(*this);
-
             if (e->next)
                 unindent() << ", ";
         }
