@@ -7,6 +7,9 @@ namespace ast_factory {
 
     using namespace ast;
 
+    /** Converts an expression (if possible) to a bool expression
+     *
+     */
     struct BoolUnaryFactory
     {
         static Expression *create(Expression *e)
@@ -32,6 +35,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a binary expression of type bool (e.g. and)
+     *
+     */
     template<class T>
     struct BoolBinaryFactory
     {
@@ -43,6 +49,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a plus expression
+     *
+     */
     struct PlusBinaryFactory
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
@@ -61,7 +70,9 @@ namespace ast_factory {
         }
     };
 
-
+    /** Creates an unary minus expression
+     *
+     */
     struct MinusUnaryFactory
     {
         static BinaryExpression *create(Expression *e)
@@ -75,6 +86,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a minus expression
+     *
+     */
     struct MinusBinaryFactory
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
@@ -88,6 +102,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a multiplication expression
+     *
+     */
     struct TimesBinaryFactory
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
@@ -107,6 +124,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a < expression
+     *
+     */
     struct LessThanFactory
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
@@ -123,6 +143,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a <= expression
+     *
+     */
     struct LessThanOrEqualFactory
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
@@ -139,6 +162,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a > expression
+     *
+     */
     struct GreaterThanFactory
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
@@ -155,6 +181,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a >= expression
+     *
+     */
     struct GreaterThanOrEqualFactory
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
@@ -171,6 +200,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a == expression
+     *
+     */
     struct EqualsFactory
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
@@ -189,6 +221,9 @@ namespace ast_factory {
         }
     };
 
+    /** Converts an expression (if possible) to a string expression
+     *
+     */
     struct StringFactory
     {
         static Expression *create(Expression *e)
@@ -207,6 +242,9 @@ namespace ast_factory {
         }
     };
 
+    /** Creates a ternary if (a ? b : c) expression
+     *
+     */
     struct TernaryIfFactory
     {
         static TernaryIf *create(Expression *cond,
@@ -221,7 +259,6 @@ namespace ast_factory {
                                    if_false->type()->str() + ")");
         }
     };
-
 }
 
 #endif
