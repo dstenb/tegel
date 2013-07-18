@@ -70,6 +70,7 @@ namespace py_backend {
 
             void generate(ast::Statements *body);
 
+            virtual void visit(ast::TernaryIf *);
             virtual void visit(ast::And *);
             virtual void visit(ast::Or *);
             virtual void visit(ast::Not *);

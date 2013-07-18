@@ -374,6 +374,17 @@ namespace py_backend
             p->next()->accept(*this);
     }
 
+    void PyBody::visit(ast::TernaryIf *p)
+    {
+        unindent() << "(";
+        p->if_true()->accept(*this);
+        unindent() << " if ";
+        p->condition()->accept(*this);
+        unindent() << " else ";
+        p->if_false()->accept(*this);
+        unindent() << ")";
+    }
+
     void PyBody::visit(ast::And *p)
     {
         binary("and", p);
