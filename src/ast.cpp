@@ -5,6 +5,7 @@ namespace ast {
     /* Accept function macro, quite ugly, quite smooth */
 #define GENERATE_ACCEPT(x) void x::accept(AST_Visitor &v) { v.visit(this); }
 
+    GENERATE_ACCEPT(TernaryIf)
     GENERATE_ACCEPT(And)
     GENERATE_ACCEPT(Or)
     GENERATE_ACCEPT(Not)

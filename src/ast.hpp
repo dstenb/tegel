@@ -167,7 +167,7 @@ namespace ast {
                 assert(tv->type() == fv->type());
             }
 
-            virtual void accept(AST_Visitor &) = 0;
+            virtual void accept(AST_Visitor &);
             virtual const Type *type() const {
                 return type_;
             }
@@ -1104,6 +1104,7 @@ namespace ast {
     class AST_Visitor
     {
         public:
+            virtual void visit(TernaryIf *) {} /* TODO */
             virtual void visit(And *) = 0;
             virtual void visit(Or *) = 0;
             virtual void visit(Not *) = 0;
