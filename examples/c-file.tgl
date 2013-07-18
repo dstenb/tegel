@@ -1,6 +1,6 @@
 record function {
-	string name;
 	string returns;
+	string name;
 	string parameters;
 }
 
@@ -9,7 +9,7 @@ record author {
 	string mail;
 }
 
-arg author a {
+arg author author {
 	cmd = "--author";
 	info = "Author information";
 }
@@ -56,8 +56,9 @@ arg bool main_a {
 %%
 /**
  * @file
-% if a.name
- * @a {{ a.name + (a.mail ? " <" + a.mail + ">" : "") }}
+% if author.name
+ % with string mail = author.mail.replace("@", " at ")
+ * @author {{ author.name + (mail ? " <" + mail + ">" : "") }}
 % endif
 % if version
  * @version {{ version }}
@@ -79,6 +80,7 @@ arg bool main_a {
 % endfor
 
 % for f in functions
+% if f.name
 /**
  * TODO
  *
@@ -86,10 +88,12 @@ arg bool main_a {
  * @return TODO
 % endif
  */
-{{ f.returns + " " + f.name + "(" + f.parameters + ")" }}
+% with string params = f.parameters ? f.parameters : "void"
+{{ f.returns + " " + f.name + "(" + params + ")" }}
 {
 
 }
+%endif
 % endfor
 
 % if main
