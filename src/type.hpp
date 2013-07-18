@@ -487,6 +487,7 @@ namespace type {
                 s->add_method(TypeMethod("upper", s, e_v));
                 s->add_method(TypeMethod("title", s, e_v));
                 s->add_method(TypeMethod("replace", s, ss_v));
+                s->add_method(TypeMethod("wrap", sl, i_v));
 
                 /* bool[] methods */
                 bl->add_method(TypeMethod("size", i, e_v));
