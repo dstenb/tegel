@@ -27,12 +27,5 @@ src/lexical.cpp
 html/
 
 # Automake / Autoconf files
-config.h
-config.log
-autom4te.cache
-autoscan.log
-config.status
-src/.deps
-stamp-h1
 Makefile
 src/Makefile
