@@ -1104,7 +1104,7 @@ namespace ast {
     class AST_Visitor
     {
         public:
-            virtual void visit(TernaryIf *) {} /* TODO */
+            virtual void visit(TernaryIf *) = 0;
             virtual void visit(And *) = 0;
             virtual void visit(Or *) = 0;
             virtual void visit(Not *) = 0;
