@@ -126,6 +126,7 @@ void vyyerror(const char *, ...);
 %type<list> list
 %type<expression_list> expression_list list_values
 
+%right '?' ':'
 %left OR
 %left AND
 %left EQ NEQ
@@ -653,7 +654,16 @@ inlined
     ;
 
 expression
-    : expression AND expression
+    : expression '?' expression ':' expression
+    {
+        try {
+            $$ = ast_factory::TernaryIfFactory::create($1, $3, $5);
+        } catch (const InvalidTypeError &e) {
+            vyyerror("%s", e.what());
+            YYERROR;
+        }
+    }
+    | expression AND expression
     {
         try {
             $$ = ast_factory::BoolBinaryFactory<ast::And>::create($1, $3);
