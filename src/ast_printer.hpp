@@ -22,6 +22,19 @@ namespace ast_printer {
                 indent--;
             }
 
+            virtual void visit(TernaryIf *p) {
+                print_ws();
+                cerr << "?\n";
+                indent++;
+                p->condition()->accept(*this);
+                indent++;
+                p->if_true()->accept(*this);
+                print_ws();
+                cerr << ":\n";
+                p->if_false()->accept(*this);
+                indent -= 2;
+            }
+
             virtual void visit(And *p) {
                 binary("And", p);
             }
