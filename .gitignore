@@ -27,5 +27,8 @@ src/lexical.cpp
 html/
 
 # Automake / Autoconf files
-Makefile
-src/Makefile
+*Makefile
+*CMakeCache.txt
+*CMakeFiles
+*cmake_install.cmake
+*install_manifest.txt
