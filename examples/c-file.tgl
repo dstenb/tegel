@@ -9,7 +9,7 @@ record author {
 	string mail;
 }
 
-arg author author {
+arg author a {
 	cmd = "--author";
 	info = "Author information";
 }
@@ -21,7 +21,7 @@ arg string version {
 
 arg string description {
 	cmd = "-d";
-	info = "Program description";
+	info = "File description";
 }
 
 arg function[] functions {
@@ -56,12 +56,8 @@ arg bool main_a {
 %%
 /**
  * @file
-% if author.name
- % with string mail = " <" + author.mail + ">"
- % if mail == " <>"
- % with mail = ""
- % endif
- * @author {{ author.name + mail }}
+% if a.name
+ * @a {{ a.name + (a.mail ? " <" + a.mail + ">" : "") }}
 % endif
 % if version
  * @version {{ version }}
@@ -70,7 +66,7 @@ arg bool main_a {
 % if description
  * @section DESCRIPTION
  *
- * {{ description }}
+ * {{ description }}{# TODO: add wrap() #}
 % endif
  */
 
@@ -90,18 +86,14 @@ arg bool main_a {
  * @return TODO
 % endif
  */
-{{ f.returns }} {{ f.name }}({{ f.parameters }})
+{{ f.returns + " " + f.name + "(" + f.parameters + ")" }}
 {
 
 }
 % endfor
 
 % if main
-% if main_a
-int main(int argc, char **argv)
-% else
-int main(void)
-% endif
+int main({{ main_a ? "int argc, char **argv" : "void"}})
 {
 	return 0;
 }
