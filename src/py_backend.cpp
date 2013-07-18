@@ -298,6 +298,7 @@ namespace py_backend
         unindent() << "# -*- coding: utf-8 -*-\n\n";
         unindent() << "import argparse\n";
         unindent() << "import sys\n";
+        unindent() << "import textwrap\n";
         unindent() << "from collections import namedtuple\n\n";
 
         unindent() << "def parse_bool(s):\n";
@@ -552,6 +553,12 @@ namespace py_backend
                 p->arguments()->expression->accept(*this);
                 unindent() << ", ";
                 p->arguments()->next->expression->accept(*this);
+                unindent() << ")";
+            } else if (name == "wrap") {
+                unindent() << "textwrap.wrap(";
+                p->expression()->accept(*this);
+                unindent() << ", ";
+                p->arguments()->expression->accept(*this);
                 unindent() << ")";
             }
         } else if (t->list()) {
