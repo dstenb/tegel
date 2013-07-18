@@ -241,8 +241,19 @@
 
   \section expression Expressions
 
+  \subsection conditional_op Conditional operator
+  `?:` operator as found in many programming languages.
+
+  For example
+
+  ~~~
+  b ? s : "empty"
+  ~~~
+
+  returns `s` when `b` is true, else `"empty"`.
+
   \subsection string_concat String concatenation
-  Two string expressions can be concatenated by using the `+` operand.
+  Two string expressions can be concatenated by using the `+` operator.
 
   ~~~
   "abc" + "def"
@@ -257,7 +268,7 @@
 
 
   \subsection string_repeat String repetition
-  A string expression can be repeated by using the `*` operand with an integer
+  A string expression can be repeated by using the `*` operator with an integer
   expression
 
   ~~~
@@ -271,7 +282,7 @@
   ~~~
 
   \subsection list_concat List Concatenation
-  Two list expressions can be concatenated by using the `+` operand.
+  Two list expressions can be concatenated by using the `+` operator.
 
   ~~~
   [ 1, 2, 3] + [ 4, 5, 6 ]
