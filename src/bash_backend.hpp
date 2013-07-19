@@ -12,11 +12,35 @@ using namespace std;
 
 namespace bash_backend {
 
-    class BashBody : public ast::AST_Visitor
+    /** BashWriter class
+     *
+     * BashWriter provides python indentation (i.e. levels of 4 spaces) to an ostream
+     *
+     */
+    class BashWriter
+    {
+        public:
+            BashWriter(ostream &os, unsigned indentation = 0)
+                : os_(os), indentation_(indentation) {}
+
+            virtual ~BashWriter() {}
+        protected:
+            ostream &indent();
+            ostream &unindent();
+
+            void indent_dec();
+            void indent_inc();
+        private:
+            ostream &os_;
+            unsigned indentation_;
+    };
+
+
+    class BashBody : public BashWriter, public ast::AST_Visitor
     {
         public:
             BashBody(ostream &os)
-                : os_(os) {}
+                : BashWriter(os) {}
 
             void generate(ast::Statements *body);
 
@@ -60,19 +84,17 @@ namespace bash_backend {
             virtual void visit(ast::VariableDeclaration *);
         private:
             void binary(const string &s, ast::BinaryExpression *e);
-            ostream &os_;
     };
 
-    class BashMain
+    class BashMain : public BashWriter
     {
         public:
             BashMain(ostream &os)
-                : os_(os) {}
+                : BashWriter(os) {}
 
             void generate(const vector<symbol::Argument *> &);
         private:
             void generate_opts(const vector<symbol::Argument *> &);
-            ostream &os_;
     };
 
 
