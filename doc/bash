@@ -1,0 +1,37 @@
+string.length()
+===============
+echo $string | wc -m (chars instead of bytes)
+
+string.lalign()
+===============
+(bash printf doesn't see to support utf-8)
+echo $string | awk '{printf "%-WIDTH", $0}'
+
+string.ralign()
+===============
+(bash printf doesn't see to support utf-8)
+echo $string | awk '{printf "%WIDTH", $0}'
+
+string.replace()
+================
+echo $string | awk '{ gsub(from,to,$0); print $0}'
+
+string.wrap()
+=============
+echo $string | fold -sw WIDTH
+
+string.lower()
+==============
+echo $string | awk '{print tolower($0)}'
+
+string.upper()
+==============
+echo $string | awk '{print toupper($0)}'
+
+
+
+int.upto()/down()
+====================
+echo {1..5}          (check limits)
+
+
