@@ -14,13 +14,20 @@
 
   - Flex
   - Bison
+  - CMake
   - A C++11 compatible compiler
 
-  TODO
+  \subsection nix_installation *NIX
 
   ~~~
-  $ cd src && make
+  $ cmake .
+  $ make
+  $ make install
   ~~~
+
+  \subsection win_installation Windows
+
+  TODO
 
   \section getting_started Getting Started
 

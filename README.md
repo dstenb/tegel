@@ -9,6 +9,7 @@ TeGeL requires:
 
 * Flex
 * Bison
+* CMake
 * A C++11 compatible compiler
 
 Documentation (TODO)
