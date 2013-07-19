@@ -27,6 +27,7 @@ src/lexical.cpp
 html/
 
 # Automake / Autoconf files
+.deps
 *Makefile
 *CMakeCache.txt
 *CMakeFiles
