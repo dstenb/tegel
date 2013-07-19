@@ -201,14 +201,12 @@ arg
 record_def
     : RECORD IDENTIFIER '{' record_def_members '}'
     {
-        const Type *t = TypeFactory::get($2);
-
-        if (t != nullptr) {
-            vyyerror("multiple definitions of type '%s'", $2);
+        try {
+            TypeFactory::add_record($2, record_members);
+        } catch (const TypeAlreadyDefined &e) {
+            vyyerror("%s", e.what());
             YYERROR;
         }
-
-        TypeFactory::add_record($2, record_members);
         record_members.clear();
 
         free($2);

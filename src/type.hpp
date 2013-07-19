@@ -311,6 +311,11 @@ namespace type {
             virtual void accept(TypeVisitor &v) const {
                 v.visit(this);
             }
+
+            /** Returns true if the record types have the same field signature
+             *
+             */
+            bool matches(const RecordType *) const;
         protected:
             RecordType(const string &name, const field_vector &m)
                 : str_(name), fields_(m) {}
@@ -358,8 +363,8 @@ namespace type {
     {
         public:
             TypeAlreadyDefined(const Type *t)
-                : runtime_error("type " + t->str() +
-                                " is already defined") {}
+                : runtime_error("type '" + t->str() +
+                                "' is already defined") {}
     };
 
     /** The TypeFactory class is a singleton that handles the declared types in
@@ -371,7 +376,11 @@ namespace type {
     {
         public:
             /** Add a record type to the factory. A corresponding list type
-             * will also be created and added
+             * will also be created and added.
+             *
+             * If an identical record, i.e. same name and field signature
+             * (same field names and types), is already defined, then nothing
+             * will be done.
              *
              */
             static void add_record(const string &n,
@@ -384,8 +393,20 @@ namespace type {
                 if (it == map_.end()) {
                     map_[t->str()] = t;
                 } else {
-                    delete t;
-                    throw TypeAlreadyDefined(it->second);
+                    if (it->second->record()) {
+                        if (it->second->record()->matches(t)) {
+                            /* An equivalent record is already defined, don't
+                             * do anything */
+                            return;
+                        } else {
+                            delete t;
+                            /* TODO: throw better exception */
+                            throw TypeAlreadyDefined(it->second);
+                        }
+                    } else {
+                        delete t;
+                        throw TypeAlreadyDefined(it->second);
+                    }
                 }
 
                 auto l = add_list(t);

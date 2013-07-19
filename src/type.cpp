@@ -104,6 +104,21 @@ namespace type {
         return fields_.end();
     }
 
+    bool RecordType::matches(const RecordType *other) const
+    {
+        if (no_of_fields() != other->no_of_fields())
+            return false;
+
+        auto m = mismatch(begin(), end(), other->begin(),
+        [] (const RecordField &a, const RecordField &b) {
+            return (a.name == b.name) && (a.type == b.type);
+        });
+
+        if (m.first != end())
+            return false;
+        return true;
+    }
+
     void ListType::print(ostream &os) const
     {
         os << "ListType(" << str() << ")";
