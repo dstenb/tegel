@@ -34,7 +34,7 @@ void usage(ostream &os, const char *cmd)
     os << " -o FILE             output to FILE instead of stdout\n";
     os << "\n";
     os << "Available backends\n";
-    os << " bash                Bash (4.0+) backend\n";
+    os << " bash                Bash (4.0+) backend (unfinished)\n";
     os << " py                  Python (2.7+) backend\n";
     os << " pygtk               PyGTK backend\n";
 }
