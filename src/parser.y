@@ -585,11 +585,17 @@ create
     {
         auto tgp_file = true; /* TODO TODO TODO */
         if (tgp_file) {
-            cout << "create(" << $3->type()->str() << ", " << $5;
-            for (auto e = $7; e != nullptr; e = e->next)
-                cout << ", " << e->expression->type()->str();
-            cout << ")\n";
-            YYERROR;
+            if ($3->type() != TypeFactory::get("string")) {
+                vyyerror("wrong type for first argument to create() (got %s, "
+                    "expected string", $3->type()->str().c_str());
+                YYERROR;
+            }
+
+            /* TODO: validate $5 */
+            /* All the tgl files is parsed and the arguments ($7) are
+             * validated after the .tgp file has been parsed */
+
+            $$ = new ast::Create($3, $5, $7);
         } else {
             vyyerror("create is only allowed in .tgp files\n");
             YYERROR;
