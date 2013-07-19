@@ -596,7 +596,6 @@ create
                 YYERROR;
             }
 
-            /* TODO: validate $5 */
             /* All the tgl files is parsed and the arguments ($7) are
              * validated after the .tgp file has been parsed */
 

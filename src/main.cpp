@@ -74,6 +74,13 @@ void generate(ostream &os, const string &backend)
     }
 }
 
+/** TODO: split into two main files (and therefore programs)
+ *
+ * tegel: for .tgl files (and stdin)
+ * tegel-pkg: for .tgp files (no stdin)
+ *
+ */
+
 int main(int argc, char **argv)
 {
     string inpath = "";
@@ -151,6 +158,9 @@ int main(int argc, char **argv)
     success = (yyparse() == 0);
 
     if (tgp_file) {
+        /* The rest of the files will be treated as .tgl files */
+        tgp_file = false;
+
         for (auto s : tgl_files) {
             cerr << "TODO: parse " << s << endl;
         }
