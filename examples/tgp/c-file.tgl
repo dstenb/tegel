@@ -1,0 +1,11 @@
+# This file generates a C file skeleton consisting of a description comment
+
+arg string desc {
+    info = "Description";
+}
+
+%%
+
+/**
+ * {{ desc }}
+ */

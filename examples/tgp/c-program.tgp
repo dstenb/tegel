@@ -1,0 +1,27 @@
+record file {
+    string name;
+    string desc;
+}
+
+arg file[] files {
+    default = [ file{"main.c", "TODO"} ];
+    cmd = "-f";
+}
+
+arg bool makefile {
+    default = true;
+    cmd = "-m";
+}
+
+%%
+This raw text might be treated as information messages in the generated script
+
+% for f in files
+% create(f.name, "c-file.tgl", [ f.desc ])
+Created {{ f.name }} using the c-file.tgl file!
+% endfor
+\\
+% if makefile
+% create("Makefile", "makefile.tgl", files)
+Created a Makefile!
+% endif

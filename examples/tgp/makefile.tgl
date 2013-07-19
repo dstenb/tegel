@@ -1,0 +1,20 @@
+# This file generates a makefile
+
+# This doesn't have to be defined here, but it is used if you alos want to
+# treat the file as a single .tgl file (i.e. not part of a package)
+record file {
+    string name;
+    string desc;
+}
+
+arg file[] files {
+    cmd = "-f";
+}
+
+%%
+SRC = \\
+% with string[] l = string[]
+% for f in files
+% with l = l + [ f.name ]
+% endfor
+{{ l.join(", ") }}
