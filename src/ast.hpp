@@ -1168,7 +1168,7 @@ namespace ast {
             virtual void visit(VariableList *) = 0;
             virtual void visit(VariableDeclaration *) = 0;
             virtual void visit(VariableAssignment *) = 0;
-            virtual void visit(Create *) {}
+            virtual void visit(Create *) {} /* TODO */
     };
 }
 
