@@ -280,6 +280,16 @@ namespace ast_printer {
                 indent--;
             }
 
+            virtual void visit(Create *p) {
+                print_ws();
+                cerr << "Create(tgl_file=" << p->tgl << ")\n";
+                indent++;
+                p->out->accept(*this);
+                for (auto e = p->args; e != nullptr; e = e->next)
+                    e->expression->accept(*this);
+                indent--;
+            }
+
         private:
             void binary(const string &s, BinaryExpression *e)
             {
