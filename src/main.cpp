@@ -20,6 +20,9 @@ using type::TypeFactory;
 extern vector<symbol::Argument *> arguments;
 extern ast::Statements *body;
 
+extern vector<string> tgl_files;
+extern bool tgp_file;
+
 extern void setup_symbol_table();
 extern int yyparse();
 
@@ -131,6 +134,13 @@ int main(int argc, char **argv)
                 return 1;
             }
         }
+
+        /* Consider the file to be a tgp file iff it ends with .tgp */
+        string suffix = ".tgp";
+        if (inpath.size() >= suffix.size() && std::equal(suffix.rbegin(),
+                suffix.rend(), inpath.rbegin()))
+            tgp_file = true;
+
     } else {
         /* Read data from pipe / directed file */
         yyin = stdin;
@@ -139,6 +149,12 @@ int main(int argc, char **argv)
     /* Parse */
     setup_symbol_table();
     success = (yyparse() == 0);
+
+    if (tgp_file) {
+        for (auto s : tgl_files) {
+            cerr << "TODO: parse " << s << endl;
+        }
+    }
 
     /* Print the defined types */
     if (print_types) {

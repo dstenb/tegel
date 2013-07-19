@@ -25,6 +25,11 @@ std::vector<PrimitiveConstantData *> constant_record;
 /* same reasoning as above */
 std::vector<Param *> param_list;
 
+/* list of tegel files to parse. The file names are added to the list by the
+ * create rule */
+std::vector<string> tgl_files;
+bool tgp_file = false;
+
 RecordType::field_vector record_members;
 
 extern int yylex();
@@ -594,6 +599,9 @@ create
             /* TODO: validate $5 */
             /* All the tgl files is parsed and the arguments ($7) are
              * validated after the .tgp file has been parsed */
+
+            /* Add the file name to the list of files to be parsed */
+            tgl_files.push_back(string($5));
 
             $$ = new ast::Create($3, $5, $7);
         } else {
