@@ -8,9 +8,11 @@
 
 #include "ast.hpp"
 #include "ast_printer.hpp"
+#include "type.hpp"
+
+#include "bash_backend.hpp"
 #include "py_backend.hpp"
 #include "pygtk_backend.hpp"
-#include "type.hpp"
 
 using namespace std;
 using type::TypeFactory;
@@ -32,6 +34,7 @@ void usage(ostream &os, const char *cmd)
     os << " -o FILE             output to FILE instead of stdout\n";
     os << "\n";
     os << "Available backends\n";
+    os << " bash                Bash (4.0+) backend\n";
     os << " py                  Python (2.7+) backend\n";
     os << " pygtk               PyGTK backend\n";
 }
@@ -50,7 +53,10 @@ ostream &warning(void)
 
 void generate(ostream &os, const string &backend)
 {
-    if (backend == "py") {
+    if (backend == "bash") {
+        bash_backend::BashBackend b;
+        b.generate(os, arguments, body);
+    } else if (backend == "py") {
         py_backend::PyBackend b;
         b.generate(os, arguments, body);
     } else if (backend == "pygtk") {

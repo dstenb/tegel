@@ -3,6 +3,7 @@ FLEX_TARGET(Scanner lexical.l lexical.cpp)
 
 set (SRC_FILES main.cpp
 	ast.cpp
+	bash_backend.cpp
 	constant.cpp
 	symbol.cpp
 	type.cpp

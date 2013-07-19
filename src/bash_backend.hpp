@@ -1,0 +1,90 @@
+#ifndef __BASH_BACKEND_H__
+#define __BASH_BACKEND_H__
+
+#include <sstream>
+#include <string>
+
+using namespace std;
+
+#include "backend.hpp"
+#include "common.hpp"
+#include "type.hpp"
+
+namespace bash_backend {
+
+    class BashBody : public ast::AST_Visitor
+    {
+        public:
+            BashBody(ostream &os)
+                : os_(os) {}
+
+            void generate(ast::Statements *body);
+
+            virtual void visit(ast::TernaryIf *);
+            virtual void visit(ast::And *);
+            virtual void visit(ast::Or *);
+            virtual void visit(ast::Not *);
+            virtual void visit(ast::BoolEquals *);
+            virtual void visit(ast::LessThan *);
+            virtual void visit(ast::LessThanOrEqual *);
+            virtual void visit(ast::GreaterThan *);
+            virtual void visit(ast::GreaterThanOrEqual *);
+            virtual void visit(ast::Equals *);
+            virtual void visit(ast::Plus *);
+            virtual void visit(ast::Minus *);
+            virtual void visit(ast::Times *);
+            virtual void visit(ast::StringLessThan *);
+            virtual void visit(ast::StringLessThanOrEqual *);
+            virtual void visit(ast::StringGreaterThan *);
+            virtual void visit(ast::StringGreaterThanOrEqual *);
+            virtual void visit(ast::StringEquals *);
+            virtual void visit(ast::StringRepeat *);
+            virtual void visit(ast::StringConcat *);
+            virtual void visit(ast::ListConcat *);
+            virtual void visit(ast::Constant *);
+            virtual void visit(ast::MethodCall *);
+            virtual void visit(ast::SymbolRef *);
+            virtual void visit(ast::FieldRef *);
+            virtual void visit(ast::List *);
+            virtual void visit(ast::Statements *);
+            virtual void visit(ast::Conditional *);
+            virtual void visit(ast::ForEach *);
+            virtual void visit(ast::ForEachEnum *);
+            virtual void visit(ast::If *);
+            virtual void visit(ast::Elif *);
+            virtual void visit(ast::Else *);
+            virtual void visit(ast::Text *);
+            virtual void visit(ast::InlinedExpression *);
+            virtual void visit(ast::VariableList *);
+            virtual void visit(ast::VariableAssignment *);
+            virtual void visit(ast::VariableDeclaration *);
+        private:
+            void binary(const string &s, ast::BinaryExpression *e);
+            ostream &os_;
+    };
+
+    class BashMain
+    {
+        public:
+            BashMain(ostream &os)
+                : os_(os) {}
+
+            void generate(const vector<symbol::Argument *> &);
+        private:
+            void generate_opts(const vector<symbol::Argument *> &);
+            ostream &os_;
+    };
+
+
+
+    class BashBackend : public Backend
+    {
+        public:
+            void generate(ostream &, const vector<symbol::Argument *> &,
+                          ast::Statements *);
+        private:
+    };
+
+}
+
+#endif
