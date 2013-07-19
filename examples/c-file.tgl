@@ -29,16 +29,10 @@ arg function[] functions {
 	info = "List of functions";
 }
 
-arg string[] global_includes {
-	info = "Global includes";
-	cmd = "-g";
-	default = [ "stdlib.h", "stdio.h" ];
-}
-
-arg string[] relative_includes {
-	info = "Relative includes";
-	cmd = "-r";
-	default = string[];
+arg string[] includes {
+	info = "Includes";
+	cmd = "-i";
+	default = [ "<stdlib.h>", "<stdio.h>" ];
 }
 
 arg bool main {
@@ -48,16 +42,16 @@ arg bool main {
 }
 
 arg bool main_a {
-    info = "Include main() arguments?";
-    cmd = "-a";
-    default = true;
+	info = "Include main() arguments?";
+	cmd = "-a";
+	default = true;
 }
 
 %%
 /**
- * @file
+ *
 % if author.name
- % with string mail = author.mail.replace("@", " at ")
+ % with string mail = author.mail.replace("@", " at ").replace(".", " dot ")
  * @author {{ author.name + (mail ? " <" + mail + ">" : "") }}
 % endif
 % if version
@@ -72,12 +66,8 @@ arg bool main_a {
 % endif
  */
 
-% for h in global_includes
-#include <{{ h }}>
-% endfor
-
-% for h in relative_includes
-#include "{{ h }}"
+% for i in includes
+#include {{ i }}
 % endfor
 
 % for f in functions
