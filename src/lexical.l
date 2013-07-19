@@ -75,6 +75,14 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <INITIAL,control,inline>not       return NOT;
 <INITIAL,control,inline>"?"       return '?';
 <INITIAL,control,inline>":"       return ':';
+<INITIAL,control,inline>for       return FOR;
+<INITIAL,control,inline>in        return IN;
+<INITIAL,control,inline>endfor    return ENDFOR;
+<INITIAL,control,inline>if        return IF;
+<INITIAL,control,inline>elif      return ELIF;
+<INITIAL,control,inline>else      return ELSE;
+<INITIAL,control,inline>endif     return ENDIF;
+<INITIAL,control,inline>with      return WITH;
 <INITIAL,control,inline>"true"    { yylval.boolean = true; return BOOL; }
 <INITIAL,control,inline>"false"   { yylval.boolean = false; return BOOL; }
 <INITIAL,control,inline>{INTEGER} { yylval.integer = atoi(yytext); return INT; }
@@ -141,14 +149,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <control>[ \t]*           // Eat up all whitespace
 <control>\n               { BEGIN(body); }
 <control>"\\"[ \t]*\n     /* Continue the control flow on the next line */
-<control>for              return FOR;
-<control>in               return IN;
-<control>endfor           return ENDFOR;
-<control>if               return IF;
-<control>elif             return ELIF;
-<control>else             return ELSE;
-<control>endif            return ENDIF;
-<control>with             return WITH;
+
 <control>"\""             { str_caller = control; string_builder_append("");
                            BEGIN(str); }
 
