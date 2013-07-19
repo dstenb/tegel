@@ -86,6 +86,7 @@ void vyyerror(const char *, ...);
 %token IF "if" ELIF "elif" ELSE "else" ENDIF "endif"
 %token AND "and" OR "or" NOT "not"
 %token WITH "with"
+%token CREATE "create"
 %token L_INLINE "{{" R_INLINE "}}"
 %token LE "<=" EQ "==" NEQ "!=" GE ">="
 %token<string> TEXT
