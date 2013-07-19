@@ -360,9 +360,9 @@ namespace py_backend
                    "\"Expected a string of type \" + rs)\n";
     }
 
-    void PyBody::generate(ast::Statements *body)
+    void PyBody::generate(ast::Statements *body, const string &suffix)
     {
-        indent() << "def generate(_args, _file):\n";
+        indent() << "def generate" << suffix << "(_args, _file):\n";
         indent_inc();
         body->accept(*this);
         indent_dec();

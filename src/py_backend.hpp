@@ -26,7 +26,8 @@ namespace py_backend {
 
     /** PyWriter class
      *
-     * PyWriter provides python indentation (i.e. levels of 4 spaces) to an ostream
+     * PyWriter provides python indentation (i.e. levels of 4 spaces) to an
+     * ostream
      *
      */
     class PyWriter
@@ -68,7 +69,11 @@ namespace py_backend {
             PyBody(ostream &os)
                 : PyWriter(os, 0) {}
 
-            void generate(ast::Statements *body);
+            /** Generates a body generation function named "generate[suffix]"
+             *
+             *
+             */
+            void generate(ast::Statements *body, const string &suffix = "");
 
             virtual void visit(ast::TernaryIf *);
             virtual void visit(ast::And *);
