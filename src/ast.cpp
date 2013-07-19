@@ -44,5 +44,5 @@ namespace ast {
     GENERATE_ACCEPT(VariableList)
     GENERATE_ACCEPT(VariableDeclaration)
     GENERATE_ACCEPT(VariableAssignment)
-
+    GENERATE_ACCEPT(Create)
 }

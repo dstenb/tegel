@@ -76,6 +76,7 @@ namespace ast {
     class VariableList;
     class VariableDeclaration;
     class VariableAssignment;
+    class Create;
 
     /** Abstract expression base class
      *
@@ -1065,6 +1066,29 @@ namespace ast {
             VariableAssignment *assignment_;
     };
 
+    /** Create class
+     *
+     * Create represents a create() call in a file, which can only be used in
+     * .tgp files
+     *
+     */
+    class Create : public Statement
+    {
+        public:
+            Create(Expression *out, const string &tgl,
+                   ExpressionList *arguments)
+                : out(out), tgl(tgl), args(arguments) {}
+
+            virtual void accept(AST_Visitor &);
+
+            Expression *out;
+            string tgl;
+            ExpressionList *args;
+        private:
+            Create(const Create &) = delete;
+            Create &operator=(const Create &) = delete;
+    };
+
     /** Statements class
      *
      * Statements represents a list of statements. A Statements object holds a
@@ -1144,6 +1168,7 @@ namespace ast {
             virtual void visit(VariableList *) = 0;
             virtual void visit(VariableDeclaration *) = 0;
             virtual void visit(VariableAssignment *) = 0;
+            virtual void visit(Create *) {}
     };
 }
 
