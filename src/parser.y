@@ -114,6 +114,7 @@ void vyyerror(const char *, ...);
 %type<statements> statements
 
 %type<statement> statement text conditional control inlined
+%type<statement> create
 %type<scope> loop for_each for_each_enum
 %type<if_node> if if_start
 %type<elif_node> elif_start elifs elif
@@ -403,6 +404,7 @@ control
     : conditional { $$ = $1; }
     | loop { $$ = $1; }
     | with { $$ = $1; }
+    | create { $$ = $1; }
 
 conditional
     : if end_if
@@ -577,6 +579,24 @@ end_for
 
 with
     : WITH variable_list { $$ = $2; }
+
+create
+    : CREATE '(' expression ',' STRING ',' expression_list ')'
+    {
+        auto tgp_file = true; /* TODO TODO TODO */
+        if (tgp_file) {
+            cout << "create(" << $3->type()->str() << ", " << $5;
+            for (auto e = $7; e != nullptr; e = e->next)
+                cout << ", " << e->expression->type()->str();
+            cout << ")\n";
+            YYERROR;
+        } else {
+            vyyerror("create is only allowed in .tgp files\n");
+            YYERROR;
+        }
+
+        free($5);
+    }
 
 variable_list
     : variable_decl ',' variable_list
