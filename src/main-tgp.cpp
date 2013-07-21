@@ -115,33 +115,33 @@ int main(int argc, char **argv)
         }
     }
 
-    if (isatty(STDIN_FILENO)) {
-        /* Read data from input file */
+    if (inpath.empty()) {
+        usage(cerr, argv[0]);
+        error() << "no input file specified\n";
+        return 1;
+    }
 
-        if (inpath.empty()) {
-            usage(cerr, argv[0]);
-            error() << "no input file specified\n";
+    if (!(yyin = fopen(inpath.c_str(), "r"))) {
+        if (errno == ENOENT) {
+            error() << "no such file or directory: '" << inpath << "'\n";
+            return 1;
+        } else {
+            error() << "couldn't open '" << inpath << "': "
+                    << strerror(errno) << "\n";
             return 1;
         }
-
-        if (!(yyin = fopen(inpath.c_str(), "r"))) {
-            if (errno == ENOENT) {
-                error() << "no such file or directory: '" << inpath << "'\n";
-                return 1;
-            } else {
-                error() << "couldn't open '" << inpath << "': "
-                        << strerror(errno) << "\n";
-                return 1;
-            }
-        }
-    } else {
-        /* Read data from pipe / directed file */
-        yyin = stdin;
     }
 
     /* Parse */
     setup_symbol_table();
     success = (yyparse() == 0);
+
+    /* The rest of the files will be treated as .tgl files */
+    tgp_file = false;
+
+    for (auto s : tgl_files) {
+        cerr << "TODO: parse " << s << endl;
+    }
 
     /* Print the defined types */
     if (print_types) {
