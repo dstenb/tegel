@@ -20,9 +20,6 @@ using type::TypeFactory;
 extern vector<symbol::Argument *> arguments;
 extern ast::Statements *body;
 
-extern vector<string> tgl_files;
-extern bool tgp_file;
-
 extern void setup_symbol_table();
 extern int yyparse();
 

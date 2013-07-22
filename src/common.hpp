@@ -29,4 +29,10 @@ class Escaper
         }
 };
 
+struct TglFileData
+{
+    string path;
+    int line;
+};
+
 #endif

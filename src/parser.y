@@ -5,6 +5,7 @@
 
 #include "ast.hpp"
 #include "ast_factories.hpp"
+#include "common.hpp"
 #include "symbol.hpp"
 
 using namespace constant;
@@ -27,11 +28,12 @@ std::vector<Param *> param_list;
 
 /* list of tegel files to parse. The file names are added to the list by the
  * create rule */
-std::vector<string> tgl_files;
+std::vector<TglFileData> tgl_files;
 bool tgp_file = false;
 
 RecordType::field_vector record_members;
 
+extern int yylineno;
 extern int yylex();
 void yyerror(const char *);
 void vyyerror(const char *, ...);
@@ -588,7 +590,6 @@ with
 create
     : CREATE '(' expression ',' STRING ',' expression_list ')'
     {
-        auto tgp_file = true; /* TODO TODO TODO */
         if (tgp_file) {
             if ($3->type() != TypeFactory::get("string")) {
                 vyyerror("wrong type for first argument to create() (got %s, "
@@ -599,12 +600,12 @@ create
             /* All the tgl files is parsed and the arguments ($7) are
              * validated after the .tgp file has been parsed */
 
-            /* Add the file name to the list of files to be parsed */
-            tgl_files.push_back(string($5));
+            /* Add the file to the list of files to be parsed */
+            tgl_files.push_back(TglFileData{ $5, yylineno });
 
             $$ = new ast::Create($3, $5, $7);
         } else {
-            vyyerror("create is only allowed in .tgp files\n");
+            vyyerror("create is only allowed in .tgp files");
             YYERROR;
         }
 
