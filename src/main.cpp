@@ -8,6 +8,7 @@
 
 #include "ast.hpp"
 #include "ast_printer.hpp"
+#include "data.hpp"
 #include "type.hpp"
 
 #include "bash_backend.hpp"
@@ -17,8 +18,7 @@
 using namespace std;
 using type::TypeFactory;
 
-extern vector<symbol::Argument *> arguments;
-extern ast::Statements *body;
+extern ParseData *yydata;
 
 extern void setup_symbol_table();
 extern int yyparse();
@@ -55,17 +55,17 @@ void generate(ostream &os, const string &backend)
 {
     if (backend == "bash") {
         bash_backend::BashBackend b;
-        b.generate(os, arguments, body);
+        b.generate(os, yydata->arguments, yydata->body);
     } else if (backend == "py") {
         py_backend::PyBackend b;
-        b.generate(os, arguments, body);
+        b.generate(os, yydata->arguments, yydata->body);
     } else if (backend == "pygtk") {
         pygtk_backend::PyGtkBackend b;
-        b.generate(os, arguments, body);
+        b.generate(os, yydata->arguments, yydata->body);
     } else if (backend.empty()) {
         warning() << "no backend specified, defaulting to python\n";
         py_backend::PyBackend b;
-        b.generate(os, arguments, body);
+        b.generate(os, yydata->arguments, yydata->body);
     } else {
         throw UnknownBackend("unknown backend '" + backend  + "'");
     }
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
     }
 
     /* Parse */
-    setup_symbol_table();
+    yydata = new ParseData;
     success = (yyparse() == 0);
 
     /* Print the defined types */
@@ -149,8 +149,8 @@ int main(int argc, char **argv)
     /* Print the syntax tree */
     if (print_ast) {
         ast_printer::AST_Printer p;
-        if (body)
-            body->accept(p);
+        if (yydata->body)
+            yydata->body->accept(p);
     }
 
     if (!success)

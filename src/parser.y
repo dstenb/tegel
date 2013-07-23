@@ -6,15 +6,13 @@
 #include "ast.hpp"
 #include "ast_factories.hpp"
 #include "common.hpp"
+#include "data.hpp"
 #include "symbol.hpp"
 
 using namespace constant;
 using namespace symbol;
 
-SymbolTable *root_table;
-SymbolTable *current_table;
-vector<Argument *> arguments;
-ast::Statements *body;
+ParseData *yydata;
 
 /* constant_list is used by the constant_list grammar rule to hold the list
   elements. This is used instead of a AST approach and is ok since only one
@@ -48,6 +46,7 @@ void vyyerror(const char *, ...);
 	#include "constant.hpp"
 	#include "symbol.hpp"
 	#include "type.hpp"
+	#include "data.hpp"
 
 	using namespace constant;
 	using namespace symbol;
@@ -152,7 +151,7 @@ void vyyerror(const char *, ...);
 file
     : header_block SEPARATOR body_block
     {
-        /*root_table->print(std::cerr);*/
+        /*yydata->root_table->print(std::cerr);*/
     }
 
 /***************************************************************************
@@ -175,11 +174,11 @@ header_item
     : arg
     {
         try {
-            root_table->add($1);
-            arguments.push_back($1);
+            yydata->root_table->add($1);
+            yydata->arguments.push_back($1);
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
-            root_table->lookup($1->get_name())->print(sstr);
+            yydata->root_table->lookup($1->get_name())->print(sstr);
             vyyerror("'%s' is already defined (as %s)\n",
                 $1->get_name().c_str(), sstr.str().c_str());
             YYERROR;
@@ -382,8 +381,8 @@ constant_list_values
 body_block
     : statements
     {
-        body = $1;
-        assert(current_table == root_table);
+        yydata->body = $1;
+        assert(yydata->current_table == yydata->root_table);
     }
     |
     ;
@@ -440,7 +439,7 @@ if
         $$->set_statements($3);
 
         /* Return the the surrounding block's symbol table */
-        current_table = current_table->parent();
+        yydata->current_table = yydata->current_table->parent();
     }
     ;
 
@@ -448,9 +447,9 @@ if_start
     : IF
     {
         /* Create symbol table for the if part */
-        current_table = new SymbolTable(current_table);
+        yydata->current_table = new SymbolTable(yydata->current_table);
 
-        $$ = new ast::If(nullptr, current_table);
+        $$ = new ast::If(nullptr, yydata->current_table);
     }
 
 else
@@ -460,14 +459,14 @@ else
         $$->set_statements($2);
 
         /* Return the the surrounding block's symbol table */
-        current_table = current_table->parent();
+        yydata->current_table = yydata->current_table->parent();
     }
 
 else_start
     : ELSE
     {
-        current_table = new SymbolTable(current_table);
-        $$ = new ast::Else(current_table);
+        yydata->current_table = new SymbolTable(yydata->current_table);
+        $$ = new ast::Else(yydata->current_table);
     }
 
 elifs
@@ -489,14 +488,14 @@ elif
         $$->set_statements($3);
 
         /* Return the the surrounding block's symbol table */
-        current_table = current_table->parent();
+        yydata->current_table = yydata->current_table->parent();
     }
 
 elif_start
     : ELIF
     {
-        current_table = new SymbolTable(current_table);
-        $$ = new ast::Elif(nullptr, current_table);
+        yydata->current_table = new SymbolTable(yydata->current_table);
+        $$ = new ast::Elif(nullptr, yydata->current_table);
     }
 
 end_if
@@ -535,15 +534,16 @@ for_each
 
         /* Create symbol table for the for loop (which will only hold the loop
          * variable) */
-        current_table = new SymbolTable(current_table);
+        yydata->current_table = new SymbolTable(yydata->current_table);
 
         Variable *v = new Variable($2, $4->type()->list()->elem());
-        current_table->add(v);
+        yydata->current_table->add(v);
 
         /* Create symbol table for the statements block */
-        current_table = new SymbolTable(current_table);
+        yydata->current_table = new SymbolTable(yydata->current_table);
 
-        $$ = new ast::ForEach(v, $4, current_table->parent(), current_table);
+        $$ = new ast::ForEach(v, $4, yydata->current_table->parent(),
+            yydata->current_table);
 
         /* Free the identifier string */
         free($2);
@@ -559,19 +559,19 @@ for_each_enum
 
         /* Create symbol table for the for loop (which will only hold the loop
          * variable) */
-        current_table = new SymbolTable(current_table);
+        yydata->current_table = new SymbolTable(yydata->current_table);
 
         Variable *i = new Variable($2, TypeFactory::get("int"));
-        current_table->add(i);
+        yydata->current_table->add(i);
 
         Variable *v = new Variable($4, $6->type()->list()->elem());
-        current_table->add(v);
+        yydata->current_table->add(v);
 
         /* Create symbol table for the statements block */
-        current_table = new SymbolTable(current_table);
+        yydata->current_table = new SymbolTable(yydata->current_table);
 
-        $$ = new ast::ForEachEnum(i, v, $6, current_table->parent(),
-            current_table);
+        $$ = new ast::ForEachEnum(i, v, $6, yydata->current_table->parent(),
+            yydata->current_table);
 
         /* Free the identifier string */
         free($2);
@@ -581,7 +581,7 @@ end_for
     : ENDFOR
     {
         /* Go back to symbol table before the for loop */
-        current_table = current_table->parent()->parent();
+        yydata->current_table = yydata->current_table->parent()->parent();
     }
 
 with
@@ -635,7 +635,7 @@ variable_decl
     {
         try {
             auto v = new Variable($2, $1);
-            current_table->add(v);
+            yydata->current_table->add(v);
 
             if ($1 != $4->type()) {
                 vyyerror("invalid type for assignment to %s (got %s, "
@@ -646,7 +646,7 @@ variable_decl
             $$ = new ast::VariableDeclaration(v, $4);
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
-            current_table->lookup($2)->print(sstr);
+            yydata->current_table->lookup($2)->print(sstr);
             vyyerror("'%s' is already defined (as %s)\n",
                 $2, sstr.str().c_str());
             YYERROR;
@@ -658,7 +658,7 @@ variable_assign
     : IDENTIFIER '=' expression
     {
         try {
-            Symbol *s = current_table->lookup($1);
+            Symbol *s = yydata->current_table->lookup($1);
 
             if (!s->variable()) {
                 vyyerror("%s is not a variable\n", $1);
@@ -855,7 +855,7 @@ expression
     | IDENTIFIER
     {
         try {
-            Symbol *s = current_table->lookup($1);
+            Symbol *s = yydata->current_table->lookup($1);
             $$ = new ast::SymbolRef(s);
         } catch (const SymTabNoSuchSymbolError &e) {
             vyyerror("no such symbol: %s\n", e.what());
@@ -963,9 +963,3 @@ expression_list
     ;
 
 %%
-
-void setup_symbol_table()
-{
-    root_table = new SymbolTable;
-    current_table = root_table;
-}
