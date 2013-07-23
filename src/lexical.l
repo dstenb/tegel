@@ -10,6 +10,7 @@ void string_builder_append(const char *s);
 
 void yyerror(const char *);
 void vyyerror(const char *, ...);
+void yysetin(FILE *);
 
 int str_caller; // calling state for str
 %}
@@ -218,4 +219,12 @@ void vyyerror(const char *fmt, ...)
 	vfprintf(stderr, fmt, val);
 	va_end(val);
 	fprintf(stderr, "\n");
+}
+
+/* Set input file and restart the scanner */
+void yysetin(FILE *fp)
+{
+    YY_FLUSH_BUFFER;
+    yyin = fp;
+    BEGIN(0);
 }
