@@ -43,18 +43,6 @@ void usage(ostream &os, const char *cmd)
     os << " pygtk               PyGTK backend\n";
 }
 
-ostream &error(void)
-{
-    cerr << "error: ";
-    return cerr;
-}
-
-ostream &warning(void)
-{
-    cerr << "warning: ";
-    return cerr;
-}
-
 void generate(ostream &os, const string &backend)
 {
     if (backend == "bash") {
@@ -73,24 +61,6 @@ void generate(ostream &os, const string &backend)
     } else {
         throw UnknownBackend("unknown backend '" + backend  + "'");
     }
-}
-
-FILE *load_file(const char *path)
-{
-    FILE *fp;
-
-    if (!(fp = fopen(path, "r"))) {
-        if (errno == ENOENT) {
-            error() << "no such file or directory: '" << path << "'\n";
-            exit(1);
-        } else {
-            error() << "couldn't open '" << path << "': "
-                    << strerror(errno) << "\n";
-            exit(1);
-        }
-    }
-
-    return fp;
 }
 
 int main(int argc, char **argv)
@@ -140,16 +110,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if (!(yyin = fopen(inpath.c_str(), "r"))) {
-        if (errno == ENOENT) {
-            error() << "no such file or directory: '" << inpath << "'\n";
-            return 1;
-        } else {
-            error() << "couldn't open '" << inpath << "': "
-                    << strerror(errno) << "\n";
-            return 1;
-        }
-    }
+    yyin = load_file(inpath.c_str());
 
     /* Parse */
     tgp_file = true;
@@ -160,10 +121,9 @@ int main(int argc, char **argv)
     tgp_file = false;
 
     for (auto f : tgl_files) {
-        cerr << "TODO: parse " << f.path << endl;
+        cerr << "parse " << f.path << endl;
 
-        FILE *fp = load_file(f.path.c_str());
-        yysetin(fp);
+        yysetin(load_file(f.path.c_str()));
         yydata = new ParseData;
 
         if (yyparse() != 0) {

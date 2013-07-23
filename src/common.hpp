@@ -1,10 +1,17 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include <cstring>
+#include <iostream>
 #include <sstream>
 #include <string>
 
-using std::string;
+using namespace std;
+
+ostream &error(void);
+ostream &warning(void);
+
+FILE *load_file(const char *);
 
 class Escaper
 {

@@ -39,18 +39,6 @@ void usage(ostream &os, const char *cmd)
     os << " pygtk               PyGTK backend\n";
 }
 
-ostream &error(void)
-{
-    cerr << "error: ";
-    return cerr;
-}
-
-ostream &warning(void)
-{
-    cerr << "warning: ";
-    return cerr;
-}
-
 void generate(ostream &os, const string &backend)
 {
     if (backend == "bash") {
@@ -121,16 +109,7 @@ int main(int argc, char **argv)
             return 1;
         }
 
-        if (!(yyin = fopen(inpath.c_str(), "r"))) {
-            if (errno == ENOENT) {
-                error() << "no such file or directory: '" << inpath << "'\n";
-                return 1;
-            } else {
-                error() << "couldn't open '" << inpath << "': "
-                        << strerror(errno) << "\n";
-                return 1;
-            }
-        }
+        yyin = load_file(inpath.c_str());
     } else {
         /* Read data from pipe / directed file */
         yyin = stdin;
