@@ -121,7 +121,7 @@ int main(int argc, char **argv)
     tgp_file = false;
 
     for (auto f : tgl_files) {
-        cerr << "parse " << f.path << endl;
+        cerr << "Parsing " << f.path << endl;
 
         yysetin(load_file(f.path.c_str()));
         yydata = new ParseData;

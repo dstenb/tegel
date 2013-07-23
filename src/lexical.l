@@ -226,5 +226,6 @@ void yysetin(FILE *fp)
 {
     YY_FLUSH_BUFFER;
     yyin = fp;
+    yylineno = 1;
     BEGIN(0);
 }
