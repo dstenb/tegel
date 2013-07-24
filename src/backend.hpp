@@ -12,6 +12,8 @@ using namespace std;
 class Backend
 {
     public:
+	virtual ~Backend() {}
+
         virtual void generate(ostream &,
                               const vector<symbol::Argument *> &,
                               ast::Statements *) = 0;

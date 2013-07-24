@@ -93,11 +93,12 @@ namespace type {
     class TypeVisitor
     {
         public:
-            virtual void visit(const BoolType *) {}
-            virtual void visit(const IntType *) {}
-            virtual void visit(const StringType *) {}
-            virtual void visit(const ListType *) {}
-            virtual void visit(const RecordType *) {}
+            virtual ~TypeVisitor() {}
+            virtual void visit(const BoolType *) = 0;
+            virtual void visit(const IntType *) = 0;
+            virtual void visit(const StringType *) = 0;
+            virtual void visit(const ListType *) = 0;
+            virtual void visit(const RecordType *) = 0;
     };
 
     /** Abstract type class

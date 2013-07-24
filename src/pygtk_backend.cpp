@@ -97,7 +97,7 @@ namespace pygtk_backend
                 os_ << "{'type': 'text', 'label': ''}";
             }
 
-            virtual void visit(const ListType *l) { }
+            virtual void visit(const ListType *) { }
         private:
             ostream &os_;
             PyGtkRendererType type_;
@@ -135,7 +135,7 @@ namespace pygtk_backend
                 os_ << "''";
             }
 
-            virtual void visit(const ListType *l) { }
+            virtual void visit(const ListType *) { }
         private:
             ostream &os_;
     };

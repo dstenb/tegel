@@ -1128,6 +1128,8 @@ namespace ast {
     class AST_Visitor
     {
         public:
+            virtual ~AST_Visitor() {}
+
             virtual void visit(TernaryIf *) = 0;
             virtual void visit(And *) = 0;
             virtual void visit(Or *) = 0;
@@ -1168,7 +1170,7 @@ namespace ast {
             virtual void visit(VariableList *) = 0;
             virtual void visit(VariableDeclaration *) = 0;
             virtual void visit(VariableAssignment *) = 0;
-            virtual void visit(Create *) {} /* TODO */
+            virtual void visit(Create *) = 0;
     };
 }
 

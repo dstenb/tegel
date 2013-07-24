@@ -43,71 +43,71 @@ namespace bash_backend
             p->next()->accept(*this);
     }
 
-    void BashBody::visit(ast::TernaryIf *p)
+    void BashBody::visit(ast::TernaryIf *)
     {
     }
 
-    void BashBody::visit(ast::And *p)
+    void BashBody::visit(ast::And *)
     {
     }
 
-    void BashBody::visit(ast::Or *p)
+    void BashBody::visit(ast::Or *)
     {
     }
 
-    void BashBody::visit(ast::Not *p)
+    void BashBody::visit(ast::Not *)
     {
     }
 
-    void BashBody::visit(ast::BoolEquals *p)
+    void BashBody::visit(ast::BoolEquals *)
     {
     }
 
-    void BashBody::visit(ast::LessThan *p)
+    void BashBody::visit(ast::LessThan *)
     {
     }
 
-    void BashBody::visit(ast::LessThanOrEqual *p)
+    void BashBody::visit(ast::LessThanOrEqual *)
     {
     }
 
-    void BashBody::visit(ast::GreaterThan *p)
+    void BashBody::visit(ast::GreaterThan *)
     {
     }
 
-    void BashBody::visit(ast::GreaterThanOrEqual *p)
+    void BashBody::visit(ast::GreaterThanOrEqual *)
     {
     }
 
-    void BashBody::visit(ast::Equals *p)
+    void BashBody::visit(ast::Equals *)
     {
     }
 
-    void BashBody::visit(ast::Plus *p)
+    void BashBody::visit(ast::Plus *)
     {
     }
 
-    void BashBody::visit(ast::Minus *p)
+    void BashBody::visit(ast::Minus *)
     {
     }
 
-    void BashBody::visit(ast::Times *p)
+    void BashBody::visit(ast::Times *)
     {
     }
 
-    void BashBody::visit(ast::StringLessThan *p)
+    void BashBody::visit(ast::StringLessThan *)
     {
     }
 
-    void BashBody::visit(ast::StringLessThanOrEqual *p)
+    void BashBody::visit(ast::StringLessThanOrEqual *)
     {
     }
 
-    void BashBody::visit(ast::StringGreaterThan *p)
+    void BashBody::visit(ast::StringGreaterThan *)
     {
     }
 
-    void BashBody::visit(ast::StringGreaterThanOrEqual *p)
+    void BashBody::visit(ast::StringGreaterThanOrEqual *)
     {
     }
 
@@ -118,23 +118,23 @@ namespace bash_backend
         p->rhs()->accept(*this);
     }
 
-    void BashBody::visit(ast::StringRepeat *p)
+    void BashBody::visit(ast::StringRepeat *)
     {
     }
 
-    void BashBody::visit(ast::StringConcat *p)
+    void BashBody::visit(ast::StringConcat *)
     {
     }
 
-    void BashBody::visit(ast::ListConcat *p)
+    void BashBody::visit(ast::ListConcat *)
     {
     }
 
-    void BashBody::visit(ast::Constant *p)
+    void BashBody::visit(ast::Constant *)
     {
     }
 
-    void BashBody::visit(ast::MethodCall *p)
+    void BashBody::visit(ast::MethodCall *)
     {
 
     }
@@ -147,11 +147,11 @@ namespace bash_backend
             unindent() << p->symbol()->get_name();
     }
 
-    void BashBody::visit(ast::FieldRef *p)
+    void BashBody::visit(ast::FieldRef *)
     {
     }
 
-    void BashBody::visit(ast::List *p)
+    void BashBody::visit(ast::List *)
     {
     }
 
@@ -165,11 +165,11 @@ namespace bash_backend
         indent() << "fi\n";
     }
 
-    void BashBody::visit(ast::ForEach *p)
+    void BashBody::visit(ast::ForEach *)
     {
     }
 
-    void BashBody::visit(ast::ForEachEnum *p)
+    void BashBody::visit(ast::ForEachEnum *)
     {
     }
 
@@ -213,29 +213,33 @@ namespace bash_backend
         indent() << "echo \"" << Escaper()(p->text()) << "\"\n";
     }
 
-    void BashBody::visit(ast::InlinedExpression *p)
+    void BashBody::visit(ast::InlinedExpression *)
     {
     }
 
-    void BashBody::visit(ast::VariableList *p)
+    void BashBody::visit(ast::VariableList *)
     {
     }
 
-    void BashBody::visit(ast::VariableAssignment *p)
+    void BashBody::visit(ast::VariableAssignment *)
     {
     }
 
-    void BashBody::visit(ast::VariableDeclaration *p)
+    void BashBody::visit(ast::VariableDeclaration *)
     {
     }
 
-    void BashBody::binary(const string &s, ast::BinaryExpression *e)
+    void BashBody::visit(ast::Create *)
+    {
+    }
+
+    void BashBody::binary(const string &, ast::BinaryExpression *)
     {
     }
 
 
     void BashBackend::generate(ostream &os,
-                               const vector<symbol::Argument *> &args,
+                               const vector<symbol::Argument *> &,
                                ast::Statements *body)
     {
         if (body) {

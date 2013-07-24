@@ -59,6 +59,8 @@ namespace symbol {
             Symbol(const string &name, const Type *t)
                 : name_(name), type_(t) {}
 
+	    virtual ~Symbol() {}
+
             virtual bool is_constant() const = 0;
             virtual void print(ostream &os) const = 0;
 

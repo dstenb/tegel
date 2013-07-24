@@ -731,6 +731,10 @@ namespace py_backend
         p->assignment()->accept(*this);
     }
 
+    void PyBody::visit(ast::Create *)
+    {
+    }
+
     void PyBody::binary(const string &s, ast::BinaryExpression *e)
     {
         unindent() << "(";

@@ -82,6 +82,7 @@ namespace bash_backend {
             virtual void visit(ast::VariableList *);
             virtual void visit(ast::VariableAssignment *);
             virtual void visit(ast::VariableDeclaration *);
+            virtual void visit(ast::Create*);
         private:
             void binary(const string &s, ast::BinaryExpression *e);
     };
