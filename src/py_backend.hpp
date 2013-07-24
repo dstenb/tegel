@@ -8,6 +8,7 @@ using namespace std;
 
 #include "backend.hpp"
 #include "common.hpp"
+#include "data.hpp"
 #include "type.hpp"
 
 namespace py_backend {
@@ -129,6 +130,9 @@ namespace py_backend {
             void generate_opts(const vector<symbol::Argument *> &);
     };
 
+    /** Backend för .tgl files
+     *
+     */
     class PyBackend : public Backend
     {
         public:
@@ -137,6 +141,17 @@ namespace py_backend {
         private:
             void check_cmd(const vector<symbol::Argument *> &args);
     };
+
+    /** Backend för .tgp files
+     *
+     */
+    class PyTgpBackend : public TgpBackend
+    {
+        public:
+            void generate(ostream &, ParseData *, map<string, ParseData *> &);
+        private:
+            void check_cmd(const vector<symbol::Argument *> &args);
+	};
 
 }
 

@@ -7,6 +7,7 @@
 using namespace std;
 
 #include "ast.hpp"
+#include "data.hpp"
 #include "symbol.hpp"
 
 class Backend
@@ -18,6 +19,18 @@ class Backend
                               const vector<symbol::Argument *> &,
                               ast::Statements *) = 0;
 };
+
+class TgpBackend
+{
+    public:
+	virtual ~TgpBackend() {}
+
+        virtual void generate(ostream &,
+                ParseData *tgp_data,
+                map<string, ParseData *> &tgl_data) = 0;
+};
+
+
 
 class BackendException : public runtime_error
 {

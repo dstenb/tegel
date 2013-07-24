@@ -600,6 +600,8 @@ create
             /* All the tgl files is parsed and the arguments ($7) are
              * validated after the .tgp file has been parsed */
 
+            /* TODO: add "ask before overwrite?" flag */
+
             /* Add the file to the list of files to be parsed */
             tgl_files.push_back(TglFileData{ $5, yylineno });
 

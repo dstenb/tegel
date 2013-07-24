@@ -810,4 +810,29 @@ namespace py_backend
     {
         PyUtils::check_cmd(args, { "-h", "-o", "--help" } );
     }
+
+    void PyTgpBackend::generate(ostream &os, ParseData *tgp_data,
+            map<string, ParseData *> &tgl_data)
+    {
+        if (tgp_data->body) {
+            /* Validate the command line names */
+            check_cmd(tgp_data->arguments);
+
+            PyHeader h(os);
+            PyBody b(os);
+            PyMain m(os);
+
+            h.generate(tgp_data->arguments);
+            os << "\n";
+            b.generate(tgp_data->body);
+            os << "\n";
+            m.generate(tgp_data->arguments);
+        }
+    }
+
+    void PyTgpBackend::check_cmd(const vector<symbol::Argument *> &args)
+    {
+        PyUtils::check_cmd(args, { "-h", "-o", "--help" } );
+    }
+
 }

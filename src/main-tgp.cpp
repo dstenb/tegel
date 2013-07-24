@@ -43,21 +43,22 @@ void usage(ostream &os, const char *cmd)
     os << " pygtk               PyGTK backend\n";
 }
 
-void generate(ostream &os, const string &backend)
+void generate(ostream &os, const string &backend,
+        ParseData *tgp_data, map<string, ParseData *> tgl_data)
 {
     if (backend == "bash") {
-        bash_backend::BashBackend b;
-        b.generate(os, yydata->arguments, yydata->body);
-    } else if (backend == "py") {
-        py_backend::PyBackend b;
-        b.generate(os, yydata->arguments, yydata->body);
+        // TODO
+        //bash_backend::BashBackend b;
+        //b.generate(os, tgp_data, tgl_data);
+    } else if (backend.empty() || backend == "py") {
+        if (backend.empty())
+            warning() << "no backend specified, defaulting to python\n";
+        py_backend::PyTgpBackend b;
+        b.generate(os, tgp_data, tgl_data);
     } else if (backend == "pygtk") {
-        pygtk_backend::PyGtkBackend b;
-        b.generate(os, yydata->arguments, yydata->body);
-    } else if (backend.empty()) {
-        warning() << "no backend specified, defaulting to python\n";
-        py_backend::PyBackend b;
-        b.generate(os, yydata->arguments, yydata->body);
+        // TODO
+        //pygtk_backend::PyGtkBackend b;
+        //b.generate(os, yydata->arguments, yydata->body);
     } else {
         throw UnknownBackend("unknown backend '" + backend  + "'");
     }
@@ -71,6 +72,9 @@ int main(int argc, char **argv)
     bool print_ast = false;
     bool print_types = false;
     bool success;
+
+    ParseData *tgp_data;
+    map<string, ParseData *> tgl_data;
 
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
@@ -116,19 +120,24 @@ int main(int argc, char **argv)
     tgp_file = true;
     yydata = new ParseData;
     success = (yyparse() == 0);
+    tgp_data = yydata;
 
     /* The rest of the files will be treated as .tgl files */
     tgp_file = false;
 
     for (auto f : tgl_files) {
-        cerr << "Parsing " << f.path << endl;
+        /* TODO: check and store absolute paths to avoid duplicates */
+        if (tgl_data.find(f.path) == tgl_data.end()) {
+            cerr << "Parsing " << f.path << endl;
 
-        yysetin(load_file(f.path.c_str()));
-        yydata = new ParseData;
+            yysetin(load_file(f.path.c_str()));
+            yydata = new ParseData;
+            if (yyparse() != 0)
+                return 1;
 
-        if (yyparse() != 0) {
-            return 1;
+            tgl_data[f.path] = yydata;
         }
+
     }
 
     /* Print the defined types */
@@ -155,7 +164,7 @@ int main(int argc, char **argv)
                 error() << "failed to open '" << outpath << "' for writing\n";
                 return 1;
             }
-            generate(f, backend);
+            generate(f, backend, tgp_data, tgl_data);
             f.close();
 
             /* Set the file permission to 0775 */
@@ -166,7 +175,7 @@ int main(int argc, char **argv)
             }
         } else {
             /* Output to stdout */
-            generate(cout, backend);
+            generate(cout, backend, tgp_data, tgl_data);
         }
     } catch (const UnknownBackend &e) {
         usage(cerr, argv[0]);
