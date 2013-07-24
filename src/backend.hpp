@@ -13,7 +13,7 @@ using namespace std;
 class Backend
 {
     public:
-	virtual ~Backend() {}
+        virtual ~Backend() {}
 
         virtual void generate(ostream &,
                               const vector<symbol::Argument *> &,
@@ -23,11 +23,11 @@ class Backend
 class TgpBackend
 {
     public:
-	virtual ~TgpBackend() {}
+        virtual ~TgpBackend() {}
 
         virtual void generate(ostream &,
-                ParseData *tgp_data,
-                map<string, ParseData *> &tgl_data) = 0;
+                              ParseData *tgp_data,
+                              map<string, ParseData *> &tgl_data) = 0;
 };
 
 

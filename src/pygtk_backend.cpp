@@ -243,7 +243,8 @@ namespace pygtk_backend
         indent() << "self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)\n";
         indent() << "self.window.connect('delete_event', self.delete)\n";
         indent() << "self.window.connect('destroy', self.destroy)\n";
-        indent() << "self.window.set_geometry_hints(min_width=800, min_height=600)\n\n";
+        indent() <<
+                 "self.window.set_geometry_hints(min_width=800, min_height=600)\n\n";
         indent() << "self.window.show()\n\n";
         indent() << "self.filename = None\n\n";
         gen_top();

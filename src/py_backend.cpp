@@ -812,7 +812,7 @@ namespace py_backend
     }
 
     void PyTgpBackend::generate(ostream &os, ParseData *tgp_data,
-            map<string, ParseData *> &tgl_data)
+                                map<string, ParseData *> &tgl_data)
     {
         if (tgp_data->body) {
             /* Validate the command line names */

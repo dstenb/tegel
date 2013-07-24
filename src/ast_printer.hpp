@@ -11,8 +11,8 @@ namespace ast_printer {
     class AST_Printer : public AST_Visitor
     {
         public:
-	    AST_Printer()
-		    : indent(0) {}
+            AST_Printer()
+                : indent(0) {}
 
             virtual void visit(Statements *p) {
                 p->statement()->accept(*this);

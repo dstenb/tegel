@@ -54,7 +54,7 @@ namespace constant {
     class ConstantDataVisitor
     {
         public:
-	    virtual ~ConstantDataVisitor() {}
+            virtual ~ConstantDataVisitor() {}
 
             virtual void visit(const BoolConstantData *) = 0;
             virtual void visit(const IntConstantData *) = 0;

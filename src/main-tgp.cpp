@@ -44,7 +44,7 @@ void usage(ostream &os, const char *cmd)
 }
 
 void generate(ostream &os, const string &backend,
-        ParseData *tgp_data, map<string, ParseData *> tgl_data)
+              ParseData *tgp_data, map<string, ParseData *> tgl_data)
 {
     if (backend == "bash") {
         // TODO

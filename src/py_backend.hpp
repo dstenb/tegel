@@ -151,7 +151,7 @@ namespace py_backend {
             void generate(ostream &, ParseData *, map<string, ParseData *> &);
         private:
             void check_cmd(const vector<symbol::Argument *> &args);
-	};
+    };
 
 }
 
