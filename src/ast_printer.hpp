@@ -11,6 +11,9 @@ namespace ast_printer {
     class AST_Printer : public AST_Visitor
     {
         public:
+	    AST_Printer()
+		    : indent(0) {}
+
             virtual void visit(Statements *p) {
                 p->statement()->accept(*this);
                 if (p->next())
@@ -301,10 +304,11 @@ namespace ast_printer {
                 indent--;
             }
 
-            int indent = 0;
             void print_ws() {
                 for (int i = 0; i < indent; i++)
                     cerr << " ";
             }
+
+            int indent;
     };
 }

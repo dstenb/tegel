@@ -97,34 +97,34 @@ namespace py_backend
     {
         public:
             PyRecordCastList(ostream &os)
-                : os_(os) {}
+                : os_(os), index_(0) {}
 
             virtual void visit(const RecordType *p) {
                 auto it = p->begin();
                 while (it != p->end()) {
                     (*it).type->accept(*this);
-                    i++;
+                    index_++;
                     if (++it != p->end())
                         os_ << ", ";
                 }
             }
 
             virtual void visit(const BoolType *) {
-                os_ << "parse_bool(l[" << i << "])";
+                os_ << "parse_bool(l[" << index_ << "])";
             }
 
             virtual void visit(const IntType *) {
-                os_ << "int(l[" << i << "])";
+                os_ << "int(l[" << index_ << "])";
             }
 
             virtual void visit(const StringType *) {
-                os_ << "l[" << i << "]";
+                os_ << "l[" << index_ << "]";
             }
 
             virtual void visit(const ListType *) { }
         private:
-            int i = 0;
             ostream &os_;
+            int index_;
     };
 
     /** Helper function for PyConstToStream
