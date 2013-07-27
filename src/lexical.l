@@ -249,3 +249,8 @@ void ParseContext::scan_destroy()
 {
 	yylex_destroy(scanner);
 }
+
+void ParseContext::scan_load(const char *)
+{
+
+}

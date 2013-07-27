@@ -7,11 +7,18 @@
 class ParseContext
 {
     public:
-        void *scanner;
+        ParseContext(bool tgp = false)
+            : scanner(nullptr), tgp_(tgp) {
+            scan_init();
+        }
 
+        void *scanner;
     private:
         void scan_init();
         void scan_destroy();
+        void scan_load(const char *);
+
+        bool tgp_;
 };
 
 struct ParseData
