@@ -625,7 +625,7 @@ namespace py_backend
     void PyBody::visit(ast::SymbolRef *p)
     {
         if (p->symbol()->argument())
-            unindent() << "_args." << p->symbol()->get_name();
+            unindent() << "_args[\"" << p->symbol()->get_name() << "\"]";
         else if (p->symbol()->variable())
             unindent() << p->symbol()->get_name();
     }
@@ -793,7 +793,7 @@ namespace py_backend
         generate_opts(args);
         unindent() << "\n";
 
-        indent() << "generate(args, args._file)\n\n";
+        indent() << "generate(vars(args), args._file)\n\n";
 
         indent_dec();
 
