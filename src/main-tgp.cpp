@@ -27,7 +27,7 @@ extern void setup_symbol_table();
 extern int yyparse();
 extern void yysetin(FILE *);
 
-extern FILE *yyin;
+/* extern FILE *yyin; TODO */
 
 void usage(ostream &os, const char *cmd)
 {
@@ -114,13 +114,13 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    yyin = load_file(inpath.c_str());
+    /* yyin = load_file(inpath.c_str()); TODO */
 
     /* Parse */
-    tgp_file = true;
+    /* tgp_file = true;
     yydata = new ParseData;
     success = (yyparse() == 0);
-    tgp_data = yydata;
+    tgp_data = yydata; TODO */
 
     /* The rest of the files will be treated as .tgl files */
     tgp_file = false;
@@ -130,10 +130,11 @@ int main(int argc, char **argv)
         if (tgl_data.find(f.path) == tgl_data.end()) {
             cerr << "Parsing " << f.path << endl;
 
+            /* TODO
             yysetin(load_file(f.path.c_str()));
             yydata = new ParseData;
             if (yyparse() != 0)
-                return 1;
+                return 1;*/
 
             tgl_data[f.path] = yydata;
         }

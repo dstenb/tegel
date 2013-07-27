@@ -31,14 +31,17 @@ bool tgp_file = false;
 
 RecordType::field_vector record_members;
 
-extern int yylineno;
-extern int yylex();
-void yyerror(const char *);
+/*extern int yylineno; TODO */
 void vyyerror(const char *, ...);
 
+#define scanner context->scanner
 %}
 
+%locations
 %error-verbose
+%pure-parser
+%lex-param { void *scanner }
+%parse-param { ParseContext *context }
 
 %code requires {
 	#include "ast.hpp"
@@ -82,6 +85,11 @@ void vyyerror(const char *, ...);
     ast::VariableList *variable_list;
     ast::VariableStatement *variable_stmt;
 }
+
+%{
+int yylex(YYSTYPE *, YYLTYPE *, void *);
+void yyerror(YYLTYPE *, ParseContext *, const char *);
+%}
 
 %token END 0 "end of file"
 %token ARGUMENT "argument"
@@ -350,7 +358,7 @@ constant_list
             for (SingleConstantData *d : constant_list)
                 $$->add(d);
         } catch (const InvalidTypeError &e) {
-            yyerror(e.what());
+            vyyerror(e.what());
             YYERROR;
         } catch (const DifferentTypesError &e) {
             vyyerror("a list can only hold items of same type (%s)",
@@ -603,7 +611,7 @@ create
             /* TODO: add "ask before overwrite?" flag */
 
             /* Add the file to the list of files to be parsed */
-            tgl_files.push_back(TglFileData{ $5, yylineno });
+            tgl_files.push_back(TglFileData{ $5, 0, /*yylineno TODO */ });
 
             $$ = new ast::Create($3, $5, $7);
         } else {

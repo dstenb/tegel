@@ -23,7 +23,7 @@ extern ParseData *yydata;
 extern void setup_symbol_table();
 extern int yyparse();
 
-extern FILE *yyin;
+/*extern FILE *yyin; TODO */
 
 void usage(ostream &os, const char *cmd)
 {
@@ -109,15 +109,15 @@ int main(int argc, char **argv)
             return 1;
         }
 
-        yyin = load_file(inpath.c_str());
+        /* yyin = load_file(inpath.c_str()); TODO */
     } else {
         /* Read data from pipe / directed file */
-        yyin = stdin;
+        /* yyin = stdin; TODO */
     }
 
     /* Parse */
-    yydata = new ParseData;
-    success = (yyparse() == 0);
+    /* yydata = new ParseData;
+    success = (yyparse() == 0); TODO */
 
     /* Print the defined types */
     if (print_types) {

@@ -4,6 +4,11 @@
 #include "symbol.hpp"
 #include "type.hpp"
 
+struct ParseContext
+{
+    void *scanner;
+};
+
 struct ParseData
 {
         ParseData()

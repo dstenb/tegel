@@ -8,15 +8,21 @@ char *string_builder = NULL;
 
 void string_builder_append(const char *s);
 
-void yyerror(const char *);
+void yyerror(YYLTYPE *, ParseContext *, const char *);
 void vyyerror(const char *, ...);
 void yysetin(FILE *);
 
 int str_caller; // calling state for str
+
+#define YY_USER_ACTION yylloc->first_line = yylineno;
 %}
 
 %option noyywrap
 %option yylineno
+
+%option reentrant
+%option bison-bridge
+%option bison-locations
 
 IDENTIFIER [[:alpha:]]([[:alnum:]]|_)*
 INTEGER -?(0|[1-9][0-9]*)
@@ -85,18 +91,18 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <INITIAL,control,inline>endif     return ENDIF;
 <INITIAL,control,inline>with      return WITH;
 <INITIAL,control,inline>create    return CREATE;
-<INITIAL,control,inline>"true"    { yylval.boolean = true; return BOOL; }
-<INITIAL,control,inline>"false"   { yylval.boolean = false; return BOOL; }
-<INITIAL,control,inline>{INTEGER} { yylval.integer = atoi(yytext); return INT; }
+<INITIAL,control,inline>"true"    { yylval->boolean = true; return BOOL; }
+<INITIAL,control,inline>"false"   { yylval->boolean = false; return BOOL; }
+<INITIAL,control,inline>{INTEGER} { yylval->integer = atoi(yytext); return INT; }
 
 "\""                 { str_caller = INITIAL; string_builder_append("");
                        BEGIN(str); }
-{IDENTIFIER}         { yylval.string = strdup(yytext); return IDENTIFIER; }
-{IDENTIFIER}"[]"     { yylval.string = strdup(yytext); return LIST; }
+{IDENTIFIER}         { yylval->string = strdup(yytext); return IDENTIFIER; }
+{IDENTIFIER}"[]"     { yylval->string = strdup(yytext); return LIST; }
 
  /* string rules */
-<str><<EOF>>         { yyerror("syntax error, unmatched '\"'"); yyterminate(); }
-<str>"\""            { yylval.string = string_builder; string_builder = NULL;
+<str><<EOF>>         { vyyerror("syntax error, unmatched '\"'"); yyterminate(); }
+<str>"\""            { yylval->string = string_builder; string_builder = NULL;
                        BEGIN(str_caller);
                        return STRING; }
 <str>"\\n"           { string_builder_append("\n"); }
@@ -114,7 +120,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <text>"{{"             {
                          if (string_builder) {
                             BEGIN(pre_inline);
-                            yylval.string = string_builder;
+                            yylval->string = string_builder;
                             string_builder = NULL;
                             return TEXT;
                          } else {
@@ -125,19 +131,19 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <text>"{#"             {
                          BEGIN(comment);
                          if (string_builder) {
-                            yylval.string = string_builder;
+                            yylval->string = string_builder;
                             string_builder = NULL;
                             return TEXT;
                          }
                        }
 <text>"\\\\\n"         { string_builder_append(yytext);
-                         yylval.string = string_builder;
+                         yylval->string = string_builder;
                          string_builder = NULL;
-                         yylval.string[strlen(yylval.string) - 3] = '\0';
+                         yylval->string[strlen(yylval->string) - 3] = '\0';
                          BEGIN(body);
                          return TEXT; }
 <text>"\n"             { string_builder_append(yytext);
-                         yylval.string = string_builder;
+                         yylval->string = string_builder;
                          string_builder = NULL;
                          BEGIN(body);
                          return TEXT; }
@@ -155,9 +161,9 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <control>"\""             { str_caller = control; string_builder_append("");
                            BEGIN(str); }
 
-<control,inline>{IDENTIFIER}     { yylval.string = strdup(yytext);
+<control,inline>{IDENTIFIER}     { yylval->string = strdup(yytext);
                                    return IDENTIFIER; }
-<control,inline>{IDENTIFIER}"[]" { yylval.string = strdup(yytext);
+<control,inline>{IDENTIFIER}"[]" { yylval->string = strdup(yytext);
                                    return LIST; }
 
  /* pre_inline is used as a way to return a TEXT token before L_INLINE */
@@ -177,10 +183,10 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
                                   yyterminate(); }
 
  /* comment rules */
-<comment><<EOF>>         { yyerror("syntax error, unmatched '#}'");
+<comment><<EOF>>         { vyyerror("syntax error, unmatched '#}'");
                            yyterminate(); }
 <comment>"#}"            { BEGIN(text); }
-<comment>"\\n"           { yyerror("comments can't span over multiple lines");
+<comment>"\\n"           { vyyerror("comments can't span over multiple lines");
                            yyterminate(); }
 <comment>{UANYN}         // Eat up everything else
 %%
@@ -204,13 +210,16 @@ void string_builder_append(const char *s)
 	}
 }
 
-void yyerror(const char *s)
+void yyerror(YYLTYPE *, ParseContext *, const char *s)
 {
-	fprintf(stderr, "Error on line %i: %s\n", yylineno, s);
+	/* TODO */
+	/*fprintf(stderr, "Error on line %i: %s\n", yylineno, s);*/
 }
 
 void vyyerror(const char *fmt, ...)
 {
+	/* TODO */
+	#if 0
 	va_list val;
 
 	fprintf(stderr, "Error on line %i: ", yylineno);
@@ -219,13 +228,14 @@ void vyyerror(const char *fmt, ...)
 	vfprintf(stderr, fmt, val);
 	va_end(val);
 	fprintf(stderr, "\n");
+	#endif
 }
 
 /* Set input file and restart the scanner */
 void yysetin(FILE *fp)
 {
-    YY_FLUSH_BUFFER;
-    yyin = fp;
-    yylineno = 1;
-    BEGIN(0);
+    /*YY_FLUSH_BUFFER;*/
+    /*yyin = fp;*/
+    /*yylineno = 1;*/
+    /*BEGIN(0);*/
 }
