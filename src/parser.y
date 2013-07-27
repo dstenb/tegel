@@ -12,8 +12,6 @@
 using namespace constant;
 using namespace symbol;
 
-ParseData *yydata;
-
 /* constant_list is used by the constant_list grammar rule to hold the list
   elements. This is used instead of a AST approach and is ok since only one
   list will be handled at a time (since a list can only contain primitives and
@@ -23,11 +21,6 @@ std::vector<PrimitiveConstantData *> constant_record;
 
 /* same reasoning as above */
 std::vector<Param *> param_list;
-
-/* list of tegel files to parse. The file names are added to the list by the
- * create rule */
-std::vector<TglFileData> tgl_files;
-bool tgp_file = false;
 
 RecordType::field_vector record_members;
 
@@ -159,7 +152,7 @@ void yyerror(YYLTYPE *, ParseContext *, const char *);
 file
     : header_block SEPARATOR body_block
     {
-        /*yydata->root_table->print(std::cerr);*/
+        /*context->data->root_table->print(std::cerr);*/
     }
 
 /***************************************************************************
@@ -182,11 +175,11 @@ header_item
     : arg
     {
         try {
-            yydata->root_table->add($1);
-            yydata->arguments.push_back($1);
+            context->data->root_table->add($1);
+            context->data->arguments.push_back($1);
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
-            yydata->root_table->lookup($1->get_name())->print(sstr);
+            context->data->root_table->lookup($1->get_name())->print(sstr);
             vyyerror("'%s' is already defined (as %s)\n",
                 $1->get_name().c_str(), sstr.str().c_str());
             YYERROR;
@@ -389,8 +382,8 @@ constant_list_values
 body_block
     : statements
     {
-        yydata->body = $1;
-        assert(yydata->current_table == yydata->root_table);
+        context->data->body = $1;
+        assert(context->data->current_table == context->data->root_table);
     }
     |
     ;
@@ -447,7 +440,7 @@ if
         $$->set_statements($3);
 
         /* Return the the surrounding block's symbol table */
-        yydata->current_table = yydata->current_table->parent();
+        context->data->current_table = context->data->current_table->parent();
     }
     ;
 
@@ -455,9 +448,9 @@ if_start
     : IF
     {
         /* Create symbol table for the if part */
-        yydata->current_table = new SymbolTable(yydata->current_table);
+        context->data->current_table = new SymbolTable(context->data->current_table);
 
-        $$ = new ast::If(nullptr, yydata->current_table);
+        $$ = new ast::If(nullptr, context->data->current_table);
     }
 
 else
@@ -467,14 +460,14 @@ else
         $$->set_statements($2);
 
         /* Return the the surrounding block's symbol table */
-        yydata->current_table = yydata->current_table->parent();
+        context->data->current_table = context->data->current_table->parent();
     }
 
 else_start
     : ELSE
     {
-        yydata->current_table = new SymbolTable(yydata->current_table);
-        $$ = new ast::Else(yydata->current_table);
+        context->data->current_table = new SymbolTable(context->data->current_table);
+        $$ = new ast::Else(context->data->current_table);
     }
 
 elifs
@@ -496,14 +489,14 @@ elif
         $$->set_statements($3);
 
         /* Return the the surrounding block's symbol table */
-        yydata->current_table = yydata->current_table->parent();
+        context->data->current_table = context->data->current_table->parent();
     }
 
 elif_start
     : ELIF
     {
-        yydata->current_table = new SymbolTable(yydata->current_table);
-        $$ = new ast::Elif(nullptr, yydata->current_table);
+        context->data->current_table = new SymbolTable(context->data->current_table);
+        $$ = new ast::Elif(nullptr, context->data->current_table);
     }
 
 end_if
@@ -542,16 +535,16 @@ for_each
 
         /* Create symbol table for the for loop (which will only hold the loop
          * variable) */
-        yydata->current_table = new SymbolTable(yydata->current_table);
+        context->data->current_table = new SymbolTable(context->data->current_table);
 
         Variable *v = new Variable($2, $4->type()->list()->elem());
-        yydata->current_table->add(v);
+        context->data->current_table->add(v);
 
         /* Create symbol table for the statements block */
-        yydata->current_table = new SymbolTable(yydata->current_table);
+        context->data->current_table = new SymbolTable(context->data->current_table);
 
-        $$ = new ast::ForEach(v, $4, yydata->current_table->parent(),
-            yydata->current_table);
+        $$ = new ast::ForEach(v, $4, context->data->current_table->parent(),
+            context->data->current_table);
 
         /* Free the identifier string */
         free($2);
@@ -567,19 +560,19 @@ for_each_enum
 
         /* Create symbol table for the for loop (which will only hold the loop
          * variable) */
-        yydata->current_table = new SymbolTable(yydata->current_table);
+        context->data->current_table = new SymbolTable(context->data->current_table);
 
         Variable *i = new Variable($2, TypeFactory::get("int"));
-        yydata->current_table->add(i);
+        context->data->current_table->add(i);
 
         Variable *v = new Variable($4, $6->type()->list()->elem());
-        yydata->current_table->add(v);
+        context->data->current_table->add(v);
 
         /* Create symbol table for the statements block */
-        yydata->current_table = new SymbolTable(yydata->current_table);
+        context->data->current_table = new SymbolTable(context->data->current_table);
 
-        $$ = new ast::ForEachEnum(i, v, $6, yydata->current_table->parent(),
-            yydata->current_table);
+        $$ = new ast::ForEachEnum(i, v, $6, context->data->current_table->parent(),
+            context->data->current_table);
 
         /* Free the identifier string */
         free($2);
@@ -589,7 +582,7 @@ end_for
     : ENDFOR
     {
         /* Go back to symbol table before the for loop */
-        yydata->current_table = yydata->current_table->parent()->parent();
+        context->data->current_table = context->data->current_table->parent()->parent();
     }
 
 with
@@ -598,20 +591,14 @@ with
 create
     : CREATE '(' expression ',' STRING ',' expression_list ')'
     {
-        if (tgp_file) {
+        if (context->is_tgp()) {
             if ($3->type() != TypeFactory::get("string")) {
                 vyyerror("wrong type for first argument to create() (got %s, "
                     "expected string", $3->type()->str().c_str());
                 YYERROR;
             }
 
-            /* All the tgl files is parsed and the arguments ($7) are
-             * validated after the .tgp file has been parsed */
-
             /* TODO: add "ask before overwrite?" flag */
-
-            /* Add the file to the list of files to be parsed */
-            tgl_files.push_back(TglFileData{ $5, 0, /*yylineno TODO */ });
 
             $$ = new ast::Create($3, $5, $7);
         } else {
@@ -645,7 +632,7 @@ variable_decl
     {
         try {
             auto v = new Variable($2, $1);
-            yydata->current_table->add(v);
+            context->data->current_table->add(v);
 
             if ($1 != $4->type()) {
                 vyyerror("invalid type for assignment to %s (got %s, "
@@ -656,7 +643,7 @@ variable_decl
             $$ = new ast::VariableDeclaration(v, $4);
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
-            yydata->current_table->lookup($2)->print(sstr);
+            context->data->current_table->lookup($2)->print(sstr);
             vyyerror("'%s' is already defined (as %s)\n",
                 $2, sstr.str().c_str());
             YYERROR;
@@ -668,7 +655,7 @@ variable_assign
     : IDENTIFIER '=' expression
     {
         try {
-            Symbol *s = yydata->current_table->lookup($1);
+            Symbol *s = context->data->current_table->lookup($1);
 
             if (!s->variable()) {
                 vyyerror("%s is not a variable\n", $1);
@@ -865,7 +852,7 @@ expression
     | IDENTIFIER
     {
         try {
-            Symbol *s = yydata->current_table->lookup($1);
+            Symbol *s = context->data->current_table->lookup($1);
             $$ = new ast::SymbolRef(s);
         } catch (const SymTabNoSuchSymbolError &e) {
             vyyerror("no such symbol: %s\n", e.what());

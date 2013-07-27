@@ -10,7 +10,6 @@ void string_builder_append(const char *s);
 
 void yyerror(YYLTYPE *, ParseContext *, const char *);
 void vyyerror(const char *, ...);
-void yysetin(FILE *);
 
 int str_caller; // calling state for str
 
@@ -231,15 +230,6 @@ void vyyerror(const char *fmt, ...)
 	#endif
 }
 
-/* Set input file and restart the scanner */
-void yysetin(FILE *fp)
-{
-    /*YY_FLUSH_BUFFER;*/
-    /*yyin = fp;*/
-    /*yylineno = 1;*/
-    /*BEGIN(0);*/
-}
-
 void ParseContext::scan_init()
 {
 	yylex_init(&scanner);
@@ -252,5 +242,12 @@ void ParseContext::scan_destroy()
 
 void ParseContext::scan_load(const char *)
 {
+	struct yyguts_t *yyg = (struct yyguts_t *)scanner;
+	yyin = NULL; /* TODO */
+}
 
+void ParseContext::scan_stdin()
+{
+	struct yyguts_t *yyg = (struct yyguts_t *)scanner;
+	yyin = stdin;
 }
