@@ -21,6 +21,13 @@ struct ParseData
         ParseData &operator=(const ParseData &) = delete;
 };
 
+class ParseContextLoadError : public runtime_error
+{
+    public:
+        ParseContextLoadError(const string &what):
+            runtime_error(what) {}
+};
+
 class ParseContext
 {
     public:
@@ -34,7 +41,10 @@ class ParseContext
         ParseData *data;
 
         void load() {
-            scan_load(path.c_str());
+            if (path.empty())
+                scan_stdin();
+            else
+                scan_load(path.c_str());
         }
 
         bool is_tgp() const {

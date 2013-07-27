@@ -47,9 +47,10 @@ Backend *get_backend(const string &str)
     }
 }
 
-void generate(ostream &os, const string &backend)
+void generate(ostream &os, const string &backend, ParseData *data)
 {
     Backend *b = get_backend(backend);
+    b->generate(os, data->arguments, data->body);
 }
 
 int main(int argc, char **argv)
@@ -102,16 +103,22 @@ int main(int argc, char **argv)
             error() << "no input file specified\n";
             return 1;
         }
-
-        /* yyin = load_file(inpath.c_str()); TODO */
     } else {
         /* Read data from pipe / directed file */
-        /* yyin = stdin; TODO */
+        inpath = "";
+    }
+
+    /* Create context */
+    context = new ParseContext(inpath, false);
+    try {
+        context->load();
+    } catch (const ParseContextLoadError &e) {
+        error() << e.what() << endl;
+        return 1;
     }
 
     /* Parse */
-    /* yydata = new ParseData;
-    success = (yyparse() == 0); TODO */
+    success = (yyparse(context) == 0);
 
     /* Print the defined types */
     if (print_types) {
@@ -122,9 +129,8 @@ int main(int argc, char **argv)
     /* Print the syntax tree */
     if (print_ast) {
         ast_printer::AST_Printer p;
-        /* TODO */
-        /*if (yydata->body)
-            yydata->body->accept(p);*/
+        if (context->data->body)
+            context->data->body->accept(p);
     }
 
     if (!success)
@@ -138,7 +144,7 @@ int main(int argc, char **argv)
                 error() << "failed to open '" << outpath << "' for writing\n";
                 return 1;
             }
-            generate(f, backend);
+            generate(f, backend, context->data);
             f.close();
 
             /* Set the file permission to 0775 */
@@ -149,7 +155,7 @@ int main(int argc, char **argv)
             }
         } else {
             /* Output to stdout */
-            generate(cout, backend);
+            generate(cout, backend, context->data);
         }
     } catch (const UnknownBackend &e) {
         usage(cerr, argv[0]);

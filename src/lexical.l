@@ -240,10 +240,19 @@ void ParseContext::scan_destroy()
 	yylex_destroy(scanner);
 }
 
-void ParseContext::scan_load(const char *)
+void ParseContext::scan_load(const char *path)
 {
 	struct yyguts_t *yyg = (struct yyguts_t *)scanner;
-	yyin = NULL; /* TODO */
+
+    if (!(yyin = fopen(path, "r"))) {
+        if (errno == ENOENT) {
+            throw ParseContextLoadError("no such file or directory: '"
+                + string(path) + "'");
+        } else {
+            throw ParseContextLoadError("couldn't open '" + string(path)
+                + string("': ") + strerror(errno));
+        }
+    }
 }
 
 void ParseContext::scan_stdin()

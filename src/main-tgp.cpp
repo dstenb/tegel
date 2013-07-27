@@ -109,7 +109,12 @@ int main(int argc, char **argv)
 
     /* Create context */
     context = new ParseContext(inpath, true);
-    context->load(); /* TODO: handle exception */
+    try {
+        context->load();
+    } catch (const ParseContextLoadError &e) {
+        error() << e.what() << endl;
+        return 1;
+    }
 
     /* Parse */
     success = (yyparse(context) == 0);
