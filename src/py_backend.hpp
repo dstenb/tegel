@@ -68,13 +68,14 @@ namespace py_backend {
     {
         public:
             PyBody(ostream &os)
-                : PyWriter(os, 0) {}
+                : PyWriter(os, 0), tgl_() {}
 
-            /** Generates a body generation function named "generate[suffix]"
+            /** Generates a body generation function named "generate"
              *
              *
              */
-            void generate(ast::Statements *body, const string &suffix = "");
+            void generate(ast::Statements *body);
+            void generate(ParseData *, const map<string, ParseData *> &);
 
             virtual void visit(ast::TernaryIf *);
             virtual void visit(ast::And *);
@@ -117,6 +118,8 @@ namespace py_backend {
             virtual void visit(ast::Create*);
         private:
             void binary(const string &s, ast::BinaryExpression *e);
+
+            map<string, ParseData *> tgl_;
     };
 
     class PyMain : public PyWriter
@@ -130,7 +133,7 @@ namespace py_backend {
             void generate_opts(const vector<symbol::Argument *> &);
     };
 
-    /** Backend för .tgl files
+    /** Backend for .tgl files
      *
      */
     class PyBackend : public Backend
@@ -142,7 +145,7 @@ namespace py_backend {
             void check_cmd(const vector<symbol::Argument *> &args);
     };
 
-    /** Backend för .tgp files
+    /** Backend for .tgp files
      *
      */
     class PyTgpBackend : public TgpBackend

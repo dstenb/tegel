@@ -360,12 +360,33 @@ namespace py_backend
                    "\"Expected a string of type \" + rs)\n";
     }
 
-    void PyBody::generate(ast::Statements *body, const string &suffix)
+    void PyBody::generate(ast::Statements *body)
     {
-        indent() << "def generate" << suffix << "(_args, _file):\n";
+        indent() << "def generate(_args, _file):\n";
         indent_inc();
         body->accept(*this);
         indent_dec();
+    }
+
+    void PyBody::generate(ParseData *tgp, const map<string, ParseData *> &tgl)
+    {
+        tgl_ = tgl;
+
+        indent() << "def generate(_args, _file, _body=\"\"):\n";
+        indent_inc();
+        indent() << "if _body == \"\":\n";
+        indent_inc();
+        tgp->body->accept(*this);
+        indent_dec();
+        for (auto it = tgl.begin(); it != tgl.end(); ++it) {
+            indent() << "elif _body == \"" << it->first << "\":\n";
+            indent_inc();
+            if (it->second->body)
+                it->second->body->accept(*this);
+            else
+                indent() << "pass\n";
+            indent_dec();
+        }
     }
 
     void PyBody::visit(ast::Statements *p)
@@ -731,8 +752,22 @@ namespace py_backend
         p->assignment()->accept(*this);
     }
 
-    void PyBody::visit(ast::Create *)
+    void PyBody::visit(ast::Create *p)
     {
+        /* TODO: - validate arguments
+         *       - create namespace for arguments
+         *       - handle file exceptions */
+        indent() << "try:\n";
+        indent() << "    f = open(";
+        p->out->accept(*this);
+        unindent() << ", 'w')\n";
+        indent() << "    __args = _args\n"; /* TODO */
+        indent() << "    try:\n";
+        indent() << "        generate(__args, f, \"" << p->tgl << "\")\n";
+        indent() << "    finally:\n";
+        indent() << "        f.close()\n";
+        indent() << "except IOError:\n";
+        indent() << "    pass\n";
     }
 
     void PyBody::binary(const string &s, ast::BinaryExpression *e)
@@ -824,7 +859,7 @@ namespace py_backend
 
             h.generate(tgp_data->arguments);
             os << "\n";
-            b.generate(tgp_data->body);
+            b.generate(tgp_data, tgl_data);
             os << "\n";
             m.generate(tgp_data->arguments);
         }
