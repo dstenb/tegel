@@ -18,12 +18,7 @@
 using namespace std;
 using type::TypeFactory;
 
-extern ParseData *yydata;
-
-extern void setup_symbol_table();
-extern int yyparse();
-
-/*extern FILE *yyin; TODO */
+extern int yyparse(ParseContext *);
 
 void usage(ostream &os, const char *cmd)
 {
@@ -39,24 +34,22 @@ void usage(ostream &os, const char *cmd)
     os << " pygtk               PyGTK backend\n";
 }
 
+Backend *get_backend(const string &str)
+{
+    if (str.empty() || str == "py") {
+        if (str.empty())
+            warning() << "no backend specified, defaulting to python\n";
+        return new py_backend::PyBackend;
+    } else if (str == "bash") {
+        return new bash_backend::BashBackend;
+    } else {
+        throw UnknownBackend("unknown backend '" + str  + "'");
+    }
+}
+
 void generate(ostream &os, const string &backend)
 {
-    if (backend == "bash") {
-        bash_backend::BashBackend b;
-        b.generate(os, yydata->arguments, yydata->body);
-    } else if (backend == "py") {
-        py_backend::PyBackend b;
-        b.generate(os, yydata->arguments, yydata->body);
-    } else if (backend == "pygtk") {
-        pygtk_backend::PyGtkBackend b;
-        b.generate(os, yydata->arguments, yydata->body);
-    } else if (backend.empty()) {
-        warning() << "no backend specified, defaulting to python\n";
-        py_backend::PyBackend b;
-        b.generate(os, yydata->arguments, yydata->body);
-    } else {
-        throw UnknownBackend("unknown backend '" + backend  + "'");
-    }
+    Backend *b = get_backend(backend);
 }
 
 int main(int argc, char **argv)
@@ -67,6 +60,7 @@ int main(int argc, char **argv)
     bool print_ast = false;
     bool print_types = false;
     bool success;
+    ParseContext *context;
 
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
@@ -128,8 +122,9 @@ int main(int argc, char **argv)
     /* Print the syntax tree */
     if (print_ast) {
         ast_printer::AST_Printer p;
-        if (yydata->body)
-            yydata->body->accept(p);
+        /* TODO */
+        /*if (yydata->body)
+            yydata->body->accept(p);*/
     }
 
     if (!success)

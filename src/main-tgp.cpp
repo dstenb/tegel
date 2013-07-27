@@ -18,16 +18,7 @@
 using namespace std;
 using type::TypeFactory;
 
-extern ParseData *yydata;
-
-extern vector<TglFileData> tgl_files;
-extern bool tgp_file;
-
-extern void setup_symbol_table();
-extern int yyparse();
-extern void yysetin(FILE *);
-
-/* extern FILE *yyin; TODO */
+extern int yyparse(ParseContext *);
 
 void usage(ostream &os, const char *cmd)
 {
@@ -43,29 +34,32 @@ void usage(ostream &os, const char *cmd)
     os << " pygtk               PyGTK backend\n";
 }
 
+TgpBackend *get_backend(const string &str)
+{
+    if (str.empty() || str == "py") {
+        if (str.empty())
+            warning() << "no backend specified, defaulting to python\n";
+        return new py_backend::PyTgpBackend;
+    } else if (str == "bash") {
+        //return new bash_backend::BashBackend;
+        // TODO
+        throw UnknownBackend("unknown backend '" + str  + "'");
+    } else {
+        throw UnknownBackend("unknown backend '" + str  + "'");
+    }
+}
+
 void generate(ostream &os, const string &backend,
               ParseData *tgp_data, map<string, ParseData *> tgl_data)
 {
-    if (backend == "bash") {
-        // TODO
-        //bash_backend::BashBackend b;
-        //b.generate(os, tgp_data, tgl_data);
-    } else if (backend.empty() || backend == "py") {
-        if (backend.empty())
-            warning() << "no backend specified, defaulting to python\n";
-        py_backend::PyTgpBackend b;
-        b.generate(os, tgp_data, tgl_data);
-    } else if (backend == "pygtk") {
-        // TODO
-        //pygtk_backend::PyGtkBackend b;
-        //b.generate(os, yydata->arguments, yydata->body);
-    } else {
-        throw UnknownBackend("unknown backend '" + backend  + "'");
-    }
+    TgpBackend *b = get_backend(backend);
+    b->generate(os, tgp_data, tgl_data);
 }
 
 int main(int argc, char **argv)
 {
+    ParseContext *context;
+
     string inpath = "";
     string outpath = "";
     string backend = "";
@@ -73,7 +67,6 @@ int main(int argc, char **argv)
     bool print_types = false;
     bool success;
 
-    ParseData *tgp_data;
     map<string, ParseData *> tgl_data;
 
     for (int i = 1; i < argc; i++) {
@@ -114,32 +107,12 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    /* yyin = load_file(inpath.c_str()); TODO */
+    /* Create context */
+    context = new ParseContext(inpath, true);
+    context->load(); /* TODO: handle exception */
 
     /* Parse */
-    /* tgp_file = true;
-    yydata = new ParseData;
-    success = (yyparse() == 0);
-    tgp_data = yydata; TODO */
-
-    /* The rest of the files will be treated as .tgl files */
-    tgp_file = false;
-
-    for (auto f : tgl_files) {
-        /* TODO: check and store absolute paths to avoid duplicates */
-        if (tgl_data.find(f.path) == tgl_data.end()) {
-            cerr << "Parsing " << f.path << endl;
-
-            /* TODO
-            yysetin(load_file(f.path.c_str()));
-            yydata = new ParseData;
-            if (yyparse() != 0)
-                return 1;*/
-
-            tgl_data[f.path] = yydata;
-        }
-
-    }
+    success = (yyparse(context) == 0);
 
     /* Print the defined types */
     if (print_types) {
@@ -150,8 +123,8 @@ int main(int argc, char **argv)
     /* Print the syntax tree */
     if (print_ast) {
         ast_printer::AST_Printer p;
-        if (yydata->body)
-            yydata->body->accept(p);
+        if (context->data->body)
+            context->data->body->accept(p);
     }
 
     if (!success)
@@ -165,7 +138,7 @@ int main(int argc, char **argv)
                 error() << "failed to open '" << outpath << "' for writing\n";
                 return 1;
             }
-            generate(f, backend, tgp_data, tgl_data);
+            generate(f, backend, context->data, tgl_data);
             f.close();
 
             /* Set the file permission to 0775 */
@@ -176,7 +149,7 @@ int main(int argc, char **argv)
             }
         } else {
             /* Output to stdout */
-            generate(cout, backend, tgp_data, tgl_data);
+            generate(cout, backend, context->data, tgl_data);
         }
     } catch (const UnknownBackend &e) {
         usage(cerr, argv[0]);
