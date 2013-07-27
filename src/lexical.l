@@ -239,3 +239,13 @@ void yysetin(FILE *fp)
     /*yylineno = 1;*/
     /*BEGIN(0);*/
 }
+
+void ParseContext::scan_init()
+{
+	yylex_init(&scanner);
+}
+
+void ParseContext::scan_destroy()
+{
+	yylex_destroy(scanner);
+}

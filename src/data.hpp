@@ -4,9 +4,14 @@
 #include "symbol.hpp"
 #include "type.hpp"
 
-struct ParseContext
+class ParseContext
 {
-    void *scanner;
+    public:
+        void *scanner;
+
+    private:
+        void scan_init();
+        void scan_destroy();
 };
 
 struct ParseData
