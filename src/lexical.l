@@ -260,3 +260,10 @@ void ParseContext::scan_stdin()
 	struct yyguts_t *yyg = (struct yyguts_t *)scanner;
 	yyin = stdin;
 }
+
+
+void ParseContext::scan_set(FILE *fp)
+{
+	struct yyguts_t *yyg = (struct yyguts_t *)scanner;
+	yyin = fp;
+}

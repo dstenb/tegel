@@ -61,6 +61,9 @@ int main(int argc, char **argv)
     bool print_ast = false;
     bool print_types = false;
     bool success;
+
+    FILE *fp;
+    string name;
     ParseContext *context;
 
     for (int i = 1; i < argc; i++) {
@@ -103,19 +106,17 @@ int main(int argc, char **argv)
             error() << "no input file specified\n";
             return 1;
         }
+
+        fp = load_file(inpath.c_str());
+        name = inpath;
     } else {
         /* Read data from pipe / directed file */
-        inpath = "";
+        fp = stdin;
+        name = "";
     }
 
     /* Create context */
-    context = new ParseContext(inpath, false);
-    try {
-        context->load();
-    } catch (const ParseContextLoadError &e) {
-        error() << e.what() << endl;
-        return 1;
-    }
+    context = new ParseContext(name, fp, false);
 
     /* Parse */
     success = (yyparse(context) == 0);

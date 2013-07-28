@@ -31,20 +31,28 @@ class ParseContextLoadError : public runtime_error
 class ParseContext
 {
     public:
-        ParseContext(const string &path, bool tgp = false)
-            : path(path), scanner(nullptr), data(new ParseData), tgp_(tgp) {
+        ParseContext(const string &name, FILE *fp, bool tgp = false)
+            : name(name), scanner(nullptr), data(new ParseData), tgp_(tgp) {
             scan_init();
+            scan_set(fp);
         }
 
-        string path;
+        string name;
         void *scanner;
         ParseData *data;
 
-        void load() {
-            if (path.empty())
-                scan_stdin();
-            else
-                scan_load(path.c_str());
+        ParseData *get_parsed_file(const string &s) {
+            auto it = parsed_files_.find(s);
+
+            return (it != parsed_files_.end()) ? it->second : nullptr;
+        }
+
+        void set_parsed_file(const string &s, ParseData *d) {
+            parsed_files_[s] = d;
+        }
+
+        map<string, ParseData *> parsed_files() {
+            return parsed_files_;
         }
 
         bool is_tgp() const {
@@ -58,8 +66,11 @@ class ParseContext
         void scan_destroy();
         void scan_load(const char *);
         void scan_stdin();
+        void scan_set(FILE *);
 
         bool tgp_;
+
+        map<string, ParseData *> parsed_files_;
 };
 
 #endif

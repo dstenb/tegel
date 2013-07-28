@@ -591,6 +591,10 @@ with
 create
     : CREATE '(' expression ',' STRING ',' expression_list ')'
     {
+        /* TODO: add "ask before overwrite?" flag */
+        /* TODO: use absolute paths (realpath()) */
+        /* TODO: handle strlen($5) == 0 */
+
         if (context->is_tgp()) {
             if ($3->type() != TypeFactory::get("string")) {
                 vyyerror("wrong type for first argument to create() (got %s, "
@@ -598,7 +602,26 @@ create
                 YYERROR;
             }
 
-            /* TODO: add "ask before overwrite?" flag */
+            auto data = context->get_parsed_file($5);
+
+            if (data != nullptr) {
+                cerr << $5 << " was already read!\n";
+            } else {
+                FILE *fp;
+                cerr << "first time parsing " << $5 << endl;
+
+                if (!(fp = fopen($5, "r"))) {
+                    cerr << "Error " << $5 << endl; /* TODO */
+                    YYERROR;
+                }
+
+                ParseContext *new_context = new ParseContext($5, fp, false);
+
+                if (yyparse(new_context) != 0)
+                    YYERROR;
+
+                context->set_parsed_file($5, new_context->data);
+            }
 
             $$ = new ast::Create($3, $5, $7);
         } else {

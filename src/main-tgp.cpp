@@ -67,8 +67,6 @@ int main(int argc, char **argv)
     bool print_types = false;
     bool success;
 
-    map<string, ParseData *> tgl_data;
-
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             usage(cout, argv[0]);
@@ -108,13 +106,7 @@ int main(int argc, char **argv)
     }
 
     /* Create context */
-    context = new ParseContext(inpath, true);
-    try {
-        context->load();
-    } catch (const ParseContextLoadError &e) {
-        error() << e.what() << endl;
-        return 1;
-    }
+    context = new ParseContext(inpath, load_file(inpath.c_str()), true);
 
     /* Parse */
     success = (yyparse(context) == 0);
@@ -143,7 +135,7 @@ int main(int argc, char **argv)
                 error() << "failed to open '" << outpath << "' for writing\n";
                 return 1;
             }
-            generate(f, backend, context->data, tgl_data);
+            generate(f, backend, context->data, context->parsed_files());
             f.close();
 
             /* Set the file permission to 0775 */
@@ -154,7 +146,7 @@ int main(int argc, char **argv)
             }
         } else {
             /* Output to stdout */
-            generate(cout, backend, context->data, tgl_data);
+            generate(cout, backend, context->data, context->parsed_files());
         }
     } catch (const UnknownBackend &e) {
         usage(cerr, argv[0]);
