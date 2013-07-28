@@ -194,27 +194,27 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 void string_builder_append(const char *s)
 {
-	if (!string_builder) {
-		string_builder = strdup(s);
-		// TODO: handle failed alloc
-		return;
-	} else {
-		size_t sb = strlen(string_builder);
-		size_t sn = strlen(s);
+    if (!string_builder) {
+        string_builder = strdup(s);
+        // TODO: handle failed alloc
+        return;
+    } else {
+        size_t sb = strlen(string_builder);
+        size_t sn = strlen(s);
 
-		string_builder = (char *)realloc(string_builder, sb + sn + 1);
+        string_builder = (char *)realloc(string_builder, sb + sn + 1);
 
-		// TODO: handle failed realloc
-		if (string_builder != NULL)
-			memcpy(string_builder + sb, s, sn);
-		string_builder[sb + sn] = '\0';
-	}
+        // TODO: handle failed realloc
+        if (string_builder != NULL)
+            memcpy(string_builder + sb, s, sn);
+        string_builder[sb + sn] = '\0';
+    }
 }
 
 void yyerror(YYLTYPE *l, ParseContext *c, const char *s)
 {
     if (!c->name.empty())
-    	fprintf(stderr, "%s:", c->name.c_str());
+        fprintf(stderr, "%s:", c->name.c_str());
     fprintf(stderr, "%i: error: %s\n", l->first_line, s);
 }
 
@@ -222,7 +222,7 @@ void yyverror(YYLTYPE *l, ParseContext *c, const char *fmt, ...)
 {
     va_list val;
     if (!c->name.empty())
-    	fprintf(stderr, "%s:", c->name.c_str());
+        fprintf(stderr, "%s:", c->name.c_str());
     fprintf(stderr, "%i: error: ", l->first_line);
 
     va_start(val, fmt);
@@ -237,7 +237,7 @@ void yylerror(ParseContext *c, const char *fmt, ...)
     va_list val;
 
     if (!c->name.empty())
-    	fprintf(stderr, "%s:", c->name.c_str());
+        fprintf(stderr, "%s:", c->name.c_str());
     fprintf(stderr, "%i: error: ", yylineno);
 
     va_start(val, fmt);
@@ -248,39 +248,17 @@ void yylerror(ParseContext *c, const char *fmt, ...)
 
 void ParseContext::scan_init()
 {
-	yylex_init(&scanner);
-	yyset_extra(this, scanner);
+    yylex_init(&scanner);
+    yyset_extra(this, scanner);
 }
 
 void ParseContext::scan_destroy()
 {
-	yylex_destroy(scanner);
+    yylex_destroy(scanner);
 }
-
-void ParseContext::scan_load(const char *path)
-{
-	struct yyguts_t *yyg = (struct yyguts_t *)scanner;
-
-    if (!(yyin = fopen(path, "r"))) {
-        if (errno == ENOENT) {
-            throw ParseContextLoadError("no such file or directory: '"
-                + string(path) + "'");
-        } else {
-            throw ParseContextLoadError("couldn't open '" + string(path)
-                + string("': ") + strerror(errno));
-        }
-    }
-}
-
-void ParseContext::scan_stdin()
-{
-	struct yyguts_t *yyg = (struct yyguts_t *)scanner;
-	yyin = stdin;
-}
-
 
 void ParseContext::scan_set(FILE *fp)
 {
-	struct yyguts_t *yyg = (struct yyguts_t *)scanner;
-	yyin = fp;
+    struct yyguts_t *yyg = (struct yyguts_t *)scanner;
+    yyin = fp;
 }

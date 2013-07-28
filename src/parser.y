@@ -35,15 +35,15 @@ RecordType::field_vector record_members;
 %parse-param { ParseContext *context }
 
 %code requires {
-	#include "ast.hpp"
+    #include "ast.hpp"
     #include "ast_factories.hpp"
-	#include "constant.hpp"
-	#include "symbol.hpp"
-	#include "type.hpp"
-	#include "data.hpp"
+    #include "constant.hpp"
+    #include "symbol.hpp"
+    #include "type.hpp"
+    #include "data.hpp"
 
-	using namespace constant;
-	using namespace symbol;
+    using namespace constant;
+    using namespace symbol;
 }
 
 %union {

@@ -21,18 +21,12 @@ struct ParseData
         ParseData &operator=(const ParseData &) = delete;
 };
 
-class ParseContextLoadError : public runtime_error
-{
-    public:
-        ParseContextLoadError(const string &what):
-            runtime_error(what) {}
-};
-
 class ParseContext
 {
     public:
         ParseContext(const string &name, FILE *fp, bool tgp = false)
-            : name(name), scanner(nullptr), data(new ParseData), tgp_(tgp) {
+            : name(name), scanner(nullptr), data(new ParseData),
+              tgp_(tgp), parsed_files_() {
             scan_init();
             scan_set(fp);
         }
@@ -64,8 +58,6 @@ class ParseContext
 
         void scan_init();
         void scan_destroy();
-        void scan_load(const char *);
-        void scan_stdin();
         void scan_set(FILE *);
 
         bool tgp_;
