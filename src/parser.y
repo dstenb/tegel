@@ -597,7 +597,6 @@ create
     {
         /* TODO: add "ask before overwrite?" flag */
         /* TODO: use absolute paths (realpath()) */
-        /* TODO: handle strlen($5) == 0 */
 
         if (context->is_tgp()) {
             if ($3->type() != TypeFactory::get("string")) {
@@ -616,7 +615,8 @@ create
                 cerr << "first time parsing " << $5 << endl;
 
                 if (!(fp = fopen($5, "r"))) {
-                    cerr << "Error " << $5 << endl; /* TODO */
+		    yyverror(&@5, context, "couldn't open %s (%s)",
+			    $5, strerror(errno));
                     YYERROR;
                 }
 
@@ -626,6 +626,7 @@ create
                     YYERROR;
 
                 context->set_parsed_file($5, new_context->data);
+		data = new_context->data;
             }
 
             $$ = new ast::Create($3, $5, $7);
