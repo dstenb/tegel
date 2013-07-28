@@ -24,8 +24,6 @@ std::vector<Param *> param_list;
 
 RecordType::field_vector record_members;
 
-/*extern int yylineno; TODO */
-void vyyerror(const char *, ...);
 
 #define scanner context->scanner
 %}
@@ -82,6 +80,7 @@ void vyyerror(const char *, ...);
 %{
 int yylex(YYSTYPE *, YYLTYPE *, void *);
 void yyerror(YYLTYPE *, ParseContext *, const char *);
+void yyverror(YYLTYPE *, ParseContext *, const char *, ...);
 %}
 
 %token END 0 "end of file"
@@ -180,7 +179,7 @@ header_item
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
             context->data->root_table->lookup($1->get_name())->print(sstr);
-            vyyerror("'%s' is already defined (as %s)\n",
+            yyverror(&@1, context, "'%s' is already defined (as %s)\n",
                 $1->get_name().c_str(), sstr.str().c_str());
             YYERROR;
         }
@@ -199,7 +198,7 @@ arg
                 if (op)
                     delete op;
             } catch (const ParamException &e) {
-                vyyerror("%s", e.what());
+                yyerror(&@1, context, e.what());
                 YYERROR;
             }
         }
@@ -213,7 +212,7 @@ record_def
         try {
             TypeFactory::add_record($2, record_members);
         } catch (const TypeAlreadyDefined &e) {
-            vyyerror("%s", e.what());
+	    yyerror(&@2, context, e.what());
             YYERROR;
         }
         record_members.clear();
@@ -232,7 +231,8 @@ record_member
         const PrimitiveType *p = $1 ? $1->primitive() : nullptr;
 
         if (p == nullptr) {
-            vyyerror("a record can only hold primitive types", $2);
+            yyverror(&@2, context,
+                "a record can only hold primitive types (got %s)", $1);
             YYERROR;
         }
 
@@ -240,7 +240,7 @@ record_member
             [&] (const RecordField &r) { return r.name == $2; });
 
         if (it != record_members.end()) {
-            vyyerror("Multiple definitions of field '%s'", $2);
+            yyverror(&@2, context, "Multiple definitions of field '%s'", $2);
             YYERROR;
         }
 
@@ -250,7 +250,8 @@ record_member
     }
     | list_type IDENTIFIER ';'
     {
-        vyyerror("A record can only hold primitive types", $2);
+    	yyverror(&@2, context,
+            "a record can only hold primitive types (got %s)", $1);
         YYERROR;
     }
 
@@ -277,14 +278,15 @@ record_constant
         const Type *t = TypeFactory::get($1);
 
         if (t == nullptr) {
-            vyyerror("unknown type '%s'", $1);
+            yyverror(&@1, context, "unknown type '%s'", $1);
             YYERROR;
         }
 
         const RecordType *p = t->record();
 
         if (p == nullptr) {
-            vyyerror("expected a record (got '%s')", t->str().c_str());
+            yyverror(&@1, context,
+	        "expected a record (got '%s')", t->str().c_str());
         }
 
         $$ = new RecordConstantData(p);
@@ -292,7 +294,7 @@ record_constant
         try {
             $$->set(constant_record);
         } catch (const UnmatchingFieldSignature &e) {
-            vyyerror("%s", e.what());
+            yyerror(&@1, context, e.what());
             YYERROR;
         }
 
@@ -318,7 +320,7 @@ single_type
         $$ = t ? t->single() : nullptr;
 
         if ($$ == nullptr) {
-            vyyerror("unknown type '%s'", $1);
+            yyverror(&@1, context, "unknown type '%s'", $1);
             YYERROR;
         }
 
@@ -334,7 +336,7 @@ list_type
         $$ = t ? t->list() : nullptr;
 
         if ($$ == nullptr) {
-            vyyerror("unknown type '%s'", $1);
+            yyverror(&@1, context, "unknown type '%s'", $1);
             YYERROR;
         }
 
@@ -351,11 +353,11 @@ constant_list
             for (SingleConstantData *d : constant_list)
                 $$->add(d);
         } catch (const InvalidTypeError &e) {
-            vyyerror(e.what());
+            yyerror(&@1, context, e.what());
             YYERROR;
         } catch (const DifferentTypesError &e) {
-            vyyerror("a list can only hold items of same type (%s)",
-                e.what());
+            yyverror(&@1, context,
+	        "a list can only hold items of one type (%s)", e.what());
             YYERROR;
         }
 
@@ -529,7 +531,8 @@ for_each
     : FOR IDENTIFIER IN expression
     {
         if ($4->type()->list() == nullptr) {
-            vyyerror("expected a list (got %s)", $4->type()->str().c_str());
+            yyverror(&@4, context,
+                "expected a list (got %s)", $4->type()->str().c_str());
             YYERROR;
         }
 
@@ -554,7 +557,8 @@ for_each_enum
     : FOR IDENTIFIER ',' IDENTIFIER IN expression
     {
         if ($6->type()->list() == nullptr) {
-            vyyerror("expected a list (got %s)", $6->type()->str().c_str());
+            yyverror(&@6, context,
+	    	"expected a list (got %s)", $6->type()->str().c_str());
             YYERROR;
         }
 
@@ -597,7 +601,8 @@ create
 
         if (context->is_tgp()) {
             if ($3->type() != TypeFactory::get("string")) {
-                vyyerror("wrong type for first argument to create() (got %s, "
+                yyverror(&@3, context,
+			"wrong type for first argument to create() (got %s, "
                     "expected string", $3->type()->str().c_str());
                 YYERROR;
             }
@@ -625,7 +630,7 @@ create
 
             $$ = new ast::Create($3, $5, $7);
         } else {
-            vyyerror("create is only allowed in .tgp files");
+            yyerror(&@1, context, "create is only allowed in .tgp files");
             YYERROR;
         }
 
@@ -658,7 +663,8 @@ variable_decl
             context->data->current_table->add(v);
 
             if ($1 != $4->type()) {
-                vyyerror("invalid type for assignment to %s (got %s, "
+                yyverror(&@4, context,
+			"invalid type for assignment to %s (got %s, "
                     "expected)%s", $2, $1->str().c_str(),
                     $4->type()->str().c_str());
                 YYERROR;
@@ -667,7 +673,7 @@ variable_decl
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
             context->data->current_table->lookup($2)->print(sstr);
-            vyyerror("'%s' is already defined (as %s)\n",
+            yyverror(&@2, context, "'%s' is already defined (as %s)\n",
                 $2, sstr.str().c_str());
             YYERROR;
         }
@@ -681,19 +687,20 @@ variable_assign
             Symbol *s = context->data->current_table->lookup($1);
 
             if (!s->variable()) {
-                vyyerror("%s is not a variable\n", $1);
+                yyverror(&@1, context, "%s is not a variable\n", $1);
                 YYERROR;
             }
 
             if (s->get_type() != $3->type()) {
-                vyyerror("invalid type for assignment to %s (got %s, "
+                yyverror(&@3, context,
+			"invalid type for assignment to %s (got %s, "
                     "expected %s)", $1, s->get_type()->str().c_str(),
                     $3->type()->str().c_str());
                 YYERROR;
             }
             $$ = new ast::VariableAssignment(s->variable(), $3); 
         } catch (const SymTabNoSuchSymbolError &e) {
-            vyyerror("no such symbol: %s\n", e.what());
+            yyverror(&@1, context, "no such variable: %s\n", e.what());
             YYERROR;
         }
         free($1);
@@ -712,7 +719,7 @@ expression
         try {
             $$ = ast_factory::TernaryIfFactory::create($1, $3, $5);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@2, context, e.what());
             YYERROR;
         }
     }
@@ -721,7 +728,7 @@ expression
         try {
             $$ = ast_factory::BoolBinaryFactory<ast::And>::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -730,7 +737,7 @@ expression
         try {
             $$ = ast_factory::BoolBinaryFactory<ast::Or>::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -739,7 +746,7 @@ expression
         try {
             $$ = new ast::Not(ast_factory::BoolUnaryFactory::create($2));
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -748,7 +755,7 @@ expression
         try {
             $$ = ast_factory::LessThanFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -757,7 +764,7 @@ expression
         try {
             $$ = ast_factory::GreaterThanFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -766,7 +773,7 @@ expression
         try {
             $$ = ast_factory::LessThanOrEqualFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -775,7 +782,7 @@ expression
         try {
             $$ = ast_factory::GreaterThanOrEqualFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -784,7 +791,7 @@ expression
         try {
             $$ = ast_factory::EqualsFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -793,7 +800,7 @@ expression
         try {
             $$ = new ast::Not(ast_factory::EqualsFactory::create($1, $3));
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -802,7 +809,7 @@ expression
         try {
             $$ = ast_factory::PlusBinaryFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -811,7 +818,7 @@ expression
         try {
             $$ = ast_factory::MinusBinaryFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -820,7 +827,7 @@ expression
         try {
             $$ = ast_factory::TimesBinaryFactory::create($1, $3);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -838,13 +845,14 @@ expression
             auto t = $1->type()->dot($3);
 
             if (t == nullptr) {
-                vyyerror("'%s' has no field named '%s'",
+                yyverror(&@3, context, "'%s' has no field named '%s'",
                     $1->type()->str().c_str(), $3);
                 YYERROR;
             }
             $$ = new ast::FieldRef($1, $3);
         } else {
-            vyyerror("can't apply '.' operator on expression of type '%s'",
+            yyverror(&@1, context,
+	    	"can't apply '.' operator on expression of type '%s'",
                 $1->type()->str().c_str());
             YYERROR;
         }
@@ -860,13 +868,13 @@ expression
             TypeMethod m = $1->type()->lookup($3, arg_types);
             $$ = new ast::MethodCall($1, m, $5);
         } catch (const NoSuchMethodError &e) {
-            vyyerror("%s", e.what());
+            yyerror(&@3, context, e.what());
             YYERROR;
         } catch (const WrongNumberOfArgumentsError &e) {
-            vyyerror("%s", e.what());
+            yyerror(&@3, context, e.what());
             YYERROR;
         } catch (const WrongArgumentSignatureError &e) {
-            vyyerror("%s", e.what());
+            yyerror(&@3, context, e.what());
             YYERROR;
         }
 
@@ -878,7 +886,7 @@ expression
             Symbol *s = context->data->current_table->lookup($1);
             $$ = new ast::SymbolRef(s);
         } catch (const SymTabNoSuchSymbolError &e) {
-            vyyerror("no such symbol: %s\n", e.what());
+            yyverror(&@1, context, "no such symbol: %s\n", e.what());
             YYERROR;
         }
 
@@ -889,7 +897,7 @@ expression
         try {
             $$ = ast_factory::MinusUnaryFactory::create($2);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyerror(&@2, context, e.what());
             YYERROR;
         }
     }
@@ -904,7 +912,7 @@ condition
         try {
             $$ = ast_factory::BoolUnaryFactory::create($1);
         } catch (const InvalidTypeError &e) {
-            vyyerror("%s", e.what());
+            yyerror(&@1, context, e.what());
             YYERROR;
         }
     }
@@ -941,13 +949,15 @@ list_values
     : expression ',' list_values
     {
         if ($1->type()->list()) {
-            vyyerror("a list can only hold primitives/records (Got %s)",
+            yyverror(&@3, context,
+	    	"a list can only hold primitives/records (Got %s)",
                 $1->type()->str().c_str());
             YYERROR;
         }
 
         if ($1->type() != $3->expression->type()) {
-            vyyerror("a list can only hold items of same type (Got %s and %s)",
+            yyverror(&@1, context,
+	    	"a list can only hold items of one type (Got %s and %s)",
                 $1->type()->str().c_str(),
                 $3->expression->type()->str().c_str());
             YYERROR;
@@ -958,7 +968,8 @@ list_values
     | expression
     {
         if ($1->type()->list()) {
-            vyyerror("a list can only hold primitives/records (Got %s)",
+            yyverror(&@1, context,
+	    	"a list can only hold primitives/records (Got %s)",
                 $1->type()->str().c_str());
             YYERROR;
         }

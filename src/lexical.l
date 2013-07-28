@@ -9,10 +9,12 @@ char *string_builder = NULL;
 void string_builder_append(const char *s);
 
 void yyerror(YYLTYPE *, ParseContext *, const char *);
-void vyyerror(const char *, ...);
+void yyverror(YYLTYPE *, ParseContext *, const char *, ...);
+void yylerror(ParseContext *, const char *, ...);
 
 int str_caller; // calling state for str
 
+#define YY_EXTRA_TYPE ParseContext *
 #define YY_USER_ACTION yylloc->first_line = yylineno;
 %}
 
@@ -100,7 +102,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 {IDENTIFIER}"[]"     { yylval->string = strdup(yytext); return LIST; }
 
  /* string rules */
-<str><<EOF>>         { vyyerror("syntax error, unmatched '\"'"); yyterminate(); }
+<str><<EOF>>         { yylerror(yyextra, "syntax error, unmatched '\"'"); }
 <str>"\""            { yylval->string = string_builder; string_builder = NULL;
                        BEGIN(str_caller);
                        return STRING; }
@@ -108,7 +110,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <str>"\\t"           { string_builder_append("\t"); }
 <str>"\\\""          { string_builder_append("\""); }
 <str>"\\\\"          { string_builder_append("\\"); }
-<str>"\\".           { vyyerror("unknown escape sequence %c%s", '\\', yytext);
+<str>"\\".           { yylerror(yyextra, "unknown escape sequence %c%s", '\\', yytext);
                        yyterminate(); }
 <str>{UANYN}         { string_builder_append(yytext); }
 
@@ -170,22 +172,22 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 <inline>[ \t]*            // Eat up all whitespace
 <inline>"}}"              { BEGIN(text); return R_INLINE; }
-<inline>"\n"              { vyyerror("inlined expressions can't span over "
+<inline>"\n"              { yylerror(yyextra, "inlined expressions can't span over "
                             "multiple lines ", '\\', yytext);
                             yyterminate(); }
 <inline>"\""              { str_caller = inline; string_builder_append("");
                             BEGIN(str); }
 
  /* Consider all other characters as errors */
-<inline,control,INITIAL>{UANYN} { vyyerror("unexpected character `%s`",
+<inline,control,INITIAL>{UANYN} { yylerror(yyextra, "unexpected character `%s`",
                                   yytext);
                                   yyterminate(); }
 
  /* comment rules */
-<comment><<EOF>>         { vyyerror("syntax error, unmatched '#}'");
+<comment><<EOF>>         { yylerror(yyextra, "syntax error, unmatched '#}'");
                            yyterminate(); }
 <comment>"#}"            { BEGIN(text); }
-<comment>"\\n"           { vyyerror("comments can't span over multiple lines");
+<comment>"\\n"           { yylerror(yyextra, "comments can't span over multiple lines");
                            yyterminate(); }
 <comment>{UANYN}         // Eat up everything else
 %%
@@ -209,30 +211,45 @@ void string_builder_append(const char *s)
 	}
 }
 
-void yyerror(YYLTYPE *, ParseContext *, const char *s)
+void yyerror(YYLTYPE *l, ParseContext *c, const char *s)
 {
-	/* TODO */
-	/*fprintf(stderr, "Error on line %i: %s\n", yylineno, s);*/
+    if (!c->name.empty())
+    	fprintf(stderr, "%s:", c->name.c_str());
+    fprintf(stderr, "%i: error: %s\n", l->first_line, s);
 }
 
-void vyyerror(const char *fmt, ...)
+void yyverror(YYLTYPE *l, ParseContext *c, const char *fmt, ...)
 {
-	/* TODO */
-	#if 0
-	va_list val;
+    va_list val;
+    if (!c->name.empty())
+    	fprintf(stderr, "%s:", c->name.c_str());
+    fprintf(stderr, "%i: error: ", l->first_line);
 
-	fprintf(stderr, "Error on line %i: ", yylineno);
+    va_start(val, fmt);
+    vfprintf(stderr, fmt, val);
+    va_end(val);
+    fprintf(stderr, "\n");
+}
 
-	va_start(val, fmt);
-	vfprintf(stderr, fmt, val);
-	va_end(val);
-	fprintf(stderr, "\n");
-	#endif
+void yylerror(ParseContext *c, const char *fmt, ...)
+{
+    struct yyguts_t *yyg = (struct yyguts_t *)c->scanner;
+    va_list val;
+
+    if (!c->name.empty())
+    	fprintf(stderr, "%s:", c->name.c_str());
+    fprintf(stderr, "%i: error: ", yylineno);
+
+    va_start(val, fmt);
+    vfprintf(stderr, fmt, val);
+    va_end(val);
+    fprintf(stderr, "\n");
 }
 
 void ParseContext::scan_init()
 {
 	yylex_init(&scanner);
+	yyset_extra(this, scanner);
 }
 
 void ParseContext::scan_destroy()
