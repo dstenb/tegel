@@ -72,6 +72,7 @@ RecordType::field_vector record_members;
     ast::Else *else_node;
 
     ast::List *list;
+    ast::Record *record;
     ast::ExpressionList *expression_list;
     ast::VariableList *variable_list;
     ast::VariableStatement *variable_stmt;
@@ -130,8 +131,8 @@ void yyverror(YYLTYPE *, ParseContext *, const char *, ...);
 %type<variable_stmt> variable_decl variable_assign
 
 %type<expression> expression condition
-
 %type<list> list
+%type<record> record
 %type<expression_list> expression_list list_values
 
 %right '?' ':'
@@ -832,9 +833,13 @@ expression
             YYERROR;
         }
     }
-    | single_constant
+    | primitive_constant
     {
         $$ = new ast::Constant($1);
+    }
+    | record
+    {
+        $$ = $1;
     }
     | list
     {
@@ -932,6 +937,35 @@ primitive_constant
 	| INT { $$ = new IntConstantData($1); }
 	| STRING { $$ = new StringConstantData($1); }
 	;
+
+record
+    : IDENTIFIER '{' expression_list '}'
+    {
+        const Type *t = TypeFactory::get($1);
+
+        if (t == nullptr) {
+            yyverror(&@1, context, "unknown type '%s'", $1);
+            YYERROR;
+        }
+
+        const RecordType *p = t->record();
+
+        if (p == nullptr) {
+            yyverror(&@1, context,
+	        "expected a record (got '%s')", t->str().c_str());
+            YYERROR;
+        }
+
+        $$ = new ast::Record(p);
+        try {
+            $$->set_fields($3);
+        } catch (const UnmatchingFieldSignature &e) {
+            yyverror(&@1, context, e.what());
+            YYERROR;
+        }
+
+        free($1);
+    }
 
 list
     : '[' list_values ']'

@@ -60,6 +60,7 @@ namespace ast {
     class SymbolRef;
     class FieldRef;
     class List;
+    class Record;
     class ExpressionList;
 
     class Statement;
@@ -710,6 +711,45 @@ namespace ast {
     /**
      *
      */
+    class Record : public UnaryExpression
+    {
+        public:
+            Record(const RecordType *t)
+                : type_(t), fields_(nullptr) {}
+
+            ~Record() {
+                if (fields_)
+                    delete fields_;
+            }
+
+            void set_fields(ExpressionList *e) {
+                vector<const Type *> types;
+                for (auto p = e; p != nullptr; p = p->next)
+                    types.push_back(p->expression->type());
+                type_->check_signature(types);
+                fields_ = e;
+            }
+
+            ExpressionList *fields() {
+                return fields_;
+            }
+
+            virtual void accept(AST_Visitor &);
+            virtual const RecordType *type() const {
+                return type_;
+            }
+        private:
+            Record(const Record &) = delete;
+            Record &operator=(const Record &) = delete;
+
+            const RecordType *type_;
+            ExpressionList *fields_;
+    };
+
+
+    /**
+     *
+     */
     class Statement : public AST_Node
     {
 
@@ -1156,6 +1196,7 @@ namespace ast {
             virtual void visit(SymbolRef *) = 0;
             virtual void visit(FieldRef *) = 0;
             virtual void visit(List *) = 0;
+            virtual void visit(Record *) {} /* TODO */
 
             virtual void visit(Statements *) = 0;
 

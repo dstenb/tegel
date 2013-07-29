@@ -210,13 +210,6 @@ namespace constant {
             string value_;
     };
 
-    class UnmatchingFieldSignature : public runtime_error
-    {
-        public:
-            UnmatchingFieldSignature(const string &what)
-                : runtime_error(what) {}
-    };
-
     class RecordConstantData : public SingleConstantData
     {
         public:
