@@ -104,6 +104,30 @@ namespace type {
         return fields_.end();
     }
 
+    void RecordType::check_signature(const vector<const Type *> &v) const {
+
+        if (v.size() != fields_.size()) {
+            stringstream s;
+            s << "wrong number of fields (got " << v.size()
+              << ", expected " << fields_.size() << ")";
+            throw UnmatchingFieldSignature(s.str());
+        }
+
+        auto m = mismatch(fields_.begin(), fields_.end(), v.begin(),
+                          [] (const RecordField &f,
+        const Type *t) {
+            return f.type == t;
+        });
+
+        if (m.first != fields_.end()) {
+            stringstream s;
+            s << "wrong type for field " << (m.first - fields_.begin() + 1)
+              << " (got " << (*m.second)->str() <<
+              ", expected " << (*m.first).type->str() << ")";
+            throw UnmatchingFieldSignature(s.str());
+        }
+    }
+
     bool RecordType::matches(const RecordType *other) const
     {
         if (no_of_fields() != other->no_of_fields())

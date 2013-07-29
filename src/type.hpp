@@ -272,6 +272,13 @@ namespace type {
         const PrimitiveType *type;
     };
 
+    class UnmatchingFieldSignature : public runtime_error
+    {
+        public:
+            UnmatchingFieldSignature(const string &what)
+                : runtime_error(what) {}
+    };
+
     class RecordType : public SingleType
     {
             friend class TypeFactory;
@@ -312,6 +319,8 @@ namespace type {
             virtual void accept(TypeVisitor &v) const {
                 v.visit(this);
             }
+
+            void check_signature(const vector<const Type *> &) const;
 
             /** Returns true if the record types have the same field signature
              *
