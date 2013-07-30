@@ -305,21 +305,16 @@ namespace py_backend
         unindent() << "    return True if s.lower() == \"y\" "
                    "else False\n\n";
 
-        generate_records(args);
+        generate_records();
     }
 
     /** Generates the record declarations
      *
      */
-    void PyHeader::generate_records(const vector<symbol::Argument *> &args)
+    void PyHeader::generate_records()
     {
-        for (symbol::Argument *a : args) {
-            auto t = a->get_type();
-            if (t->record())
-                generate_record(t->record());
-            else if (t->list() && t->list()->elem()->record())
-                generate_record(t->list()->elem()->record());
-        }
+        for (const RecordType *r : TypeFactory::get_records())
+            generate_record(r);
     }
 
     /** Generates a record declaration using collections.namedtuple

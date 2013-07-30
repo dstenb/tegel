@@ -60,7 +60,7 @@ namespace py_backend {
             /** Generate the named tuples for all the defined records
              *
              */
-            void generate_records(const vector<symbol::Argument *> &);
+            void generate_records(void);
             void generate_record(const RecordType *);
     };
 

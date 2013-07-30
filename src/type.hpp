@@ -446,6 +446,15 @@ namespace type {
                        it->second->list() : nullptr;
             }
 
+            static vector<const RecordType *>get_records() {
+                vector<const RecordType *> v;
+                for (auto it = map_.begin(); it != map_.end(); ++it) {
+                    if (it->second->record())
+                        v.push_back(it->second->record());
+                }
+                return v;
+            }
+
             /** Prints the type map to the given stream
              *
              */
