@@ -602,7 +602,7 @@ create
         if (context->is_tgp()) {
             if ($3->type() != TypeFactory::get("string")) {
                 yyverror(&@3, context,
-			"wrong type for first argument to create() (got %s, "
+                    "wrong type for first argument to create() (got %s, "
                     "expected string", $3->type()->str().c_str());
                 YYERROR;
             }
@@ -616,7 +616,7 @@ create
                 cerr << "first time parsing " << $5 << endl;
 
                 if (!(fp = fopen($5, "r"))) {
-		    yyverror(&@5, context, "couldn't open %s (%s)",
+                    yyverror(&@5, context, "couldn't open %s (%s)",
 			    $5, strerror(errno));
                     YYERROR;
                 }
@@ -627,7 +627,7 @@ create
                     YYERROR;
 
                 context->set_parsed_file($5, new_context->data);
-		data = new_context->data;
+                data = new_context->data;
             }
 
             $$ = new ast::Create($3, $5, $7);
