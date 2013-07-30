@@ -103,6 +103,7 @@ namespace py_backend {
             virtual void visit(ast::SymbolRef *);
             virtual void visit(ast::FieldRef *);
             virtual void visit(ast::List *);
+            virtual void visit(ast::Record *);
             virtual void visit(ast::Statements *);
             virtual void visit(ast::Conditional *);
             virtual void visit(ast::ForEach *);

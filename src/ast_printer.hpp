@@ -162,6 +162,17 @@ namespace ast_printer {
                 indent--;
             }
 
+            virtual void visit(Record *p) {
+                print_ws();
+                cerr << "Record " << p->type()->str() << "\n";
+                indent++;
+                for (auto e = p->fields(); e != nullptr;
+                        e = e->next) {
+                    e->expression->accept(*this);
+                }
+                indent--;
+            }
+
             virtual void visit(Conditional *p) {
                 print_ws();
                 cerr << "Conditional\n";

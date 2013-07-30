@@ -155,6 +155,10 @@ namespace bash_backend
     {
     }
 
+    void BashBody::visit(ast::Record *)
+    {
+    }
+
     void BashBody::visit(ast::Conditional *p)
     {
         p->if_node()->accept(*this);

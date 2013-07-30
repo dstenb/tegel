@@ -647,6 +647,17 @@ namespace py_backend
         unindent() << "]";
     }
 
+    void PyBody::visit(ast::Record *p)
+    {
+        unindent() << PyUtils::record_name(p->type()) << "(";
+        for (auto e = p->fields(); e != nullptr; e = e->next) {
+            e->expression->accept(*this);
+            if (e->next)
+                unindent() << ", ";
+        }
+        unindent() << ")";
+    }
+
     void PyBody::visit(ast::Conditional *p)
     {
         p->if_node()->accept(*this);

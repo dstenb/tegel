@@ -1196,7 +1196,7 @@ namespace ast {
             virtual void visit(SymbolRef *) = 0;
             virtual void visit(FieldRef *) = 0;
             virtual void visit(List *) = 0;
-            virtual void visit(Record *) {} /* TODO */
+            virtual void visit(Record *) = 0;
 
             virtual void visit(Statements *) = 0;
 
