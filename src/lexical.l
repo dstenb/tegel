@@ -11,6 +11,8 @@ void string_builder_append(const char *s);
 void yyerror(YYLTYPE *, ParseContext *, const char *);
 void yyverror(YYLTYPE *, ParseContext *, const char *, ...);
 void yylerror(ParseContext *, const char *, ...);
+void yywarning(YYLTYPE *, ParseContext *, const char *);
+void yyvwarning(YYLTYPE *, ParseContext *, const char *, ...);
 
 int str_caller; // calling state for str
 
@@ -239,6 +241,26 @@ void yylerror(ParseContext *c, const char *fmt, ...)
     if (!c->name.empty())
         fprintf(stderr, "%s:", c->name.c_str());
     fprintf(stderr, "%i: error: ", yylineno);
+
+    va_start(val, fmt);
+    vfprintf(stderr, fmt, val);
+    va_end(val);
+    fprintf(stderr, "\n");
+}
+
+void yywarning(YYLTYPE *l, ParseContext *c, const char *s)
+{
+    if (!c->name.empty())
+        fprintf(stderr, "%s:", c->name.c_str());
+    fprintf(stderr, "%i: warning: %s\n", l->first_line, s);
+}
+
+void yyvwarning(YYLTYPE *l, ParseContext *c, const char *fmt, ...)
+{
+    va_list val;
+    if (!c->name.empty())
+        fprintf(stderr, "%s:", c->name.c_str());
+    fprintf(stderr, "%i: warning: ", l->first_line);
 
     va_start(val, fmt);
     vfprintf(stderr, fmt, val);
