@@ -254,7 +254,7 @@ namespace pygtk_backend
         indent() << "self.vbox.add(self.bottom)\n";
         indent() << "self.vbox.show()\n";
         indent() << "self.window.add(self.vbox)\n\n";
-        indent() << "if self.args._preview:\n";
+        indent() << "if self.args['_preview']:\n";
         indent() << "    self.update()\n\n";
         indent_dec();
     }
@@ -284,7 +284,7 @@ namespace pygtk_backend
 
         indent() << "self.a_scrolled.show()\n";
         indent() << "self.bottom.add(self.a_scrolled)\n";
-        indent() << "self.p_scrolled.set_visible(self.args._preview)\n";
+        indent() << "self.p_scrolled.set_visible(self.args['_preview'])\n";
         indent() << "self.bottom.add(self.p_scrolled)\n";
         indent() << "self.bottom.show()\n\n";
 
@@ -382,7 +382,7 @@ namespace pygtk_backend
         indent() << "view.set_submenu(viewmenu)\n";
 
         indent() << "preview = gtk.CheckMenuItem('Preview')\n";
-        indent() << "preview.set_active(self.args._preview)\n";
+        indent() << "preview.set_active(self.args['_preview'])\n";
         indent() << "preview.connect('activate', self.toggle_preview)\n";
         indent() << "viewmenu.append(preview)\n";
         indent() << "k, m = gtk.accelerator_parse('<Control>P')\n";
@@ -551,12 +551,12 @@ namespace pygtk_backend
         indent() << "def update_list_item(self, name, value, row, i):\n";
         indent() << "    new_item = None\n";
         indent() << "    if list_decl[name]['record']:\n";
-        indent() << "        rl = list(getattr(self.args, name)[row])\n";
+        indent() << "        rl = list(self.args[name][row])\n";
         indent() << "        rl[i] = value\n";
         indent() << "        new_item = list_decl[name]['record'](*rl)\n";
         indent() << "    else:\n";
         indent() << "        new_item = value\n";
-        indent() << "    getattr(self.args, name)[row] = new_item\n";
+        indent() << "    self.args[name][row] = new_item\n";
         indent() << "    self.update()\n\n";
 
         /* Generate the CellRendererText column method */
@@ -599,10 +599,10 @@ namespace pygtk_backend
         indent() << "def create_store(self, name):\n";
         indent() << "    store = gtk.ListStore(*list_decl[name]['types'])\n";
         indent() << "    if list_decl[name]['record']:\n";
-        indent() << "        for v in getattr(self.args, name):\n";
+        indent() << "        for v in self.args[name]:\n";
         indent() << "            store.append(list(v))\n";
         indent() << "    else:\n";
-        indent() << "        for v in getattr(self.args, name):\n";
+        indent() << "        for v in self.args[name]:\n";
         indent() << "            store.append([v])\n";
         indent() << "    return store\n\n";
 
@@ -630,10 +630,10 @@ namespace pygtk_backend
 
         /* Generate the shared function for updating records */
         indent() << "def register_change(self, name, i, v):\n";
-        indent() << "    rl = list(getattr(self.args, name))\n";
+        indent() << "    rl = list(self.args[name])\n";
         indent() << "    rl[i] = v\n";
-        indent() << "    setattr(self.args, name, type(getattr(self.args, "
-                 "name))(*rl))\n";
+        indent() << "    self.args[name] = type(self.args[name]"
+                 ")(*rl)\n";
         indent() << "    self.update()\n\n";
     }
 
@@ -646,30 +646,30 @@ namespace pygtk_backend
         indent() << "def add_row(self, w, view, name):\n";
         indent() << "    sv, v = create_default_item(name)\n";
         indent() << "    view.get_model().append(sv)\n";
-        indent() << "    getattr(self.args, name).append(v)\n";
+        indent() << "    self.args[name].append(v)\n";
         indent() << "    self.update()\n\n";
 
         /* Generate the callback function for the "remove" button */
         indent() << "def remove_selected(self, w, view, name):\n";
         indent() << "    s, i = view.get_selection().get_selected()\n";
         indent() << "    if i:\n";
-        indent() << "        del getattr(self.args, name)[s.get_path(i)[0]]\n";
+        indent() << "        del self.args[name][s.get_path(i)[0]]\n";
         indent() << "        s.remove(i)\n";
         indent() << "    self.update()\n\n";
 
         /* Generate the callback function for a bool argument */
         indent() << "def bool_toggled(self, w, name):\n";
-        indent() << "    setattr(self.args, name, w.get_active())\n";
+        indent() << "    self.args[name] = w.get_active()\n";
         indent() << "    self.update()\n\n";
 
         /* Generate the callback function for an int argument */
         indent() << "def int_changed(self, w, name):\n";
-        indent() << "    setattr(self.args, name, int(w.get_value()))\n";
+        indent() << "    self.args[name] = int(w.get_value())\n";
         indent() << "    self.update()\n\n";
 
         /* Generate the callback function for a string argument */
         indent() << "def string_changed(self, w, name):\n";
-        indent() << "    setattr(self.args, name, w.get_text())\n";
+        indent() << "    self.args[name] = w.get_text()\n";
         indent() << "    self.update()\n\n";
 
         /* Generate the callback function for a text cell */
@@ -712,19 +712,19 @@ namespace pygtk_backend
 
         /* Generate create_bool(). Used to create a bool argument */
         indent() << "def create_bool(self, label, name):\n";
-        indent() << "    b = self.create_toggle(getattr(self.args, name), "
+        indent() << "    b = self.create_toggle(self.args[name], "
                  "self.bool_toggled, name)\n";
         indent() << "    return self.create_labeled(label, (b, False))\n\n";
 
         /* Generate create_int(). Used to create an int argument */
         indent() << "def create_int(self, label, name):\n";
-        indent() << "    i = self.create_spin(getattr(self.args, name), "
+        indent() << "    i = self.create_spin(self.args[name], "
                  "self.int_changed, name)\n";
         indent() << "    return self.create_labeled(label, (i, False))\n\n";
 
         /* Generate create_string(). Used to create a string argument */
         indent() << "def create_string(self, label, name):\n";
-        indent() << "    e = self.create_text(getattr(self.args, name), "
+        indent() << "    e = self.create_text(self.args[name], "
                  "self.string_changed, name)\n";
         indent() << "    return self.create_labeled(label, (e, False))\n\n";
 
@@ -748,7 +748,7 @@ namespace pygtk_backend
                  "self.int_field_changed) }\n";
         indent() << "    for i, f in enumerate(fields):\n";
         indent() << "        t = d[f['type']]\n";
-        indent() << "        w = t[0](getattr(self.args, name)[i], "
+        indent() << "        w = t[0](self.args[name][i], "
                  "t[1], name, i)\n";
         indent() << "        l = gtk.Label(f['label'])\n";
         indent() << "        table.attach(l, 0, 1, i, i+1, xoptions=0, "
@@ -769,7 +769,7 @@ namespace pygtk_backend
         generate_opts(args);
         unindent() << "\n";
 
-        indent() << "g = GUI(args)\n";
+        indent() << "g = GUI(vars(args))\n";
         indent() << "g.main()\n";
 
         indent_dec();
