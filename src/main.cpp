@@ -42,6 +42,8 @@ Backend *get_backend(const string &str)
         return new py_backend::PyBackend;
     } else if (str == "bash") {
         return new bash_backend::BashBackend;
+    } else if (str == "pygtk") {
+        return new pygtk_backend::PyGtkBackend;
     } else {
         throw UnknownBackend("unknown backend '" + str  + "'");
     }
