@@ -30,7 +30,33 @@ class TgpBackend
                               map<string, ParseData *> &tgl_data) = 0;
 };
 
+/** Symbol table for untyped backends
+ *
+ * The symbol table maps symbols to strings created by calls to
+ * StringCreator.next()
+ *
+ */
+template<typename StringCreator>
+class BackendUntypedSymbolTable
+{
+    public:
+        BackendUntypedSymbolTable()
+            : creator_(), map_() {}
 
+        string get(symbol::Symbol *s) {
+            auto it = map_.find(s);
+            string str;
+            if (it != map_.end())
+                str = it->second;
+            else
+                str = map_[s] = creator_.next();
+            return str;
+        }
+
+    private:
+        StringCreator creator_;
+        map<symbol::Symbol *, string> map_;
+};
 
 class BackendException : public runtime_error
 {
