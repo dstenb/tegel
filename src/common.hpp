@@ -36,4 +36,33 @@ class Escaper
         }
 };
 
+/** AsciiStringCreator
+ *
+ * Returns a string from the list of strings
+ * "{prefix}a", ..., "{prefix}z", "{prefix}aa", ... for each call to next()
+ *
+ */
+class AsciiStringCreator
+{
+    public:
+        AsciiStringCreator(const string &prefix)
+            : prefix_(prefix), str_("") {}
+
+        string next() {
+            if (str_.empty()) {
+                str_ = prefix_ + "a";
+            } else {
+                if (str_[str_.length() - 1] == 'z')
+                    str_ += "a";
+                else
+                    str_[str_.length() - 1]++;
+            }
+            return str_;
+        }
+
+    private:
+        string prefix_;
+        string str_;
+};
+
 #endif
