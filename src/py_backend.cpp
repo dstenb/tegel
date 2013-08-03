@@ -622,7 +622,7 @@ namespace py_backend
         if (p->symbol()->argument())
             unindent() << "_args[\"" << p->symbol()->get_name() << "\"]";
         else if (p->symbol()->variable())
-            unindent() << p->symbol()->get_name();
+            unindent() << table_.get(p->symbol());
     }
 
     void PyBody::visit(ast::FieldRef *p)
@@ -666,7 +666,7 @@ namespace py_backend
     {
         if (p->statements()) {
             indent() << "for ";
-            unindent() << p->variable()->get_name();
+            unindent() << table_.get(p->variable());
             unindent() << " in ";
             p->expression()->accept(*this);
             unindent() << ":\n";
@@ -680,9 +680,9 @@ namespace py_backend
     {
         if (p->statements()) {
             indent() << "for ";
-            unindent() << p->index()->get_name();
+            unindent() << table_.get(p->index());
             unindent() << ", ";
-            unindent() << p->value()->get_name();
+            unindent() << table_.get(p->value());
             unindent() << " in enumerate(";
             p->expression()->accept(*this);
             unindent() << "):\n";
@@ -747,7 +747,7 @@ namespace py_backend
 
     void PyBody::visit(ast::VariableAssignment *p)
     {
-        indent() << p->variable()->get_name() << " = ";
+        indent() << table_.get(p->variable()) << " = ";
         p->expression()->accept(*this);
         unindent() << "\n";
     }

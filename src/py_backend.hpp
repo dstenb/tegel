@@ -49,6 +49,20 @@ namespace py_backend {
             unsigned indentation_;
     };
 
+    class PyVariableCreator : public AsciiStringCreator
+    {
+        public:
+            PyVariableCreator()
+                : AsciiStringCreator("") {}
+    };
+
+    class PySymbolTable : public BackendUntypedSymbolTable<PyVariableCreator>
+    {
+        public:
+            PySymbolTable()
+                : BackendUntypedSymbolTable() {}
+    };
+
     class PyHeader : public PyWriter
     {
         public:
@@ -68,7 +82,7 @@ namespace py_backend {
     {
         public:
             PyBody(ostream &os)
-                : PyWriter(os, 0), tgl_() {}
+                : PyWriter(os, 0), tgl_(), table_() {}
 
             /** Generates a body generation function named "generate"
              *
@@ -121,6 +135,7 @@ namespace py_backend {
             void binary(const string &s, ast::BinaryExpression *e);
 
             map<string, ParseData *> tgl_;
+            PySymbolTable table_;
     };
 
     class PyMain : public PyWriter
@@ -156,7 +171,6 @@ namespace py_backend {
         private:
             void check_cmd(const vector<symbol::Argument *> &args);
     };
-
 }
 
 #endif
