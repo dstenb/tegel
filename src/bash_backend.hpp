@@ -35,6 +35,19 @@ namespace bash_backend {
             unsigned indentation_;
     };
 
+    class BashVariableCreator : public AsciiStringCreator
+    {
+        public:
+            BashVariableCreator()
+                : AsciiStringCreator("") {}
+    };
+
+    class BashSymbolTable : public BackendUntypedSymbolTable<BashVariableCreator>
+    {
+        public:
+            BashSymbolTable()
+                : BackendUntypedSymbolTable() {}
+    };
 
     class BashBody : public BashWriter, public ast::AST_Visitor
     {
@@ -98,8 +111,6 @@ namespace bash_backend {
         private:
             void generate_opts(const vector<symbol::Argument *> &);
     };
-
-
 
     class BashBackend : public Backend
     {
