@@ -808,7 +808,7 @@ namespace pygtk_backend
             check_cmd(args);
 
             PyHeader h(os);
-            h.generate(args);
+            h.generate();
 
             PyGtkHeader hg(os);
             hg.generate(args);

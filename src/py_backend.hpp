@@ -69,7 +69,7 @@ namespace py_backend {
             PyHeader(ostream &os)
                 : PyWriter(os, 0) {}
 
-            void generate(const vector<symbol::Argument *> &);
+            void generate(void);
         private:
             /** Generate the named tuples for all the defined records
              *

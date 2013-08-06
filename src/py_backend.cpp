@@ -292,7 +292,7 @@ namespace py_backend
     /** Generates the header section of the file
      *
      */
-    void PyHeader::generate(const vector<symbol::Argument *> &args)
+    void PyHeader::generate()
     {
         unindent() << "#! /usr/bin/env python\n";
         unindent() << "# -*- coding: utf-8 -*-\n\n";
@@ -851,7 +851,7 @@ namespace py_backend
             PyBody b(os);
             PyMain m(os);
 
-            h.generate(args);
+            h.generate();
             os << "\n";
             b.generate(body);
             os << "\n";
@@ -875,7 +875,7 @@ namespace py_backend
             PyBody b(os);
             PyMain m(os);
 
-            h.generate(tgp_data->arguments);
+            h.generate();
             os << "\n";
             b.generate(tgp_data, tgl_data);
             os << "\n";
