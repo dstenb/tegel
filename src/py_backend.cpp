@@ -760,14 +760,26 @@ namespace py_backend
 
     void PyBody::visit(ast::Create *p)
     {
-        /* TODO: - validate arguments
-         *       - create namespace for arguments
+        /* TODO: - add overwrite
          *       - handle file exceptions */
         indent() << "try:\n";
         indent() << "    f = open(";
         p->out->accept(*this);
         unindent() << ", 'w')\n";
-        indent() << "    __args = _args\n"; /* TODO */
+        indent() << "    __args = {";
+        auto pd = tgl_[p->tgl];
+        for (symbol::Argument *a : pd->arguments) {
+            unindent() << "\"" << a->get_name() << "\": ";
+            auto it = p->args.find(a->get_name());
+            if (it != p->args.end()) {
+                it->second->accept(*this);
+            } else {
+                PyConstToStream c(unindent());
+                a->get("default")->get()->accept(c);
+            }
+            unindent() << ", ";
+        }
+        unindent() << "}\n";
         indent() << "    try:\n";
         indent() << "        generate(__args, f, \"" << p->tgl << "\")\n";
         indent() << "    finally:\n";
