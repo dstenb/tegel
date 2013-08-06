@@ -149,6 +149,7 @@ namespace ast_printer {
                 p->record()->accept(*this);
                 print_ws();
                 cerr << "." << p->field() << "\n";
+                indent--;
             }
 
             virtual void visit(List *p) {
@@ -296,11 +297,18 @@ namespace ast_printer {
 
             virtual void visit(Create *p) {
                 print_ws();
-                cerr << "Create(tgl_file=" << p->tgl << ")\n";
+                cerr << "Create(tgl_file=" << p->tgl << ", ow_ask="
+                     << (p->ow_ask ? "true" : "false") << ")\n";
                 indent++;
                 p->out->accept(*this);
-                for (auto e = p->args; e != nullptr; e = e->next)
-                    e->expression->accept(*this);
+                /* TODO */
+                for (auto a = p->args.begin(); a != p->args.end(); a++) {
+                    print_ws();
+                    cerr << a->first << "\n";
+                    indent++;
+                    a->second->accept(*this);
+                    indent--;
+                }
                 indent--;
             }
 

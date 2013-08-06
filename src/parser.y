@@ -1,6 +1,7 @@
 %{
 #include <algorithm>
 #include <iostream>
+#include <map>
 #include <vector>
 
 #include "ast.hpp"
@@ -24,6 +25,7 @@ std::vector<Param *> param_list;
 
 RecordType::field_vector record_members;
 
+std::map<string, ast::Expression *> kw_map;
 
 #define scanner context->scanner
 %}
@@ -82,6 +84,9 @@ RecordType::field_vector record_members;
 int yylex(YYSTYPE *, YYLTYPE *, void *);
 void yyerror(YYLTYPE *, ParseContext *, const char *);
 void yyverror(YYLTYPE *, ParseContext *, const char *, ...);
+void yywarning(YYLTYPE *, ParseContext *, const char *);
+void yyvwarning(YYLTYPE *, ParseContext *, const char *, ...);
+
 %}
 
 %token END 0 "end of file"
@@ -594,9 +599,8 @@ with
     : WITH variable_list { $$ = $2; }
 
 create
-    : CREATE '(' expression ',' STRING ',' expression_list ')'
+    : CREATE '(' expression ',' STRING ',' BOOL create_keywords ')'
     {
-        /* TODO: add "ask before overwrite?" flag */
         /* TODO: use absolute paths (realpath()) */
 
         if (context->is_tgp()) {
@@ -609,15 +613,12 @@ create
 
             auto data = context->get_parsed_file($5);
 
-            if (data != nullptr) {
-                cerr << $5 << " was already read!\n";
-            } else {
+            if (!data) {
                 FILE *fp;
-                cerr << "first time parsing " << $5 << endl;
 
                 if (!(fp = fopen($5, "r"))) {
                     yyverror(&@5, context, "couldn't open %s (%s)",
-			    $5, strerror(errno));
+                        $5, strerror(errno));
                     YYERROR;
                 }
 
@@ -630,14 +631,38 @@ create
                 data = new_context->data;
             }
 
-            $$ = new ast::Create($3, $5, $7);
+            for (auto it = kw_map.begin(); it != kw_map.end(); ++it) {
+                auto fit = find_if(data->arguments.begin(),
+                    data->arguments.end(), [&] (Argument *a) {
+                        return a->get_name() == it->first; });
+
+                if (fit == data->arguments.end()) {
+                    yyverror(&@1, context,
+                        "invalid keyword for '%s': '%s'", $5,
+                        it->first.c_str());
+                    YYERROR;
+                } else if (it->second->type() != (*fit)->get_type()) {
+                    yyverror(&@1, context,
+                        "wrong type for keyword '%s' (got %s, expected %s)",
+                        it->first.c_str(), it->second->type()->str().c_str(),
+                        (*fit)->get_type()->str().c_str());
+                    YYERROR;
+                }
+            }
+
+            $$ = new ast::Create($3, $5, $7, kw_map);
         } else {
             yyerror(&@1, context, "create is only allowed in .tgp files");
             YYERROR;
         }
 
+        kw_map.clear();
         free($5);
     }
+
+create_keywords
+    : ',' keyword_list { /* empty */  }
+    | /* empty */
 
 variable_list
     : variable_decl ',' variable_list
@@ -1026,6 +1051,36 @@ expression_list
     {
         $$ = nullptr;
     }
+    ;
+
+keyword_list
+    : IDENTIFIER '=' expression ',' keyword_list
+    {
+        auto it = kw_map.find($1);
+        if (it != kw_map.end()) {
+            yyvwarning(&@1, context,
+                "multiple declarations of argument '%s'", $1);
+            auto e = it->second;
+            it->second = $3;
+            delete e;
+        } else {
+            kw_map[$1] = $3;
+        }
+    }
+    | IDENTIFIER '=' expression
+    {
+        auto it = kw_map.find($1);
+        if (it != kw_map.end()) {
+            yyvwarning(&@1, context,
+                "multiple declarations of argument '%s'", $1);
+            auto e = it->second;
+            it->second = $3;
+            delete e;
+        } else {
+            kw_map[$1] = $3;
+        }
+    }
+    | /* empty */
     ;
 
 %%

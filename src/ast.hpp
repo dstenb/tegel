@@ -1112,18 +1112,20 @@ namespace ast {
      * .tgp files
      *
      */
+    /* TODO: ow_mask -> Expression */
     class Create : public Statement
     {
         public:
-            Create(Expression *out, const string &tgl,
-                   ExpressionList *arguments)
-                : out(out), tgl(tgl), args(arguments) {}
+            Create(Expression *out, const string &tgl, bool ow_ask,
+                   const map<string, Expression *> &kw)
+                : out(out), tgl(tgl), ow_ask(ow_ask), args(kw) {}
 
             virtual void accept(AST_Visitor &);
 
             Expression *out;
             string tgl;
-            ExpressionList *args;
+            bool ow_ask;
+            map<string, Expression *> args;
         private:
             Create(const Create &) = delete;
             Create &operator=(const Create &) = delete;
