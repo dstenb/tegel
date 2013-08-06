@@ -43,6 +43,8 @@ class BackendUntypedSymbolTable
         BackendUntypedSymbolTable()
             : creator_(), map_() {}
 
+        virtual ~BackendUntypedSymbolTable() {}
+
         string get(symbol::Symbol *s) {
             auto it = map_.find(s);
             string str;

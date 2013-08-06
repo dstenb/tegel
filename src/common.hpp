@@ -48,6 +48,8 @@ class AsciiStringCreator
         AsciiStringCreator(const string &prefix)
             : prefix_(prefix), str_("") {}
 
+        virtual ~AsciiStringCreator() {}
+
         string next() {
             if (str_.empty()) {
                 str_ = prefix_ + "a";
