@@ -53,7 +53,7 @@ namespace bash_backend {
     {
         public:
             BashBody(ostream &os)
-                : BashWriter(os) {}
+                : BashWriter(os), table_() {}
 
             void generate(ast::Statements *body);
 
@@ -99,6 +99,8 @@ namespace bash_backend {
             virtual void visit(ast::Create*);
         private:
             void binary(const string &s, ast::BinaryExpression *e);
+
+            BashSymbolTable table_;
     };
 
     class BashMain : public BashWriter
