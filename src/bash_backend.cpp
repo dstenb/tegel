@@ -169,12 +169,42 @@ namespace bash_backend
         indent() << "fi\n";
     }
 
-    void BashBody::visit(ast::ForEach *)
+    void BashBody::visit(ast::ForEach *p)
     {
+        /* for [variable] in [expression] ; do */
+        indent() << "for " << table_.get(p->variable())  << " in ";
+        p->expression()->accept(*this);
+        unindent() << " ; do\n";
+
+        /* statements */
+        indent_inc();
+        p->statements()->accept(*this);
+        indent_dec();
+
+        /* done */
+        indent() << "done\n";
     }
 
-    void BashBody::visit(ast::ForEachEnum *)
+    void BashBody::visit(ast::ForEachEnum *p)
     {
+        string index = table_.get(p->index());
+
+        /* [index]=0 */
+        indent() << index << "=0\n";
+
+        /* for [variable] in [expression] ; do */
+        indent() << "for " << table_.get(p->value()) << " in ";
+        p->expression()->accept(*this);
+        unindent() << " ; do\n";
+
+        /* statements and [index]++*/
+        indent_inc();
+        p->statements()->accept(*this);
+        indent() << index << "=$((" << index << " + 1 ))\n";
+        indent_dec();
+
+        /* done */
+        indent() << "done\n";
     }
 
     void BashBody::visit(ast::If *p)
