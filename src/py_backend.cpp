@@ -665,9 +665,7 @@ namespace py_backend
     void PyBody::visit(ast::ForEach *p)
     {
         if (p->statements()) {
-            indent() << "for ";
-            unindent() << table_.get(p->variable());
-            unindent() << " in ";
+            indent() << "for " << table_.get(p->variable()) << " in ";
             p->expression()->accept(*this);
             unindent() << ":\n";
             indent_inc();
@@ -679,11 +677,8 @@ namespace py_backend
     void PyBody::visit(ast::ForEachEnum *p)
     {
         if (p->statements()) {
-            indent() << "for ";
-            unindent() << table_.get(p->index());
-            unindent() << ", ";
-            unindent() << table_.get(p->value());
-            unindent() << " in enumerate(";
+            indent() << "for " << table_.get(p->index()) << ", "
+                     << table_.get(p->value()) << " in enumerate(";
             p->expression()->accept(*this);
             unindent() << "):\n";
             indent_inc();
