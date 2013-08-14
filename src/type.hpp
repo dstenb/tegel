@@ -543,11 +543,12 @@ namespace type {
             }
 
             static void setup_record_list_methods(ListType *t) {
+                vector<const Type *> e_v = { };
                 vector<const Type *> sb_v = { get("string"),
                                               get("bool")
                                             };
-                vector<const Type *> s_v = { get("string") };
 
+                t->add_method(TypeMethod("size", get("int"), e_v));
                 t->add_method(TypeMethod("sort", t, sb_v));
             }
 
