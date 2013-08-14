@@ -548,7 +548,6 @@ namespace type {
                                             };
                 vector<const Type *> s_v = { get("string") };
 
-                t->add_method(TypeMethod("join", get("string"), s_v));
                 t->add_method(TypeMethod("sort", t, sb_v));
             }
 
