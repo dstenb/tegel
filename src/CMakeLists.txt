@@ -17,3 +17,5 @@ set (SRC_FILES_TGP main-tgp.cpp ${SRC_FILES})
 
 add_executable(tegel ${SRC_FILES_TGL})
 add_executable(tegel-tgp ${SRC_FILES_TGP})
+
+install(TARGETS tegel tegel-tgp DESTINATION bin)
