@@ -1,0 +1,20 @@
+# This file generates a LaTeX makefile
+
+arg section[] sections {
+    cmd = "-f";
+}
+
+%%
+FLAGS = -interaction=batchmode
+NUMBERS = 1 2 3
+all:
+	$(foreach var,$(NUMBERS),pdflatex $(FLAGS) main.tex;)
+
+x: all
+	xpdf main.pdf &
+
+evince: all
+	evince main.pdf &
+
+clean:
+	rm -f main.aux main.log main.toc main.pdf

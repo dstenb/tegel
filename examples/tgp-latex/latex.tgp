@@ -1,0 +1,37 @@
+record section {
+    string name;
+    string title;
+}
+
+arg section[] sections {
+    default = section[];
+    cmd = "-f";
+}
+
+arg bool toc {
+    default = true;
+    cmd = "-t";
+    info = "Generate table of contents?";
+}
+
+arg bool makefile {
+    default = true;
+    cmd = "-m";
+    info = "Generate a makefile?";
+}
+
+%%
+% create("main.tex", "main.tgl", true, title = "TeGeL Example", toc = toc, \
+	sections = sections)
+Created main.tex using the main.tgl file!
+\\
+% for f in sections
+% create(f.name, "section.tgl", true, \
+	title = f.title)
+Created {{ f.name }} using the section.tgl file!
+% endfor
+\\
+% if makefile
+% create("Makefile", "makefile.tgl", true, sections = sections)
+Created a Makefile!
+% endif

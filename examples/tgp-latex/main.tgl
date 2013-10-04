@@ -1,0 +1,51 @@
+arg section[] sections {
+}
+
+arg string title {
+
+}
+
+arg bool toc {
+
+}
+
+%%
+\documentclass[a4paper,12pt]{article}
+\pagestyle{plain}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{empheq}
+\usepackage[fixlanguage]{babelbib}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{appendix}
+\usepackage{verbatim}
+
+\restylefloat{table}
+
+\setlength{\parskip}{12pt}		% 12pt mellan stycken
+\setlength{\parindent}{0pt}		% Nya stycken indenteras inte
+
+\title{{ "{" + title + "}" }}
+\author{John Doe}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% if toc
+\tableofcontents
+\newpage
+% endif
+
+% for f in sections
+\input{{ "{" + f.name + "}" }}
+% endfor
+
+\end{document}
