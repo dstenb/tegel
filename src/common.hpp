@@ -46,19 +46,26 @@ class AsciiStringCreator
 {
     public:
         AsciiStringCreator(const string &prefix)
-            : prefix_(prefix), str_("") {}
+            : prefix_(prefix), str_(prefix_ + "`") {}
 
         virtual ~AsciiStringCreator() {}
 
         string next() {
-            if (str_.empty()) {
-                str_ = prefix_ + "a";
-            } else {
-                if (str_[str_.length() - 1] == 'z')
-                    str_ += "a";
-                else
-                    str_[str_.length() - 1]++;
+            bool append = true;
+
+            for (auto i = str_.length() - 1; i >= prefix_.length(); i--) {
+                if (str_[i] == 'z') {
+                    str_[i] = 'a';
+                } else {
+                    str_[i]++;
+                    append = false;
+                    break;
+                }
             }
+
+            if (append)
+                str_ += "a";
+
             return str_;
         }
 
