@@ -13,6 +13,15 @@ using namespace std;
 
 namespace py_backend {
 
+    struct PyExtraArgument
+    {
+        string name;
+        string type;
+        string default_value;
+        string help;
+        string destination;
+    };
+
     struct PyUtils
     {
         static ostream &constant_to_stream(ostream &, const ConstantData *);
@@ -144,9 +153,11 @@ namespace py_backend {
             PyMain(ostream &os)
                 : PyWriter(os, 0) {}
 
-            void generate(const vector<symbol::Argument *> &);
+            void generate(const vector<symbol::Argument *> &,
+                    const vector<PyExtraArgument> &, bool);
         private:
-            void generate_opts(const vector<symbol::Argument *> &);
+            void generate_opts(const vector<symbol::Argument *> &,
+                    const vector<PyExtraArgument> &);
     };
 
     /** Backend for .tgl files
