@@ -154,10 +154,10 @@ namespace py_backend {
                 : PyWriter(os, 0) {}
 
             void generate(const vector<symbol::Argument *> &,
-                    const vector<PyExtraArgument> &, bool);
+                          const vector<PyExtraArgument> &, bool);
         private:
             void generate_opts(const vector<symbol::Argument *> &,
-                    const vector<PyExtraArgument> &);
+                               const vector<PyExtraArgument> &);
     };
 
     /** Backend for .tgl files
