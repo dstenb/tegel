@@ -7,6 +7,7 @@ set (SRC_FILES ast.cpp
 	constant.cpp
 	symbol.cpp
 	type.cpp
+	py_helpers.cpp
 	py_backend.cpp
 	pygtk_backend.cpp
 	${BISON_Parser_OUTPUTS}

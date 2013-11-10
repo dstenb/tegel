@@ -9,7 +9,10 @@ using namespace std;
 #include "backend.hpp"
 #include "common.hpp"
 #include "py_backend.hpp"
+#include "py_helpers.hpp"
 #include "type.hpp"
+
+using namespace py_helpers;
 
 namespace pygtk_backend {
 
