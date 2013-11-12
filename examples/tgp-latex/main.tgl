@@ -24,6 +24,7 @@ arg bool toc {
 \usepackage{float}
 \usepackage{appendix}
 \usepackage{verbatim}
+\usepackage{listings}
 
 \restylefloat{table}
 

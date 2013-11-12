@@ -1,6 +1,7 @@
 #ifndef __PARSE_DATA_H__
 #define __PARSE_DATA_H__
 
+#include "ast.hpp"
 #include "symbol.hpp"
 #include "type.hpp"
 

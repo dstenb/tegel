@@ -652,7 +652,8 @@ create
 
             $$ = new ast::Create($3, $5, $7, kw_map);
         } else {
-            yyerror(&@1, context, "create is only allowed in .tgp files");
+            yyerror(&@1, context, "create is only allowed in .tgp files (use "
+                "tegel-tgp instead");
             YYERROR;
         }
 
