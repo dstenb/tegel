@@ -4,6 +4,16 @@
 @file
 @mainpage TeGeL - Template Generator Language
 
+ TeGeL is a language and program that generates runnable template scripts (e.g.
+ Python scripts) from a template specification.
+
+ A template specification consists of a body and a set of data arguments that
+ the body uses. The backends will automatically generate scripts that handles
+ the arguments in a safe fashion.
+
+ TeGeL can either generate scripts that create single files, or scripts that
+ create a set of files.
+
  \section source Source Code
 
  The source code can be found at https://github.com/dstenb/tegel
