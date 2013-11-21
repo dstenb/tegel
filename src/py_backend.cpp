@@ -290,12 +290,36 @@ namespace py_backend
         unindent() << "    except OSError as e:\n";
         unindent() << "        if e.errno != errno.EEXIST:\n";
         unindent() << "            print('Can\\'t create %s: %s' % "
-            "(path, e.strerror))\n";
+                   "(path, e.strerror))\n";
         unindent() << "            sys.exit(1)\n";
         unindent() << "    try:\n";
         unindent() << "        os.chdir(path)\n";
         unindent() << "    except OSError as e:\n";
-        unindent() << "        print('%s: %s' % (e.strerror, path))\n";
+        unindent() << "        print('%s: %s' % (e.strerror, path))\n\n";
+
+        unindent() << "def _input(s = ''):\n";
+        unindent() << "    if sys.version_info >= (3, 0):\n";
+        unindent() << "        return input(s)\n";
+        unindent() << "    else:\n";
+        unindent() << "        return raw_input(s)\n\n";
+
+        unindent() << "def open_file(path, ask):\n";
+        unindent() << "    try:\n";
+        unindent() << "        fd = os.open(path, os.O_CREAT | os.O_EXCL, "
+                   "0664)\n";
+        unindent() << "        return os.fdopen(fd, 'w')\n";
+        unindent() << "    except OSError as e:\n";
+        unindent() << "        if e.errno == errno.EEXIST:\n";
+        unindent() << "            while ask:\n";
+        unindent() << "                c = _input('%s already exists, "
+                   "overwrite? [Y/n]: ' % path)\n";
+        unindent() << "                if (c in [ 'y', 'Y', '' ]):\n";
+        unindent() << "                    ask = False\n";
+        unindent() << "                elif (c in [ 'n', 'N' ]):\n";
+        unindent() << "                    return None\n";
+        unindent() << "            return open(path, 'w')\n";
+        unindent() << "        else:\n";
+        unindent() << "            raise\n";
 
         generate_records();
     }
@@ -750,9 +774,9 @@ namespace py_backend
         /* TODO: - add overwrite
          *       - handle file exceptions */
         indent() << "try:\n";
-        indent() << "    f = open(";
+        indent() << "    f = open_file(";
         p->out->accept(*this);
-        unindent() << ", 'w')\n";
+        unindent() << ", " << (p->ow_ask ? "True" : "False") << ")\n";
         indent() << "    __args = {";
         auto pd = tgl_[p->tgl];
         for (symbol::Argument *a : pd->arguments) {
@@ -767,10 +791,11 @@ namespace py_backend
             unindent() << ", ";
         }
         unindent() << "}\n";
-        indent() << "    try:\n";
-        indent() << "        generate(__args, f, \"" << p->tgl << "\")\n";
-        indent() << "    finally:\n";
-        indent() << "        f.close()\n";
+        indent() << "    if f:\n";
+        indent() << "        try:\n";
+        indent() << "            generate(__args, f, \"" << p->tgl << "\")\n";
+        indent() << "        finally:\n";
+        indent() << "            f.close()\n";
         indent() << "except IOError as e:\n";
         indent() << "    print('Can\\'t create %s: %s' % (";
         p->out->accept(*this);
