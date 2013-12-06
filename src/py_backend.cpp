@@ -524,112 +524,85 @@ namespace py_backend
         PyUtils::constant_to_stream(unindent(), p->data());
     }
 
+    class VisitorWrapper
+    {
+        public:
+            VisitorWrapper(ast::AST_Visitor &v, ast::AST_Node *n)
+                : visitor_(v), node_(n) {}
+
+            friend ostream& operator <<(ostream &os, VisitorWrapper &t) {
+                t.node_->accept(t.visitor_);
+                return os;
+            }
+        private:
+            ast::AST_Visitor &visitor_;
+            ast::AST_Node *node_;
+    };
+
     void PyBody::visit(ast::MethodCall *p)
     {
-        /* TODO */
         auto t = p->expression()->type();
         auto m = p->method();
         auto name = m.name();
 
+        ast::Expression *a0 = nullptr;
+        ast::Expression *a1 = nullptr;
+
+        if (p->arguments()) {
+            a0 = p->arguments()->expression;
+            if (p->arguments()->next)
+                a1 = p->arguments()->next->expression;
+        }
+
+        VisitorWrapper ew(*this, p->expression());
+        VisitorWrapper a0w(*this, a0);
+        VisitorWrapper a1w(*this, a1);
+
         if (t == type::TypeFactory::get("bool")) {
             if (name == "str") {
-                unindent() << "\"true\" if ";
-                p->expression()->accept(*this);
-                unindent() << " else \"false\"";
+                unindent() << "'true' if " << ew << " else 'false'";
             }
         } else if (t == type::TypeFactory::get("int")) {
             if (name == "downto") {
-                unindent() << "list(reversed(range(";
-                p->arguments()->expression->accept(*this);
-                unindent() << ", ";
-                p->expression()->accept(*this);
-                unindent() << "+ 1)))";
+                unindent() << "list(reversed(range(" << a0w << ", "
+                           << ew << " + 1)))";
             } else if (name == "str") {
-                unindent() << "str(";
-                p->expression()->accept(*this);
-                unindent() << ")";
+                unindent() << "str(" << ew << ")";
             } else if (name == "upto") {
-                unindent() << "list(range(";
-                p->expression()->accept(*this);
-                unindent() << ", ";
-                p->arguments()->expression->accept(*this);
-                unindent() << "+ 1))";
+                unindent() << "list(range(" << ew << ", " << a0w << " + 1))";
             }
         } else if (t == type::TypeFactory::get("string")) {
             if (name == "lalign") {
-                p->expression()->accept(*this);
-                unindent() << ".ljust(";
-                p->arguments()->expression->accept(*this);
-                unindent() << ")";
+                unindent() << ew << ".ljust(" << a0w << ")";
             } else if (name == "length") {
-                unindent() << "len(";
-                p->expression()->accept(*this);
-                unindent() << ")";
+                unindent() << "len(" << ew << ")";
             } else if (name == "lower") {
-                p->expression()->accept(*this);
-                unindent() << ".lower()";
+                unindent() << ew << ".lower()";
             } else if (name == "ralign") {
-                p->expression()->accept(*this);
-                unindent() << ".rjust(";
-                p->arguments()->expression->accept(*this);
-                unindent() << ")";
+                unindent() << ew << ".rjust(" << a0w << ")";
             } else if (name == "title") {
-                p->expression()->accept(*this);
-                unindent() << ".title()";
+                unindent() << ew << ".title()";
             } else if (name == "upper") {
-                p->expression()->accept(*this);
-                unindent() << ".upper()";
+                unindent() << ew << ".upper()";
             } else if (name == "replace") {
-                p->expression()->accept(*this);
-                unindent() << ".replace(";
-                p->arguments()->expression->accept(*this);
-                unindent() << ", ";
-                p->arguments()->next->expression->accept(*this);
-                unindent() << ")";
+                unindent() << ew << ".replace(" << a0w << ", " << a1w << ")";
             } else if (name == "wrap") {
-                unindent() << "textwrap.wrap(";
-                p->expression()->accept(*this);
-                unindent() << ", ";
-                p->arguments()->expression->accept(*this);
-                unindent() << ")";
+                unindent() << "textwrap.wrap(" << ew << ", " << a0w << ")";
             }
         } else if (t->list()) {
-            auto tl = t->list();
-
             if (name == "size") {
-                unindent() << "len(";
-                p->expression()->accept(*this);
-                unindent() << ")";
+                unindent() << "len(" << ew << ")";
             } else if (name == "sort") {
-                if (tl->elem()->primitive()) {
-                    unindent() << "sorted(";
-                    p->expression()->accept(*this);
-                    unindent() << ", reverse=not ";
-                    p->arguments()->expression->accept(*this);
-                    unindent() << ")";
-                } else if (tl->elem()->record()) {
-                    auto a = p->arguments();
-                    auto key = a->expression;
-                    auto asc = a->next->expression;
-
-                    unindent() << "sorted(";
-                    p->expression()->accept(*this);
-                    unindent() << ", reverse=not ";
-                    asc->accept(*this);
-                    unindent() << ", key=lambda r: getattr(r, ";
-                    key->accept(*this);
-                    unindent() << "))";
+                if (t->list()->elem()->primitive()) {
+                    unindent() << "sorted(" << ew << ", reverse=not "
+                               << a0w << ")";
+                } else if (t->list()->elem()->record()) {
+                    unindent() << "sorted(" << ew << ", reverse=not " << a1w
+                               << ", key=lambda r: getattr(r, " << a0w << "))";
                 }
             } else if (name == "join") {
-                p->arguments()->expression->accept(*this);
-                unindent() << ".join(";
-                p->expression()->accept(*this);
-                unindent() << ")";
+                unindent() << a0w << ".join(" << ew << ")";
             }
-        } else if (t->record()) {
-
-        } else {
-
         }
     }
 
