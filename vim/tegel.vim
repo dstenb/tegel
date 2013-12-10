@@ -10,6 +10,8 @@ endif
 " Header keywords
 syn keyword tglKeyword arg record contained
 
+syn keyword tglControlKeyword with if elif else for endif endfor in contained
+
 " Types
 syn keyword tglTypes bool int string contained
 
@@ -20,16 +22,30 @@ syn region tglString start=/\v"/ skip=/\v\\./ end=/\v"/
 
 " Comments
 syn keyword tglTodo contained TODO FIXME XXX NOTE
-syn match tglComment "#.*$" contains=tglTodo
+syn region tglComment start="#" end="$" contains=tglTodo
 
 " Clusters
 syn cluster tglHeaderCluster
  \ contains=tglBoolean,tglComment,tglKeyword,tglNumber,tglString,
  \ tglTypes
-syn cluster tglBodyCluster contains=tglNumber
+
+syn cluster tglControlCluster
+ \ contains=tglBoolean,tglControlKeyword,tglNumber,tglString,
+ \ tglTypes
+
+syn cluster tglInlineCluster
+ \ contains=tglBoolean,tglNumber,tglString
+syn cluster tglBodyCluster contains=tglControl,tglInline
+
+" TODO: handle multiple lines
+syn region tglControl matchgroup=tglControlSep start='^[ \t]*%'ms=e end='$' 
+ \ contains=@tglControlCluster
+
+syn region tglInline matchgroup=tglInlineSep start='{{' matchgroup=tglInlineSep end='}}' 
+ \ contains=@tglInlineCluster
 
 " Header and body regions
-syn region tglInit start='\%^\_.'ms=s-1,rs=s-1 matchgroup=tglSectionSep
+syn region tglHeader start='\%^\_.'ms=s-1,rs=s-1 matchgroup=tglSectionSep
  \ end='^%%'me=e-2,re=e-2 contains=@tglHeaderCluster
  \ nextgroup=tglBody skipwhite skipempty
 syn region tglBody matchgroup=tglSectionSep
@@ -37,6 +53,9 @@ syn region tglBody matchgroup=tglSectionSep
 
 hi def link tglBoolean Boolean
 hi def link tglComment Comment
+hi def link tglControlKeyword Keyword
+hi def link tglControlSep Keyword
+hi def link tglInlineSep Typedef
 hi def link tglKeyword Keyword
 hi def link tglNumber Number
 hi def link tglSectionSep Todo
