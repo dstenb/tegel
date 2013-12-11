@@ -1075,17 +1075,24 @@ namespace ast {
             Expression *expression_;
     };
 
-    /** TODO
-    *
-    */
+    /** VariableDeclaration class
+     *
+     * Represents a variable declaration, and may also hold a variable
+     * assignment
+     *
+     */
     class VariableDeclaration : public VariableStatement
     {
         public:
             VariableDeclaration(symbol::Variable *v, Expression *e)
                 : variable_(v), assignment_(new VariableAssignment(v, e)) {}
 
+            VariableDeclaration(symbol::Variable *v)
+                : variable_(v), assignment_(nullptr) {}
+
             ~VariableDeclaration() {
-                delete assignment_;
+                if (assignment_)
+                    delete assignment_;
             }
 
             symbol::Variable *variable() {
@@ -1105,6 +1112,7 @@ namespace ast {
             symbol::Variable *variable_;
             VariableAssignment *assignment_;
     };
+
 
     /** Create class
      *
