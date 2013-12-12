@@ -1173,6 +1173,36 @@ namespace ast {
     };
 
     /**
+     * LambdaExpression class
+     *
+     * ~~~
+     * type1 var1, type2 var2, ... : expression
+     *
+     * string s1, string s2 : s1 > s2
+     * ~~~
+     *
+     */
+    class LambdaExpression : public AST_Node
+    {
+        public:
+            LambdaExpression(VariableDeclaration *v,
+                             Expression *e, symbol::SymbolTable *t)
+                : variables(v), expression(e), table(t) {}
+
+            ~LambdaExpression() {
+            }
+
+            virtual void accept(AST_Visitor &) = 0;
+
+            VariableDeclaration *variables;
+            Expression *expression;
+            symbol::SymbolTable *table;
+        private:
+            LambdaExpression(const LambdaExpression &) = delete;
+            LambdaExpression &operator=(const LambdaExpression &) = delete;
+    };
+
+    /**
      *
      */
     class AST_Visitor
