@@ -10,6 +10,8 @@ endif
 " Header keywords
 syn keyword tglKeyword arg record contained
 
+syn keyword tglHeaderItemKeyword cmd info default contained
+
 syn keyword tglControlKeyword with if elif else
  \ for endif endfor in create contained
 
@@ -27,10 +29,13 @@ syn region tglComment start="#" end="$" contains=tglTodo
 
 syn match tglContinue "\\$" contained
 
+syn region tglHeaderItem start='{' end='}'
+ \ contains=@tglHeaderCluster,tglHeaderItemKeyword
+
 " Clusters
 syn cluster tglHeaderCluster
  \ contains=tglBoolean,tglComment,tglKeyword,tglNumber,tglString,
- \ tglTypes
+ \ tglTypes,tglHeaderItem
 
 syn cluster tglControlCluster
  \ contains=tglBoolean,tglControlKeyword,tglNumber,tglString,
@@ -60,6 +65,7 @@ hi def link tglContinue Special
 hi def link tglControlKeyword Keyword
 hi def link tglControlSep Special
 hi def link tglInlineSep Typedef
+hi def link tglHeaderItemKeyword Keyword
 hi def link tglKeyword Keyword
 hi def link tglNumber Number
 hi def link tglSectionSep Special
