@@ -531,7 +531,8 @@ namespace py_backend
                 : visitor_(v), node_(n) {}
 
             friend ostream& operator <<(ostream &os, VisitorWrapper &t) {
-                t.node_->accept(t.visitor_);
+                if (t.node_)
+                    t.node_->accept(t.visitor_);
                 return os;
             }
         private:
@@ -606,6 +607,36 @@ namespace py_backend
         }
     }
 
+    void PyBody::visit(ast::LambdaExpression *p)
+    {
+        unindent() << "lambda ";
+        for (auto v = p->variables; v != nullptr; v = v->next) {
+            unindent() << table_.get(v->statement->variable());
+            if (v->next)
+                unindent() << ", ";
+        }
+        unindent() << ": ";
+
+        p->expression->accept(*this);
+    }
+
+    void PyBody::visit(ast::FunctionCall *p)
+    {
+        if (p->name == "filter") {
+            unindent() << "filter(";
+            p->args->get_lambda(0)->accept(*this);
+            unindent() << ", ";
+            p->args->get_expression(1)->accept(*this);
+            unindent() << ")";
+        } else if (p->name == "map") {
+            unindent() << "map(";
+            p->args->get_lambda(0)->accept(*this);
+            unindent() << ", ";
+            p->args->get_expression(1)->accept(*this);
+            unindent() << ")";
+        }
+    }
+
     void PyBody::visit(ast::SymbolRef *p)
     {
         if (p->symbol()->argument())
@@ -640,6 +671,18 @@ namespace py_backend
                 unindent() << ", ";
         }
         unindent() << ")";
+    }
+
+    void PyBody::visit(ast::FuncArgList *) {
+
+    }
+
+    void PyBody::visit(ast::FuncArgExpression *) {
+
+    }
+
+    void PyBody::visit(ast::FuncArgLambda *) {
+
     }
 
     void PyBody::visit(ast::Conditional *p)

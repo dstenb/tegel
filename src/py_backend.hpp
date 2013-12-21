@@ -28,8 +28,7 @@ namespace py_backend {
     struct PyUtils
     {
         static ostream &constant_to_stream(ostream &, const ConstantData *);
-        static string record_name(const RecordType *);
-        static bool is_short_cmd(const string &);
+        static string record_name(const RecordType *); static bool is_short_cmd(const string &);
         static bool is_long_cmd(const string &);
         static bool valid_cmd_format(const string &);
         static void generate_opt(ostream &, symbol::Argument *);
@@ -106,6 +105,11 @@ namespace py_backend {
             virtual void visit(ast::FieldRef *);
             virtual void visit(ast::List *);
             virtual void visit(ast::Record *);
+            virtual void visit(ast::FunctionCall *);
+            virtual void visit(ast::FuncArgList *);
+            virtual void visit(ast::FuncArgExpression *);
+            virtual void visit(ast::FuncArgLambda *);
+            virtual void visit(ast::LambdaExpression *);
             virtual void visit(ast::Statements *);
             virtual void visit(ast::Conditional *);
             virtual void visit(ast::ForEach *);
