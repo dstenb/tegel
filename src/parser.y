@@ -1124,7 +1124,18 @@ function_args
 function_call
     : IDENTIFIER '(' function_args ')'
     {
-        $$ = ast_factory::FunctionCallFactory::create($1, $3);
+        try {
+            $$ = ast_factory::FunctionCallFactory::create($1, $3);
+        } catch (const ast_factory::NoSuchFunctionError &e) {
+            yyerror(&@3, context, e.what());
+            YYERROR;
+        } catch (const ast_factory::WrongLambdaSignatureError &e) {
+            yyerror(&@3, context, e.what());
+            YYERROR;
+        } catch (const ast_factory::WrongFunctionSignatureError &e) {
+            yyerror(&@3, context, e.what());
+            YYERROR;
+        }
     }
     ;
 

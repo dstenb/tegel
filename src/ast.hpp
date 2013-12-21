@@ -731,12 +731,12 @@ namespace ast {
                         FuncArgLambda *lambda = p->arg->lambda();
 
                         if (lambda == nullptr)
-                            assert(0 && "Not a lambda function"); // TODO: throw
+                            return nullptr;
                         return lambda->value;
                     }
                 }
 
-                assert(0 && "Wrong number of arguments to function"); // TODO: throw
+                return nullptr;
             }
 
             Expression *get_expression(int pos) {
@@ -747,12 +747,12 @@ namespace ast {
                         FuncArgExpression *expression = p->arg->expression();
 
                         if (expression == nullptr)
-                            assert(0 && "Not a lambda function"); // TODO: throw
+                            return nullptr;
                         return expression->value;
                     }
                 }
 
-                assert(0 && "Wrong number of arguments to function"); // TODO: throw
+                return nullptr;
             }
 
             FuncArg *arg;
