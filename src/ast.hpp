@@ -61,7 +61,14 @@ namespace ast {
     class FieldRef;
     class List;
     class Record;
+    class FunctionCall;
     class ExpressionList;
+
+    class LambdaExpression;
+    class FuncArg;
+    class FuncArgExpression;
+    class FuncArgLambda;
+    class FuncArgList;
 
     class Statement;
     class Conditional;
@@ -78,6 +85,7 @@ namespace ast {
     class VariableDeclaration;
     class VariableAssignment;
     class Create;
+
 
     /** Abstract expression base class
      *
@@ -620,6 +628,166 @@ namespace ast {
             string field_;
     };
 
+    /* TODO: Create and use LambdaVariables instead of VariableList */
+    /**
+     * LambdaExpression class
+     *
+     * ~~~
+     * type1 var1, type2 var2, ... : expression
+     *
+     * string s1, string s2 : s1 > s2
+     * ~~~
+     *
+     */
+    class LambdaExpression : public AST_Node
+    {
+        public:
+            LambdaExpression(VariableList *v,
+                             Expression *e, symbol::SymbolTable *t)
+                : variables(v), expression(e), table(t) {}
+
+            ~LambdaExpression() {
+            }
+
+            virtual void accept(AST_Visitor &);
+
+            VariableList *variables;
+            Expression *expression;
+            symbol::SymbolTable *table;
+        private:
+            LambdaExpression(const LambdaExpression &) = delete;
+            LambdaExpression &operator=(const LambdaExpression &) = delete;
+    };
+
+    class FuncArg : public AST_Node
+    {
+        public:
+            virtual FuncArgExpression *expression() { return nullptr; }
+            virtual FuncArgLambda *lambda() { return nullptr; }
+    };
+
+    class FuncArgExpression : public FuncArg
+    {
+        public:
+            FuncArgExpression(Expression *e)
+                : value(e) {
+                assert(e != nullptr);
+            }
+
+            ~FuncArgExpression() {
+                delete value;
+            }
+
+            virtual FuncArgExpression *expression() { return this; }
+
+            virtual void accept(AST_Visitor &);
+
+            Expression *value;
+        private:
+            FuncArgExpression(const FuncArgExpression &) = delete;
+            FuncArgExpression &operator=(const FuncArgExpression &) = delete;
+    };
+
+    class FuncArgLambda : public FuncArg
+    {
+        public:
+            FuncArgLambda(LambdaExpression *le)
+                : value(le) {
+                assert(le != NULL);
+            }
+
+            ~FuncArgLambda() {
+                delete value;
+            }
+
+            virtual void accept(AST_Visitor &);
+
+            virtual FuncArgLambda *lambda() { return this; }
+
+            LambdaExpression *value;
+        private:
+            FuncArgLambda(const FuncArgLambda &) = delete;
+            FuncArgLambda &operator=(const FuncArgLambda &) = delete;
+    };
+
+    class FuncArgList : public AST_Node
+    {
+        public:
+            FuncArgList(FuncArg *a, FuncArgList *n = nullptr)
+                : arg(a), next(n) {}
+
+            ~FuncArgList() {
+                delete arg;
+                if (next)
+                    delete next;
+            }
+
+            virtual void accept(AST_Visitor &);
+
+            LambdaExpression *get_lambda(int pos) {
+                int i = 0;
+                for (FuncArgList *p = this; p != nullptr; p = p->next, i++) {
+                    if (i == pos) {
+                        FuncArgLambda *lambda = p->arg->lambda();
+
+                        if (lambda == nullptr)
+                            assert(0 && "Not a lambda function"); // TODO: throw
+                        return lambda->value;
+                    }
+                }
+
+                assert(0 && "Wrong number of arguments to function"); // TODO: throw
+            }
+
+            Expression *get_expression(int pos) {
+                int i = 0;
+
+                for (FuncArgList *p = this; p != nullptr; p = p->next, i++) {
+                    if (i == pos) {
+                        FuncArgExpression *expression = p->arg->expression();
+
+                        if (expression == nullptr)
+                            assert(0 && "Not a lambda function"); // TODO: throw
+                        return expression->value;
+                    }
+                }
+
+                assert(0 && "Wrong number of arguments to function"); // TODO: throw
+            }
+
+            FuncArg *arg;
+            FuncArgList *next;
+        private:
+            FuncArgList(const FuncArgList &) = delete;
+            FuncArgList &operator=(const FuncArgList &) = delete;
+    };
+
+    /**
+     *
+     */
+    class FunctionCall : public UnaryExpression
+    {
+        public:
+            FunctionCall(const string &n, const Type *r, FuncArgList *a)
+                : name(n), return_value(r), args(a) {}
+
+            virtual void accept(AST_Visitor &);
+
+            virtual const Type *type() const {
+                return return_value;
+            }
+
+            ~FunctionCall() {
+            }
+
+            string name;
+            const Type *return_value;
+            FuncArgList *args;
+        private:
+            FunctionCall(const FunctionCall &) = delete;
+            FunctionCall &operator=(const FunctionCall &) = delete;
+    };
+
     /**
      *
      */
@@ -1019,6 +1187,8 @@ namespace ast {
      */
     class VariableStatement : public Statement
     {
+        public:
+            virtual symbol::Variable *variable() = 0;
     };
 
     /** TODO
@@ -1172,35 +1342,6 @@ namespace ast {
             Statements *next_;
     };
 
-    /**
-     * LambdaExpression class
-     *
-     * ~~~
-     * type1 var1, type2 var2, ... : expression
-     *
-     * string s1, string s2 : s1 > s2
-     * ~~~
-     *
-     */
-    class LambdaExpression : public AST_Node
-    {
-        public:
-            LambdaExpression(VariableDeclaration *v,
-                             Expression *e, symbol::SymbolTable *t)
-                : variables(v), expression(e), table(t) {}
-
-            ~LambdaExpression() {
-            }
-
-            virtual void accept(AST_Visitor &) = 0;
-
-            VariableDeclaration *variables;
-            Expression *expression;
-            symbol::SymbolTable *table;
-        private:
-            LambdaExpression(const LambdaExpression &) = delete;
-            LambdaExpression &operator=(const LambdaExpression &) = delete;
-    };
 
     /**
      *
@@ -1237,6 +1378,13 @@ namespace ast {
             virtual void visit(FieldRef *) = 0;
             virtual void visit(List *) = 0;
             virtual void visit(Record *) = 0;
+
+            virtual void visit(LambdaExpression *) {}
+            /* TODO */
+            virtual void visit(FunctionCall *) {}
+            virtual void visit(FuncArgList *) {}
+            virtual void visit(FuncArgExpression *) {}
+            virtual void visit(FuncArgLambda *) {}
 
             virtual void visit(Statements *) = 0;
 

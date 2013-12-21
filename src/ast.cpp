@@ -32,6 +32,12 @@ namespace ast {
     GENERATE_ACCEPT(FieldRef)
     GENERATE_ACCEPT(List)
     GENERATE_ACCEPT(Record)
+    GENERATE_ACCEPT(FunctionCall)
+
+    GENERATE_ACCEPT(LambdaExpression)
+    GENERATE_ACCEPT(FuncArgExpression)
+    GENERATE_ACCEPT(FuncArgLambda)
+    GENERATE_ACCEPT(FuncArgList)
 
     GENERATE_ACCEPT(Statements)
     GENERATE_ACCEPT(Conditional)
