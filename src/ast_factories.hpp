@@ -259,6 +259,71 @@ namespace ast_factory {
                                    if_false->type()->str() + ")");
         }
     };
+
+    struct FunctionCallFactory
+    {
+        /** Compares the variables of a lambda expression to a list of expected
+         * variables */
+        static void check_lambda(const LambdaExpression *lambda,
+                const vector<const Type *> &expected) {
+            vector<const Type *> lambda_vars;
+
+            for (auto p = lambda->variables; p != nullptr; p = p->next)
+                lambda_vars.push_back(p->statement->variable()->get_type());
+
+            cerr << "Got: " << types_to_str(lambda_vars) << "\n";
+            cerr << "Expected: " << types_to_str(expected) << "\n";
+ 
+            if (lambda_vars.size() != expected.size())
+                assert(0 && "Wrong number of arguments"); // TODO: throw
+            if (lambda_vars != expected)
+                assert(0 && "Wrong argument signature"); // TODO: throw
+        }
+
+        static FunctionCall *create(const string &name, FuncArgList *args)
+        {
+            LambdaExpression *f;
+            Expression *e0;
+
+            if (name == "filter") {
+                const ListType *list;
+
+                // TODO throw
+                assert(args);
+                f = args->get_lambda(0);
+                e0 = args->get_expression(1);
+                list = e0->type()->list();
+                assert(list);
+
+                check_lambda(f, { list->elem() });
+
+                /* Cast the filter's expression to bool */
+                f->expression = BoolUnaryFactory::create(f->expression);
+
+                return new ast::FunctionCall(name, list, args);
+            } else if (name == "map") {
+                const ListType *list;
+                const SingleType *ret_elem;
+
+                // TODO throw
+                assert(args);
+                f = args->get_lambda(0);
+                e0 = args->get_expression(1);
+                list = e0->type()->list();
+                assert(list);
+                ret_elem = f->expression->type()->single();
+                assert(ret_elem);
+
+                check_lambda(f, { list->elem() });
+
+                return new ast::FunctionCall(name,
+                        TypeFactory::get_list(ret_elem), args);
+            } else {
+                // TODO throw
+                assert(0 && "Unknown function name!");
+            }
+        }
+    };
 }
 
 #endif
