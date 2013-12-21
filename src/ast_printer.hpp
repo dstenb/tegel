@@ -174,6 +174,55 @@ namespace ast_printer {
                 indent--;
             }
 
+            virtual void visit(LambdaExpression *p) {
+                print_ws();
+                cerr << "LambdaExpression(" << p->table << ")\n";
+                indent++;
+                p->variables->accept(*this);
+                assert(p->expression);
+                p->expression->accept(*this);
+                indent--;
+            }
+
+            virtual void visit(FunctionCall *p){
+                print_ws();
+                cerr << "FunctionCall(" << p->type()->str()
+                    << ", " << p->name << ")\n";
+                indent++;
+                p->args->accept(*this);
+                indent--;
+            }
+
+            virtual void visit(FuncArgList *p) {
+                print_ws();
+                cerr << "FuncArgList\n";
+                indent++;
+                p->arg->accept(*this);
+                if (p->next)
+                    p->next->accept(*this);
+                indent--;
+            }
+
+            virtual void visit(FuncArgExpression *p) {
+                print_ws();
+                cerr << "FuncArgExpression\n";
+                indent++;
+                p->value->accept(*this);
+                indent--;
+                print_ws();
+                cerr << ")\n";
+            }
+
+            virtual void visit(FuncArgLambda *p) {
+                print_ws();
+                cerr << "FuncArgLambda\n";
+                indent++;
+                p->value->accept(*this);
+                indent--;
+                print_ws();
+                cerr << ")\n";
+            }
+
             virtual void visit(Conditional *p) {
                 print_ws();
                 cerr << "Conditional\n";
@@ -291,7 +340,8 @@ namespace ast_printer {
                 print_ws();
                 p->variable()->print(cerr);
                 cerr <<"\n";
-                p->assignment()->accept(*this);
+                if (p->assignment())
+                    p->assignment()->accept(*this);
                 indent--;
             }
 
