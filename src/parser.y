@@ -6,6 +6,7 @@
 
 #include "ast.hpp"
 #include "ast_factories.hpp"
+#include "ast_printer.hpp"
 #include "common.hpp"
 #include "data.hpp"
 #include "symbol.hpp"
@@ -78,6 +79,9 @@ std::map<string, ast::Expression *> kw_map;
     ast::ExpressionList *expression_list;
     ast::VariableList *variable_list;
     ast::VariableStatement *variable_stmt;
+    ast::FuncArgList *funcarg_list;
+
+    ast::LambdaExpression *lambda;
 }
 
 %{
@@ -115,6 +119,8 @@ void yyvwarning(YYLTYPE *, ParseContext *, const char *, ...);
 %type<record_const> record_constant
 %type<list_const> constant_list
 
+%type<funcarg_list> function_args
+
 %type<argument> arg
 
 %type<param> param
@@ -132,13 +138,15 @@ void yyvwarning(YYLTYPE *, ParseContext *, const char *, ...);
 %type<elif_node> elif_start elifs elif
 %type<else_node> else_start else
 
-%type<variable_list> with variable_list
-%type<variable_stmt> variable_decl variable_assign
+%type<variable_list> with variable_list variable_decl_list
+%type<variable_stmt> variable_decl_assign variable_assign variable_decl
 
-%type<expression> expression condition
+%type<expression> expression condition function_call
 %type<list> list
 %type<record> record
 %type<expression_list> expression_list list_values
+
+%type<lambda> lambda lambda_start
 
 %right '?' ':'
 %left OR
@@ -666,11 +674,11 @@ create_keywords
     | /* empty */
 
 variable_list
-    : variable_decl ',' variable_list
+    : variable_decl_assign ',' variable_list
     {
         $$ = new ast::VariableList($1, $3);
     }
-    | variable_decl
+    | variable_decl_assign
     {
         $$ = new ast::VariableList($1, nullptr);
     }
@@ -683,7 +691,7 @@ variable_list
         $$ = new ast::VariableList($1, nullptr);
     }
 
-variable_decl
+variable_decl_assign
     : type IDENTIFIER '=' expression
     {
         try {
@@ -937,6 +945,10 @@ expression
     {
         $$ = $2;
     }
+    | function_call
+    {
+        $$ = $1;
+    }
 
 condition
     : expression
@@ -1051,6 +1063,87 @@ expression_list
     |
     {
         $$ = nullptr;
+    }
+    ;
+
+variable_decl_list
+    : variable_decl ',' variable_decl_list
+    {
+        $$ = new ast::VariableList($1, $3);
+    }
+    | variable_decl
+    {
+        $$ = new ast::VariableList($1, nullptr);
+    }
+    ;
+
+lambda_start
+    : '^'
+    {
+        context->data->current_table = new SymbolTable(context->data->current_table);
+        $$ = new ast::LambdaExpression(nullptr, nullptr, context->data->current_table);
+    }
+    ;
+
+lambda
+    : lambda_start variable_decl_list ':' expression
+    {
+        $$ = $1;
+        $$->variables = $2;
+        $$->expression = $4;
+        context->data->current_table = context->data->current_table->parent();
+    }
+
+function_args
+    : expression ',' function_args
+    {
+        ast::FuncArgExpression *arg = new ast::FuncArgExpression($1);
+        $$ = new ast::FuncArgList(arg, $3);
+    }
+    | expression
+    {
+        ast::FuncArgExpression *arg = new ast::FuncArgExpression($1);
+        $$ = new ast::FuncArgList(arg);
+    }
+    | lambda ',' function_args
+    {
+        ast::FuncArgLambda *arg = new ast::FuncArgLambda($1);
+        $$ = new ast::FuncArgList(arg, $3);
+    }
+    | lambda
+    {
+        ast::FuncArgLambda *arg = new ast::FuncArgLambda($1);
+        $$ = new ast::FuncArgList(arg);
+    }
+    |
+    {
+        $$ = nullptr;
+    }
+    ;
+
+function_call
+    : IDENTIFIER '(' function_args ')'
+    {
+        $$ = ast_factory::FunctionCallFactory::create($1, $3);
+    }
+    ;
+
+variable_decl
+    : type IDENTIFIER
+    {
+        try {
+            auto v = new Variable($2, $1);
+            context->data->current_table->add(v);
+
+            $$ = new ast::VariableDeclaration(v);
+        } catch(const SymTabAlreadyDefinedError &e) {
+            stringstream sstr;
+            context->data->current_table->lookup($2)->print(sstr);
+            yyverror(&@2, context, "'%s' is already defined (as %s)\n",
+                $2, sstr.str().c_str());
+            YYERROR;
+        }
+        free($2);
     }
     ;
 
