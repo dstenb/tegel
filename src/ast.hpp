@@ -662,8 +662,12 @@ namespace ast {
     class FuncArg : public AST_Node
     {
         public:
-            virtual FuncArgExpression *expression() { return nullptr; }
-            virtual FuncArgLambda *lambda() { return nullptr; }
+            virtual FuncArgExpression *expression() {
+                return nullptr;
+            }
+            virtual FuncArgLambda *lambda() {
+                return nullptr;
+            }
     };
 
     class FuncArgExpression : public FuncArg
@@ -678,7 +682,9 @@ namespace ast {
                 delete value;
             }
 
-            virtual FuncArgExpression *expression() { return this; }
+            virtual FuncArgExpression *expression() {
+                return this;
+            }
 
             virtual void accept(AST_Visitor &);
 
@@ -702,7 +708,9 @@ namespace ast {
 
             virtual void accept(AST_Visitor &);
 
-            virtual FuncArgLambda *lambda() { return this; }
+            virtual FuncArgLambda *lambda() {
+                return this;
+            }
 
             LambdaExpression *value;
         private:

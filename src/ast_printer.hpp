@@ -184,10 +184,10 @@ namespace ast_printer {
                 indent--;
             }
 
-            virtual void visit(FunctionCall *p){
+            virtual void visit(FunctionCall *p) {
                 print_ws();
                 cerr << "FunctionCall(" << p->type()->str()
-                    << ", " << p->name << ")\n";
+                     << ", " << p->name << ")\n";
                 indent++;
                 p->args->accept(*this);
                 indent--;

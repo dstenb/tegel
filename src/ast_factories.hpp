@@ -265,7 +265,7 @@ namespace ast_factory {
         public:
             WrongLambdaSignatureError(const string &g, const string &e)
                 : runtime_error("wrong lambda argument signature (got [" + g
-                        + "], expected [" + e + "])") {}
+                                + "], expected [" + e + "])") {}
     };
 
     class WrongFunctionSignatureError : public runtime_error
@@ -274,7 +274,7 @@ namespace ast_factory {
             // TODO: add got
             WrongFunctionSignatureError(const string &n, const string &e)
                 : runtime_error("wrong arguments for " + n + "(expected ["
-                        + e + "])") {}
+                                + e + "])") {}
     };
 
     class NoSuchFunctionError : public runtime_error
@@ -292,15 +292,16 @@ namespace ast_factory {
         /** Compares the variables of a lambda expression to a list of expected
          * variables */
         static void check_lambda(const LambdaExpression *lambda,
-                const vector<const Type *> &expected) {
+                                 const vector<const Type *> &expected) {
             vector<const Type *> lambda_vars;
 
             for (auto p = lambda->variables; p != nullptr; p = p->next)
                 lambda_vars.push_back(p->statement->variable()->get_type());
 
-            if (lambda_vars.size() != expected.size() || lambda_vars != expected)
+            if (lambda_vars.size() != expected.size()
+                    || lambda_vars != expected)
                 throw WrongLambdaSignatureError(types_to_str(lambda_vars),
-                        types_to_str(expected));
+                                                types_to_str(expected));
         }
 
         static FunctionCall *create(const string &name, FuncArgList *args)
@@ -315,7 +316,7 @@ namespace ast_factory {
                         !(e0 = args->get_expression(1)) ||
                         !(list = e0->type()->list()))
                     throw WrongFunctionSignatureError("map",
-                            "lambda function, list");
+                                                      "lambda function, list");
                 list = e0->type()->list();
                 assert(list);
 
@@ -333,7 +334,7 @@ namespace ast_factory {
                         !(e0 = args->get_expression(1)) ||
                         !(list = e0->type()->list()))
                     throw WrongFunctionSignatureError("map",
-                            "lambda function, list");
+                                                      "lambda function, list");
 
                 ret_elem = f->expression->type()->single();
                 assert(ret_elem);
@@ -341,7 +342,7 @@ namespace ast_factory {
                 check_lambda(f, { list->elem() });
 
                 return new ast::FunctionCall(name,
-                        TypeFactory::get_list(ret_elem), args);
+                                             TypeFactory::get_list(ret_elem), args);
             } else {
                 throw NoSuchFunctionError(name);
             }

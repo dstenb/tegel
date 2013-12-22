@@ -28,7 +28,8 @@ namespace py_backend {
     struct PyUtils
     {
         static ostream &constant_to_stream(ostream &, const ConstantData *);
-        static string record_name(const RecordType *); static bool is_short_cmd(const string &);
+        static string record_name(const RecordType *);
+        static bool is_short_cmd(const string &);
         static bool is_long_cmd(const string &);
         static bool valid_cmd_format(const string &);
         static void generate_opt(ostream &, symbol::Argument *);
