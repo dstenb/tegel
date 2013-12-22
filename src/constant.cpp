@@ -51,7 +51,7 @@ namespace constant {
 
     void StringConstantData::print(ostream &os) const
     {
-        os << "\"" << value_ << "\"";
+        os << "\"" << Escaper()(value_) << "\"";
     }
 
     void RecordConstantData::set(const vector<PrimitiveConstantData *> &v)

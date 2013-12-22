@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 
+#include "common.hpp"
 #include "type.hpp"
 
 using namespace std;

@@ -144,17 +144,15 @@ namespace ast_printer {
 
             virtual void visit(FieldRef *p) {
                 print_ws();
-                cerr << "FieldRef\n";
+                cerr << "FieldRef(." << p->field() << ")\n";
                 indent++;
                 p->record()->accept(*this);
-                print_ws();
-                cerr << "." << p->field() << "\n";
                 indent--;
             }
 
             virtual void visit(List *p) {
                 print_ws();
-                cerr << "List " << p->type()->str() << "\n";
+                cerr << "List(" << p->type()->str() << ")\n";
                 indent++;
                 for (auto e = p->elements(); e != nullptr;
                         e = e->next) {
@@ -165,7 +163,7 @@ namespace ast_printer {
 
             virtual void visit(Record *p) {
                 print_ws();
-                cerr << "Record " << p->type()->str() << "\n";
+                cerr << "Record(" << p->type()->str() << ")\n";
                 indent++;
                 for (auto e = p->fields(); e != nullptr;
                         e = e->next) {
@@ -209,8 +207,6 @@ namespace ast_printer {
                 indent++;
                 p->value->accept(*this);
                 indent--;
-                print_ws();
-                cerr << ")\n";
             }
 
             virtual void visit(FuncArgLambda *p) {
@@ -219,8 +215,6 @@ namespace ast_printer {
                 indent++;
                 p->value->accept(*this);
                 indent--;
-                print_ws();
-                cerr << ")\n";
             }
 
             virtual void visit(Conditional *p) {
@@ -301,7 +295,7 @@ namespace ast_printer {
 
             virtual void visit(Text *p) {
                 print_ws();
-                cerr << "Text('" << Escaper()(p->text()) << "')\n";
+                cerr << "Text(\"" << Escaper()(p->text()) << "\")\n";
             }
 
             virtual void visit(InlinedExpression *p) {
