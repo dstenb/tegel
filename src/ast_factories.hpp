@@ -190,9 +190,9 @@ namespace ast_factory {
         {
             if (lhs->type() == rhs->type()) {
                 if (lhs->type() == TypeFactory::get("int"))
-                    return new LessThan(lhs, rhs);
+                    return new GreaterThanOrEqual(lhs, rhs);
                 else if (lhs->type() == TypeFactory::get("string"))
-                    return new StringLessThan(lhs, rhs);
+                    return new StringGreaterThanOrEqual(lhs, rhs);
             }
             throw InvalidTypeError("Can't apply '>=' operand on " +
                                    lhs->type()->str()  + " and " +
