@@ -305,8 +305,8 @@ namespace py_backend
 
         unindent() << "def open_file(path, ask):\n";
         unindent() << "    try:\n";
-        unindent() << "        fd = os.open(path, os.O_CREAT | os.O_EXCL, "
-                   "0664)\n";
+        unindent() << "        fd = os.open(path, "
+                   "os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0664)\n";
         unindent() << "        return os.fdopen(fd, 'w')\n";
         unindent() << "    except OSError as e:\n";
         unindent() << "        if e.errno == errno.EEXIST:\n";
