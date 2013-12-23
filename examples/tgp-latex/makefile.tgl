@@ -7,7 +7,9 @@ arg section[] sections {
 %%
 FLAGS = -interaction=batchmode
 NUMBERS = 1 2 3
-all:
+all: main.pdf
+
+main.pdf: {{ map(^section s: s.name, sections).join(" ") }}
 	$(foreach var,$(NUMBERS),pdflatex $(FLAGS) main.tex;)
 
 x: all

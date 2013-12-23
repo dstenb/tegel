@@ -20,18 +20,22 @@ arg bool makefile {
     info = "Generate a makefile?";
 }
 
+arg string[] authors {
+    cmd = "-a";
+}
+
 %%
 % create("main.tex", "main.tgl", true, title = "TeGeL Example", toc = toc, \
-	sections = sections)
+	sections = sections, authors = authors)
 Created main.tex using the main.tgl file!
 \\
 % for f in sections
-% create(f.name, "section.tgl", true, \
-	title = f.title)
+% create(f.name, "section.tgl", true, title = f.title)
 Created {{ f.name }} using the section.tgl file!
 % endfor
 \\
 % if makefile
-% create("Makefile", "makefile.tgl", true, sections = sections)
+% create("Makefile", "makefile.tgl", true, sections = \
+	sections + [section{"main.tex", ""}])
 Created a Makefile!
 % endif

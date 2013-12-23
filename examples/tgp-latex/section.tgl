@@ -1,9 +1,6 @@
-arg string title {
-}
+arg string title {}
 
 %%
 \section{{ "{" + title + "}" }}
 
-% for l in ("Text " * 100).wrap(80)
-{{ l }}
-% endfor
+{{ ("Text " * 100).wrap(80).join("\n") }}
