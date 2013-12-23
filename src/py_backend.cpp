@@ -284,7 +284,7 @@ namespace py_backend
         unindent() << "    return True if s.lower() == \"y\" "
                    "else False\n\n";
 
-        unindent() << "def mkdir_chroot(path):\n";
+        unindent() << "def mkdir_chdir(path):\n";
         unindent() << "    try:\n";
         unindent() << "        os.mkdir(path)\n";
         unindent() << "    except OSError as e:\n";
@@ -787,8 +787,6 @@ namespace py_backend
 
     void PyBody::visit(ast::Create *p)
     {
-        /* TODO: - add overwrite
-         *       - handle file exceptions */
         indent() << "try:\n";
         indent() << "    f = open_file(";
         p->out->accept(*this);
@@ -844,7 +842,7 @@ namespace py_backend
         unindent() << "\n";
 
         if (mkdir)
-            indent() << "mkdir_chroot(args._dir)\n\n";
+            indent() << "mkdir_chdir(args._dir)\n\n";
 
         indent() << "generate(vars(args), args._file)\n\n";
 
