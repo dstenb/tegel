@@ -9,8 +9,8 @@ namespace py_backend
     class PyConstToStream : public ConstantDataVisitor
     {
         public:
-            PyConstToStream(ostream &os)
-                : os_(os) {}
+            PyConstToStream(ostream &os, bool unicode = true)
+                : os_(os), unicode_(unicode) {}
 
             virtual void visit(const BoolConstantData *p) {
                 os_ << (p->value() ? "True" : "False");
@@ -21,7 +21,10 @@ namespace py_backend
             }
 
             virtual void visit(const StringConstantData *p) {
-                os_ << "\"" << Escaper()(p->value()) << "\"";
+                if (unicode_)
+                    os_ << "u\"" << Escaper()(p->value()) << "\"";
+                else
+                    os_ << "\"" << Escaper()(p->value()) << "\"";
             }
 
             virtual void visit(const ListConstantData *p) {
@@ -51,6 +54,7 @@ namespace py_backend
             }
         protected:
             ostream &os_;
+            bool unicode_;
     };
 
     /** Outputs a colon delimited list of field type information (used for the
@@ -217,7 +221,7 @@ namespace py_backend
                << PyUtils::record_name(t->record());
         }
 
-        PyConstToStream pcs(os);
+        PyConstToStream pcs(os, false);
         os << ", default=";
         dd->accept(pcs);
 
@@ -755,14 +759,15 @@ namespace py_backend
 
     void PyBody::visit(ast::Text *p)
     {
-        indent() << "_file.write('" << Escaper()(p->text()) << "')\n";
+        indent() << "_file.write(u'" << Escaper()(p->text()) <<
+                 "'.encode('utf-8'))\n";
     }
 
     void PyBody::visit(ast::InlinedExpression *p)
     {
         indent() << "_file.write(";
         p->expression()->accept(*this);
-        unindent() << ")\n";
+        unindent() << ".encode('utf-8'))\n";
     }
 
     void PyBody::visit(ast::VariableList *p)
@@ -843,6 +848,18 @@ namespace py_backend
 
         if (mkdir)
             indent() << "mkdir_chdir(args._dir)\n\n";
+
+        indent() << "for a in vars(args):\n";
+        indent() << "    v = getattr(args, a)\n";
+        indent() << "    if not a.startswith('_'):\n";
+        indent() << "        if (type(v) == str):\n";
+        indent() << "            setattr(args, a, "
+                 "v.decode(sys.stdin.encoding))\n";
+        indent() << "        elif not type(v) in [ bool, int ]:\n";
+        indent() << "            l = [ (v[i].decode('utf-8') if "
+                 "(type(v[i]) == str)\n";
+        indent() << "                else v[i]) for i in range(len(v)) ]\n";
+        indent() << "            setattr(args, a, v.__new__(type(v), *l))\n\n";
 
         indent() << "generate(vars(args), args._file)\n\n";
 
