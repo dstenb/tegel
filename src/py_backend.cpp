@@ -9,8 +9,8 @@ namespace py_backend
     class PyConstToStream : public ConstantDataVisitor
     {
         public:
-            PyConstToStream(ostream &os, bool unicode = true)
-                : os_(os), unicode_(unicode) {}
+            PyConstToStream(ostream &os)
+                : os_(os) {}
 
             virtual void visit(const BoolConstantData *p) {
                 os_ << (p->value() ? "True" : "False");
@@ -21,10 +21,7 @@ namespace py_backend
             }
 
             virtual void visit(const StringConstantData *p) {
-                if (unicode_)
-                    os_ << "u\"" << Escaper()(p->value()) << "\"";
-                else
-                    os_ << "\"" << Escaper()(p->value()) << "\"";
+                os_ << "\"" << Escaper()(p->value()) << "\"";
             }
 
             virtual void visit(const ListConstantData *p) {
@@ -54,7 +51,6 @@ namespace py_backend
             }
         protected:
             ostream &os_;
-            bool unicode_;
     };
 
     /** Outputs a colon delimited list of field type information (used for the
@@ -221,7 +217,7 @@ namespace py_backend
                << PyUtils::record_name(t->record());
         }
 
-        PyConstToStream pcs(os, false);
+        PyConstToStream pcs(os);
         os << ", default=";
         dd->accept(pcs);
 
@@ -277,6 +273,7 @@ namespace py_backend
     {
         unindent() << "#! /usr/bin/env python\n";
         unindent() << "# -*- coding: utf-8 -*-\n\n";
+        unindent() << "from __future__ import unicode_literals\n\n";
         unindent() << "import argparse\n";
         unindent() << "import errno\n";
         unindent() << "import os\n";
@@ -310,7 +307,7 @@ namespace py_backend
         unindent() << "def open_file(path, ask):\n";
         unindent() << "    try:\n";
         unindent() << "        fd = os.open(path, "
-                   "os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0664)\n";
+                   "os.O_CREAT | os.O_EXCL | os.O_WRONLY)\n";
         unindent() << "        return os.fdopen(fd, 'w')\n";
         unindent() << "    except OSError as e:\n";
         unindent() << "        if e.errno == errno.EEXIST:\n";
@@ -323,7 +320,12 @@ namespace py_backend
         unindent() << "                    return None\n";
         unindent() << "            return open(path, 'w')\n";
         unindent() << "        else:\n";
-        unindent() << "            raise\n";
+        unindent() << "            raise\n\n";
+        unindent() << "def write(f, s):\n";
+        unindent() << "    if sys.version < '3':\n";
+        unindent() << "        f.write(s.encode('utf-8'))\n";
+        unindent() << "    else:\n";
+        unindent() << "        f.buffer.write(s.encode('utf-8'))\n\n";
 
         generate_records();
     }
@@ -759,15 +761,14 @@ namespace py_backend
 
     void PyBody::visit(ast::Text *p)
     {
-        indent() << "_file.write(u'" << Escaper()(p->text()) <<
-                 "'.encode('utf-8'))\n";
+        indent() << "write(_file, '" << Escaper()(p->text()) << "')\n";
     }
 
     void PyBody::visit(ast::InlinedExpression *p)
     {
-        indent() << "_file.write(";
+        indent() << "write(_file, ";
         p->expression()->accept(*this);
-        unindent() << ".encode('utf-8'))\n";
+        unindent() << ")\n";
     }
 
     void PyBody::visit(ast::VariableList *p)
@@ -849,17 +850,18 @@ namespace py_backend
         if (mkdir)
             indent() << "mkdir_chdir(args._dir)\n\n";
 
-        indent() << "for a in vars(args):\n";
-        indent() << "    v = getattr(args, a)\n";
-        indent() << "    if not a.startswith('_'):\n";
-        indent() << "        if (type(v) == str):\n";
-        indent() << "            setattr(args, a, "
+        indent() << "if sys.version < '3':\n";
+        indent() << "    for a in vars(args):\n";
+        indent() << "        v = getattr(args, a)\n";
+        indent() << "        if not a.startswith('_'):\n";
+        indent() << "            if (type(v) == str):\n";
+        indent() << "                setattr(args, a, "
                  "v.decode(sys.stdin.encoding))\n";
-        indent() << "        elif not type(v) in [ bool, int ]:\n";
-        indent() << "            l = [ (v[i].decode('utf-8') if "
+        indent() << "            elif not type(v) in [ bool, int ]:\n";
+        indent() << "                l = [ (v[i].decode('utf-8') if "
                  "(type(v[i]) == str)\n";
-        indent() << "                else v[i]) for i in range(len(v)) ]\n";
-        indent() << "            setattr(args, a, v.__new__(type(v), *l))\n\n";
+        indent() << "                    else v[i]) for i in range(len(v)) ]\n";
+        indent() << "                setattr(args, a, v.__new__(type(v), *l))\n\n";
 
         indent() << "generate(vars(args), args._file)\n\n";
 
