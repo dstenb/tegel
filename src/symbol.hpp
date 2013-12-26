@@ -16,6 +16,8 @@ using namespace type;
 
 namespace symbol {
 
+    bool is_reserved_symbol_name(const string &n);
+
     class Param
     {
         public:
@@ -61,7 +63,16 @@ namespace symbol {
 
             virtual ~Symbol() {}
 
-            virtual bool is_constant() const = 0;
+            /** Returns true if the symbol is read only
+             *
+             * With read only, it is meant that the template can not explicitly
+             * change the value of the symbol. I.e. a loop variable in a for
+             * loop is considered read only, even though it will be changed by
+             * the underlying script.
+             *
+             */
+            virtual bool read_only() const = 0;
+
             virtual void print(ostream &os) const = 0;
 
             virtual Argument *argument() {
@@ -85,15 +96,23 @@ namespace symbol {
             const Type *type_;
     };
 
+    class SymbolNameError : public runtime_error
+    {
+        public:
+            SymbolNameError(const string &n)
+                : runtime_error(n + " is a reserved symbol name") {}
+    };
+
     class Argument : public Symbol
     {
         public:
-            Argument(const string &name, const Type *t)
-                : Symbol(name, t), params_() {
-                setup_parameters();
+            static Argument *create(const string &n, const Type *t) {
+                if (is_reserved_symbol_name(n))
+                    throw SymbolNameError(n);
+                return new Argument(n, t);
             }
 
-            virtual bool is_constant() const {
+            virtual bool read_only() const {
                 return true;
             }
             virtual void print(ostream &os) const;
@@ -103,6 +122,11 @@ namespace symbol {
 
             Param *replace(Param *p);
             const Param *get(const string &s) const;
+        protected:
+            Argument(const string &name, const Type *t)
+                : Symbol(name, t), params_() {
+                setup_parameters();
+            }
         private:
             Argument(const Argument &) = delete;
             Argument &operator=(const Argument &) = delete;
@@ -116,19 +140,28 @@ namespace symbol {
     class Variable : public Symbol
     {
         public:
-            Variable(const string &name, const Type *t)
-                : Symbol(name, t) {}
+            static Variable *create(const string &n, const Type *t,
+                                    bool ro = false, bool internal = false) {
+                if (!internal && is_reserved_symbol_name(n))
+                    throw SymbolNameError(n);
+                return new Variable(n, t, ro);
+            }
 
-            virtual bool is_constant() const {
-                return false;
+            virtual bool read_only() const {
+                return read_only_;
             }
             virtual void print(ostream &os) const;
             virtual Variable *variable() {
                 return this;
             }
         private:
+            Variable(const string &name, const Type *t, bool read_only)
+                : Symbol(name, t), read_only_(read_only) {}
+
             Variable(const Variable &) = delete;
             Variable &operator=(const Variable &) = delete;
+
+            bool read_only_;
     };
 
     class SymTabAlreadyDefinedError : public runtime_error
@@ -169,8 +202,6 @@ namespace symbol {
             SymbolTable *parent_;
             map<string, Symbol *> map_;
     };
-
-    void add_default_functions(SymbolTable &);
 
 }
 
