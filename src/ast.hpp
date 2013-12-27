@@ -294,6 +294,10 @@ namespace ast {
             const Type *type_;
     };
 
+    /** LessThan class
+     *
+     * Integer < operator
+     */
     class LessThan : public IntCompare
     {
         public:
@@ -303,6 +307,10 @@ namespace ast {
             virtual void accept(AST_Visitor &);
     };
 
+    /** LessThanOrEqual class
+     *
+     * Integer <= operator
+     */
     class LessThanOrEqual : public IntCompare
     {
         public:
@@ -312,6 +320,10 @@ namespace ast {
             virtual void accept(AST_Visitor &);
     };
 
+    /** GreaterThan class
+     *
+     * Integer > operator
+     */
     class GreaterThan : public IntCompare
     {
         public:
@@ -321,6 +333,10 @@ namespace ast {
             virtual void accept(AST_Visitor &);
     };
 
+    /** GreaterThanOrEqual class
+     *
+     * Integer >= operator
+     */
     class GreaterThanOrEqual : public IntCompare
     {
         public:
@@ -330,6 +346,10 @@ namespace ast {
             virtual void accept(AST_Visitor &);
     };
 
+    /** Equals class
+     *
+     * Integer == operator
+     */
     class Equals : public IntCompare
     {
         public:
@@ -402,6 +422,11 @@ namespace ast {
             virtual void accept(AST_Visitor &);
     };
 
+    /** StringCompare class
+     *
+     * Compares strings. No guarantees about the comparison of non-ASCII
+     * characters for different backends are given
+     */
     class StringCompare : public BinaryExpression
     {
         public:
@@ -423,6 +448,11 @@ namespace ast {
             const Type *type_;
     };
 
+    /** StringLessThan class
+     *
+     * See StringCompare for general implementation details.
+     *
+     */
     class StringLessThan : public StringCompare
     {
         public:
@@ -432,6 +462,12 @@ namespace ast {
             virtual void accept(AST_Visitor &);
     };
 
+
+    /** StringLessThanOrEqual class
+     *
+     * See StringCompare for general implementation details.
+     *
+     */
     class StringLessThanOrEqual : public StringCompare
     {
         public:
@@ -441,6 +477,11 @@ namespace ast {
             virtual void accept(AST_Visitor &);
     };
 
+    /** StringGreaterThan class
+     *
+     * See StringCompare for general implementation details.
+     *
+     */
     class StringGreaterThan : public StringCompare
     {
         public:
@@ -450,6 +491,11 @@ namespace ast {
             virtual void accept(AST_Visitor &);
     };
 
+    /** StringGreaterThanOrEqual class
+     *
+     * See StringCompare for general implementation details.
+     *
+     */
     class StringGreaterThanOrEqual : public StringCompare
     {
         public:
@@ -659,6 +705,9 @@ namespace ast {
             LambdaExpression &operator=(const LambdaExpression &) = delete;
     };
 
+    /** FuncArg class
+     *
+     */
     class FuncArg : public AST_Node
     {
         public:
@@ -670,6 +719,9 @@ namespace ast {
             }
     };
 
+    /** FuncArgExpression class
+     *
+     */
     class FuncArgExpression : public FuncArg
     {
         public:
@@ -694,6 +746,9 @@ namespace ast {
             FuncArgExpression &operator=(const FuncArgExpression &) = delete;
     };
 
+    /** FuncArgLambda class
+     *
+     */
     class FuncArgLambda : public FuncArg
     {
         public:
@@ -718,6 +773,9 @@ namespace ast {
             FuncArgLambda &operator=(const FuncArgLambda &) = delete;
     };
 
+    /** FuncArgList class
+     *
+     */
     class FuncArgList : public AST_Node
     {
         public:
@@ -818,7 +876,7 @@ namespace ast {
             ExpressionList &operator=(const ExpressionList &) = delete;
     };
 
-    /**
+    /** MethodCall class
      *
      */
     class MethodCall : public UnaryExpression
@@ -851,7 +909,7 @@ namespace ast {
             ExpressionList *args_;
     };
 
-    /**
+    /** List class
      *
      */
     class List : public UnaryExpression
@@ -884,7 +942,7 @@ namespace ast {
             ExpressionList *elems_;
     };
 
-    /**
+    /** Record class
      *
      */
     class Record : public UnaryExpression
@@ -923,7 +981,7 @@ namespace ast {
     };
 
 
-    /**
+    /** Statement class
      *
      */
     class Statement : public AST_Node
@@ -931,7 +989,7 @@ namespace ast {
 
     };
 
-    /**
+    /** Conditional class
      *
      */
     class Conditional : public Statement
@@ -1076,7 +1134,7 @@ namespace ast {
             symbol::Variable *value_;
     };
 
-    /**
+    /** If class
      *
      */
     class If : public Scope
@@ -1101,7 +1159,7 @@ namespace ast {
             Expression *condition_;
     };
 
-    /**
+    /** Elif class
      *
      */
     class Elif : public Scope
@@ -1133,7 +1191,7 @@ namespace ast {
             Elif *next_;
     };
 
-    /**
+    /** Else class
      *
      */
     class Else : public Scope
@@ -1164,7 +1222,7 @@ namespace ast {
             string text_;
     };
 
-    /**
+    /** InlinedExpression class
      *
      */
     class InlinedExpression : public Statement
@@ -1190,7 +1248,7 @@ namespace ast {
             Expression *expression_;
     };
 
-    /** TODO
+    /** VariableStatement class
      *
      */
     class VariableStatement : public Statement
@@ -1199,7 +1257,9 @@ namespace ast {
             virtual symbol::Variable *variable() = 0;
     };
 
-    /** TODO
+    /** VariableList class
+     *
+     * A list of variable statements (assignments and or declarations)
      *
      */
     struct VariableList : public Statement
@@ -1222,7 +1282,7 @@ namespace ast {
             VariableList &operator=(const VariableList &) = delete;
     };
 
-    /** TODO
+    /** VariableAssignment class
      *
      */
     class VariableAssignment : public VariableStatement
