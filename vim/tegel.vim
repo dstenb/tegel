@@ -8,7 +8,9 @@ if exists("b:current_syntax")
 endif
 
 " Header keywords
-syn keyword tglKeyword arg record contained
+syn keyword tglSharedKeyword and or not in contained
+
+syn keyword tglHeaderKeyword arg record contained
 
 syn keyword tglHeaderItemKeyword cmd info default contained
 
@@ -34,15 +36,16 @@ syn region tglHeaderItem start='{' end='}'
 
 " Clusters
 syn cluster tglHeaderCluster
- \ contains=tglBoolean,tglComment,tglKeyword,tglNumber,tglString,
+ \ contains=tglBoolean,tglComment,tglHeaderKeyword,tglNumber,tglString,
  \ tglTypes,tglHeaderItem
 
 syn cluster tglControlCluster
  \ contains=tglBoolean,tglControlKeyword,tglNumber,tglString,
- \ tglTypes,tglContinue
+ \ tglTypes,tglContinue,tglSharedKeyword
 
 syn cluster tglInlineCluster
- \ contains=tglBoolean,tglNumber,tglString
+ \ contains=tglBoolean,tglNumber,tglString,tglSharedKeyword
+
 syn cluster tglBodyCluster contains=tglControl,tglInline
 
 " TODO: handle multiple lines
@@ -64,11 +67,12 @@ hi def link tglComment Comment
 hi def link tglContinue Special
 hi def link tglControlKeyword Keyword
 hi def link tglControlSep Special
-hi def link tglInlineSep Typedef
 hi def link tglHeaderItemKeyword Keyword
-hi def link tglKeyword Keyword
+hi def link tglHeaderKeyword Keyword
+hi def link tglInlineSep Typedef
 hi def link tglNumber Number
 hi def link tglSectionSep Special
+hi def link tglSharedKeyword Keyword
 hi def link tglString String
 hi def link tglTodo Todo
 hi def link tglTypes Type
