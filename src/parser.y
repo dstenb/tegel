@@ -204,7 +204,12 @@ header_item
 arg
     : ARGUMENT type IDENTIFIER '{' header_item_params '}'
     {
-        $$ = new Argument($3, $2);
+        try {
+            $$ = Argument::create($3, $2);
+        } catch (const SymbolNameError &e) {
+            yyverror(&@3, context, e.what());
+            YYERROR;
+        }
 
         for (Param *p : param_list) {
             try {
@@ -544,6 +549,8 @@ loop
 for_each
     : FOR IDENTIFIER IN expression
     {
+        Variable *v;
+
         if ($4->type()->list() == nullptr) {
             yyverror(&@4, context,
                 "expected a list (got %s)", $4->type()->str().c_str());
@@ -554,7 +561,12 @@ for_each
          * variable) */
         context->data->current_table = new SymbolTable(context->data->current_table);
 
-        Variable *v = new Variable($2, $4->type()->list()->elem());
+        try {
+            v = Variable::create($2, $4->type()->list()->elem());
+        } catch (const SymbolNameError &e) {
+            yyverror(&@2, context, e.what());
+            YYERROR;
+        }
         context->data->current_table->add(v);
 
         /* Create symbol table for the statements block */
@@ -570,6 +582,8 @@ for_each
 for_each_enum
     : FOR IDENTIFIER ',' IDENTIFIER IN expression
     {
+        Variable *i, *v;
+
         if ($6->type()->list() == nullptr) {
             yyverror(&@6, context,
 	    	"expected a list (got %s)", $6->type()->str().c_str());
@@ -580,10 +594,20 @@ for_each_enum
          * variable) */
         context->data->current_table = new SymbolTable(context->data->current_table);
 
-        Variable *i = new Variable($2, TypeFactory::get("int"));
+        try {
+            i = Variable::create($2, TypeFactory::get("int"));
+        } catch (const SymbolNameError &e) {
+            yyverror(&@2, context, e.what());
+            YYERROR;
+        }
         context->data->current_table->add(i);
 
-        Variable *v = new Variable($4, $6->type()->list()->elem());
+        try {
+            v = Variable::create($4, $6->type()->list()->elem());
+        } catch (const SymbolNameError &e) {
+            yyverror(&@4, context, e.what());
+            YYERROR;
+        }
         context->data->current_table->add(v);
 
         /* Create symbol table for the statements block */
@@ -695,7 +719,8 @@ variable_decl_assign
     : type IDENTIFIER '=' expression
     {
         try {
-            auto v = new Variable($2, $1);
+            auto v = Variable::create($2, $1);
+
             context->data->current_table->add(v);
 
             if ($1 != $4->type()) {
@@ -706,6 +731,9 @@ variable_decl_assign
                 YYERROR;
             }
             $$ = new ast::VariableDeclaration(v, $4);
+        } catch (const SymbolNameError &e) {
+            yyverror(&@2, context, e.what());
+            YYERROR;
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
             context->data->current_table->lookup($2)->print(sstr);
@@ -722,8 +750,8 @@ variable_assign
         try {
             Symbol *s = context->data->current_table->lookup($1);
 
-            if (!s->variable()) {
-                yyverror(&@1, context, "%s is not a variable\n", $1);
+            if (s->read_only()) {
+                yyverror(&@1, context, "%s is not assignable\n", $1);
                 YYERROR;
             }
 
@@ -1143,10 +1171,14 @@ variable_decl
     : type IDENTIFIER
     {
         try {
-            auto v = new Variable($2, $1);
+            auto v = Variable::create($2, $1);
+
             context->data->current_table->add(v);
 
             $$ = new ast::VariableDeclaration(v);
+        } catch (const SymbolNameError &e) {
+            yyverror(&@2, context, e.what());
+            YYERROR;
         } catch(const SymTabAlreadyDefinedError &e) {
             stringstream sstr;
             context->data->current_table->lookup($2)->print(sstr);

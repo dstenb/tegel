@@ -1069,13 +1069,21 @@ namespace ast {
                     symbol::SymbolTable *ft,
                     symbol::SymbolTable *t)
                 : Scope(t, nullptr), expression_(e), for_table_(ft),
-                  variable_(sy) {}
+                  variable_(sy),
+                  loop_variable_(symbol::Variable::create("loop",
+                                 TypeFactory::get("loop"), true, true)) {
+                ft->add(loop_variable_);
+            }
 
             Expression *expression() {
                 return expression_;
             }
             symbol::Symbol *variable() {
                 return variable_;
+            }
+
+            symbol::Symbol *loop_variable() {
+                return loop_variable_;
             }
 
             virtual void accept(AST_Visitor &);
@@ -1086,6 +1094,8 @@ namespace ast {
             Expression *expression_;
             symbol::SymbolTable *for_table_;
             symbol::Variable *variable_;
+
+            symbol::Variable *loop_variable_;
     };
 
     /** ForEachEnum class

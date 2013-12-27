@@ -96,4 +96,8 @@ namespace symbol {
         }
     }
 
+    bool is_reserved_symbol_name(const string &name) {
+        return (name == "loop");
+    }
+
 }
