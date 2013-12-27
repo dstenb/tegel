@@ -321,11 +321,39 @@ namespace py_backend
         unindent() << "            return open(path, 'w')\n";
         unindent() << "        else:\n";
         unindent() << "            raise\n\n";
+
         unindent() << "def write(f, s):\n";
         unindent() << "    if sys.version < '3':\n";
         unindent() << "        f.write(s.encode('utf-8'))\n";
         unindent() << "    else:\n";
         unindent() << "        f.buffer.write(s.encode('utf-8'))\n\n";
+
+        /* The loop record variable in loops are instances of Loop instead of
+         * tuple_list to improve performance (by not having to create a new
+         * tuple every iteration); however, when other variables are
+         * assigned to their values, e.g. %with loop a = loop, a tuple is
+         * created (see copy())
+         */
+        unindent() << "class Loop:\n";
+        unindent() << "    def __init__(self, list):\n";
+        unindent() << "        self.list = list\n";
+        unindent() << "        self.length = len(list)\n";
+        unindent() << "        self.index = 0\n";
+        unindent() << "        self.first = True\n";
+        unindent() << "        self.last = (self.length == 1)\n\n";
+        unindent() << "    def tuple(self):\n";
+        unindent() << "        return tuple_loop(self.index, self.first, "
+                   "self.last, self.length)\n\n";
+        unindent() << "    def update(self):\n";
+        unindent() << "        self.index = self.index + 1\n";
+        unindent() << "        self.first = False\n";
+        unindent() << "        self.last = (self.index == self.length - 1)"
+                   "\n\n\n";
+
+        unindent() << "def copy(o):\n";
+        unindent() << "    if (isinstance(o, Loop)):\n";
+        unindent() << "        return o.tuple()\n";
+        unindent() << "    return o\n\n";
 
         generate_records();
     }
@@ -703,11 +731,15 @@ namespace py_backend
     void PyBody::visit(ast::ForEach *p)
     {
         if (p->statements()) {
-            indent() << "for " << table_.get(p->variable()) << " in ";
+            indent() << table_.get(p->loop_variable()) <<
+                     " = Loop(";
             p->expression()->accept(*this);
-            unindent() << ":\n";
+            unindent() << ")\n";
+            indent() << "for " << table_.get(p->variable()) << " in "
+                     << table_.get(p->loop_variable()) << ".list:\n";
             indent_inc();
             p->statements()->accept(*this);
+            indent() << table_.get(p->loop_variable()) << ".update()\n";
             indent_dec();
         }
     }
@@ -780,9 +812,9 @@ namespace py_backend
 
     void PyBody::visit(ast::VariableAssignment *p)
     {
-        indent() << table_.get(p->variable()) << " = ";
+        indent() << table_.get(p->variable()) << " = copy(";
         p->expression()->accept(*this);
-        unindent() << "\n";
+        unindent() << ")\n";
     }
 
     void PyBody::visit(ast::VariableDeclaration *p)
