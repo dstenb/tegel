@@ -842,7 +842,6 @@ namespace py_backend
         indent_inc();
         indent() << "if argv is None:\n";
         indent() << "   argv = sys.argv\n\n";
-        indent() << "cmd = argv[0]\n\n";
 
         generate_opts(args, extra);
         unindent() << "\n";
