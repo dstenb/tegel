@@ -761,7 +761,7 @@ namespace py_backend
 
     void PyBody::visit(ast::Text *p)
     {
-        indent() << "write(_file, '" << Escaper()(p->text()) << "')\n";
+        indent() << "write(_file, \"" << Escaper()(p->text()) << "\")\n";
     }
 
     void PyBody::visit(ast::InlinedExpression *p)
