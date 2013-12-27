@@ -471,6 +471,7 @@ namespace type {
             static void init() {
                 initialized_ = true;
                 setup_primitives();
+                setup_loop_record();
             }
 
             static ListType *add_list(const SingleType *s) {
@@ -540,6 +541,17 @@ namespace type {
                 sl->add_method(TypeMethod("join", s, s_v));
                 sl->add_method(TypeMethod("size", i, e_v));
                 sl->add_method(TypeMethod("sort", sl, b_v));
+            }
+
+            static void setup_loop_record() {
+                RecordType::field_vector fields = {
+                    { "index", get("int")->primitive() },
+                    { "first", get("bool")->primitive() },
+                    { "last", get("bool")->primitive() },
+                    { "length", get("int")->primitive() }
+                };
+
+                add_record("loop", fields);
             }
 
             static void setup_record_list_methods(ListType *t) {
