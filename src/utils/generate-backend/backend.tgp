@@ -1,0 +1,15 @@
+arg string name {
+    cmd = "-n";
+    info = "Backend name";
+}
+
+arg bool ast_visitor {
+    cmd = "-a";
+    info = "Generate a AST visitor?";
+}
+
+%%
+% create(name + "_backend.hpp", "backend-file.tgl", true, hpp_file = true, \
+    name = name, ast_visitor = ast_visitor)
+% create(name + "_backend.cpp", "backend-file.tgl", true, hpp_file = false, \
+    name = name, ast_visitor = ast_visitor)

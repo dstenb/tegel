@@ -1,0 +1,97 @@
+arg bool hpp_file {}
+arg bool ast_visitor {}
+arg string name {}
+
+%%
+% with string[] ast_classes = [ \
+  "Statements", "TernaryIf", "And", "Or", "Not", "BoolEquals", "LessThan", \
+  "LessThanOrEqual", "GreaterThan", "GreaterThanOrEqual", "Equals", "Plus", \
+  "Minus", "Times", "StringLessThan", "StringLessThanOrEqual", \
+  "StringGreaterThan", "StringGreaterThanOrEqual", "StringEquals", \
+  "StringRepeat", "StringConcat", "ListConcat", "Constant", "MethodCall", \
+  "SymbolRef", "FieldRef", "List", "Record", "FunctionCall", \
+  "ExpressionList", "LambdaExpression", "FuncArg", "FuncArgExpression", \
+  "FuncArgLambda", "FuncArgList", "Conditional", "Scope", "ForEach", \
+  "ForEachEnum", "If", "Elif", "Else", "Text", "InlinedExpression", \
+  "VariableStatement", "VariableList", "VariableDeclaration", \
+  "VariableAssignment", "Create" ]
+\\
+% if hpp_file
+#ifndef __{{ name.upper() }}_BACKEND_H__
+#define __{{ name.upper() }}_BACKEND_H__
+
+#include <sstream>
+#include <string>
+
+using namespace std;
+
+#include "ast.hpp"
+#include "backend.hpp"
+#include "common.hpp"
+#include "data.hpp"
+#include "type.hpp"
+
+namespace {{ name.lower() }}_backend
+{
+% if ast_visitor
+    class {{ name.title() }}Body : public ast::AST_Visitor
+    {
+        public:
+            % for c in ast_classes.sort(true)
+            virtual void visit(ast::{{ c }} *);
+            % endfor
+    };
+% endif
+
+    class {{ name.title() }}Backend : public Backend
+    {
+        public:
+            void generate(ostream &, const vector<symbol::Argument *> &,
+                          ast::Statements *);
+    };
+
+    class {{ name.title() }}TgpBackend : public TgpBackend
+    {
+        public:
+            void generate(ostream &, ParseData *, map<string, ParseData *> &);
+    };
+}
+
+#endif
+% else
+#include "{{ name.lower() }}_backend.hpp"
+
+% if ast_visitor
+/*
+ *
+ */
+namespace {{ name.lower() }}_backend
+{
+    % for c in ast_classes
+    void {{ name.title() }}Body::visit(ast::{{ c }} *)
+    {
+
+    }
+    % if not loop.last
+
+    % endif
+    % endfor
+}
+% endif
+
+namespace {{ name.lower() }}_backend
+{
+    void {{ name.title() }}Backend::generate(ostream &os,
+                             const vector<symbol::Argument *> &args,
+                             ast::Statements *body)
+    {
+
+    }
+
+    void {{ name.title() }}TgpBackend::generate(ostream &os, ParseData *tgp_data,
+                                map<string, ParseData *> &tgl_data)
+    {
+
+    }
+}
+% endif
