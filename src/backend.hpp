@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include <stdarg.h>
+
 using namespace std;
 
 #include "ast.hpp"
@@ -72,6 +74,62 @@ class UnknownBackend : public runtime_error
     public:
         UnknownBackend(const string &s)
             : runtime_error(s) {}
+};
+
+class BackendWriter
+{
+    public:
+        BackendWriter(ostream &os, ast::AST_Visitor &v)
+            : os_(os), visitor_(v) {}
+
+        void writev(const char *fmt, va_list val) {
+            while (*fmt) {
+                if (*fmt == '%') {
+                    ast::AST_Node *n;
+                    ast::AST_Visitor *v;
+                    fmt++;
+                    switch (*fmt) {
+                    case '%':
+                        os_ << "%";
+                        break;
+                    case 'a':
+                        n = va_arg(val, ast::AST_Node *);
+                        if (n)
+                            n->accept(visitor_);
+                        break;
+                    case 'A':
+                        n = va_arg(val, ast::AST_Node *);
+                        v = va_arg(val, ast::AST_Visitor *);
+                        if (n && v)
+                            n->accept(*v);
+                        break;
+                    case 's':
+                        os_ << va_arg(val, char *);
+                        break;
+                    case 'i':
+                        os_ << va_arg(val, int);
+                        break;
+                    default:
+                        os_ << "%" << *fmt;
+                        break;
+                    }
+                    fmt++;
+                } else {
+                    os_ << *fmt++;
+                }
+            }
+        }
+
+        void write(const char *fmt, ...) {
+            va_list val;
+
+            va_start(val, fmt);
+            writev(fmt, val);
+            va_end(val);
+        }
+    private:
+        ostream &os_;
+        ast::AST_Visitor &visitor_;
 };
 
 #endif
