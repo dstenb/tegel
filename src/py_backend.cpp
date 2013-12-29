@@ -2,7 +2,6 @@
 
 namespace py_backend
 {
-
     /** Converts a TeGeL constant to the corresponding constant in Python
      *
      */
@@ -407,7 +406,7 @@ namespace py_backend
 
     void PyBody::generate(ast::Statements *body)
     {
-        indent() << "def generate(_args, _file):\n";
+        windent("def generate(_args, _file):\n");
         indent_inc();
         body->accept(*this);
         indent_dec();
@@ -417,9 +416,9 @@ namespace py_backend
     {
         tgl_ = tgl;
 
-        indent() << "def generate(_args, _file, _body=\"\"):\n";
+        windent("def generate(_args, _file, _body=\"\"):\n");
         indent_inc();
-        indent() << "if _body == \"\":\n";
+        windent("if _body == \"\":\n");
         indent_inc();
         tgp->body->accept(*this);
         indent_dec();
@@ -443,13 +442,8 @@ namespace py_backend
 
     void PyBody::visit(ast::TernaryIf *p)
     {
-        unindent() << "(";
-        p->if_true()->accept(*this);
-        unindent() << " if ";
-        p->condition()->accept(*this);
-        unindent() << " else ";
-        p->if_false()->accept(*this);
-        unindent() << ")";
+        write("(%a if %a else %a)", p->if_true(),
+              p->condition(), p->if_false());
     }
 
     void PyBody::visit(ast::And *p)
@@ -464,8 +458,7 @@ namespace py_backend
 
     void PyBody::visit(ast::Not *p)
     {
-        unindent() << "not ";
-        p->expression()->accept(*this);
+        write("not %a", p->expression());
     }
 
     void PyBody::visit(ast::BoolEquals *p)
@@ -558,28 +551,13 @@ namespace py_backend
         PyUtils::constant_to_stream(unindent(), p->data());
     }
 
-    class VisitorWrapper
-    {
-        public:
-            VisitorWrapper(ast::AST_Visitor &v, ast::AST_Node *n)
-                : visitor_(v), node_(n) {}
-
-            friend ostream& operator <<(ostream &os, VisitorWrapper &t) {
-                if (t.node_)
-                    t.node_->accept(t.visitor_);
-                return os;
-            }
-        private:
-            ast::AST_Visitor &visitor_;
-            ast::AST_Node *node_;
-    };
-
     void PyBody::visit(ast::MethodCall *p)
     {
         auto t = p->expression()->type();
         auto m = p->method();
         auto name = m.name();
 
+        ast::Expression *e = p->expression();
         ast::Expression *a0 = nullptr;
         ast::Expression *a1 = nullptr;
 
@@ -589,122 +567,108 @@ namespace py_backend
                 a1 = p->arguments()->next->expression;
         }
 
-        VisitorWrapper ew(*this, p->expression());
-        VisitorWrapper a0w(*this, a0);
-        VisitorWrapper a1w(*this, a1);
-
         if (t == type::TypeFactory::get("bool")) {
             if (name == "str") {
-                unindent() << "'true' if " << ew << " else 'false'";
+                write("'true' if %a else 'false'", e);
             }
         } else if (t == type::TypeFactory::get("int")) {
             if (name == "downto") {
-                unindent() << "list(reversed(range(" << a0w << ", "
-                           << ew << " + 1)))";
+                write("list(reversed(range(%a, %a + 1)))", a0, e);
             } else if (name == "str") {
-                unindent() << "str(" << ew << ")";
+                write("str(%a)", e);
             } else if (name == "upto") {
-                unindent() << "list(range(" << ew << ", " << a0w << " + 1))";
+                write("list(range(%a, %a + 1))", e, a0);
             }
         } else if (t == type::TypeFactory::get("string")) {
             if (name == "lalign") {
-                unindent() << ew << ".ljust(" << a0w << ")";
+                write("%a.ljust(%a)", e, a0);
             } else if (name == "length") {
-                unindent() << "len(" << ew << ")";
+                write("len(%a)", e);
             } else if (name == "lower") {
-                unindent() << ew << ".lower()";
+                write("%a.lower()", e);
             } else if (name == "ralign") {
-                unindent() << ew << ".rjust(" << a0w << ")";
+                write("%a.rjust(%a)", e, a0);
             } else if (name == "title") {
-                unindent() << ew << ".title()";
+                write("%a.title()", e);
             } else if (name == "upper") {
-                unindent() << ew << ".upper()";
+                write("%a.upper()", e);
             } else if (name == "replace") {
-                unindent() << ew << ".replace(" << a0w << ", " << a1w << ")";
+                write("%a.replace(%a, %a)", e, a0, a1);
             } else if (name == "wrap") {
-                unindent() << "textwrap.wrap(" << ew << ", " << a0w << ")";
+                write("textwrap.wrap(%a, %a)", e, a0);
             }
         } else if (t->list()) {
             if (name == "size") {
-                unindent() << "len(" << ew << ")";
+                write("len(%a)", e);
             } else if (name == "sort") {
                 if (t->list()->elem()->primitive()) {
-                    unindent() << "sorted(" << ew << ", reverse=not "
-                               << a0w << ")";
+                    write("sorted(%a, reverse=not %a)", e, a0);
                 } else if (t->list()->elem()->record()) {
-                    unindent() << "sorted(" << ew << ", reverse=not " << a1w
-                               << ", key=lambda r: getattr(r, " << a0w << "))";
+                    write("sorted(%a, reverse=not %a, "
+                          "key=lambda r: getattr(r, %a))", e, a1, a0);
                 }
             } else if (name == "join") {
-                unindent() << a0w << ".join(" << ew << ")";
+                write("%a.join(%a)", a0, e);
             }
         }
     }
 
     void PyBody::visit(ast::LambdaExpression *p)
     {
-        unindent() << "lambda ";
+        write("lambda ");
         for (auto v = p->variables; v != nullptr; v = v->next) {
-            unindent() << table_.get(v->statement->variable());
+            write(table_.get(v->statement->variable()).c_str());
             if (v->next)
-                unindent() << ", ";
+                write(", ");
         }
-        unindent() << ": ";
 
-        p->expression->accept(*this);
+        write(": %a", p->expression);
     }
 
     void PyBody::visit(ast::FunctionCall *p)
     {
         if (p->name == "filter") {
-            unindent() << "filter(";
-            p->args->get_lambda(0)->accept(*this);
-            unindent() << ", ";
-            p->args->get_expression(1)->accept(*this);
-            unindent() << ")";
+            write("filter(%a, %a)", p->args->get_lambda(0),
+                  p->args->get_expression(1));
         } else if (p->name == "map") {
-            unindent() << "map(";
-            p->args->get_lambda(0)->accept(*this);
-            unindent() << ", ";
-            p->args->get_expression(1)->accept(*this);
-            unindent() << ")";
+            write("map(%a, %a)", p->args->get_lambda(0),
+                  p->args->get_expression(1));
         }
     }
 
     void PyBody::visit(ast::SymbolRef *p)
     {
         if (p->symbol()->argument())
-            unindent() << "_args[\"" << p->symbol()->get_name() << "\"]";
+            write("_args[\"%s\"]", p->symbol()->get_name().c_str());
         else if (p->symbol()->variable())
-            unindent() << table_.get(p->symbol());
+            write("%s", table_.get(p->symbol()).c_str());
     }
 
     void PyBody::visit(ast::FieldRef *p)
     {
-        p->record()->accept(*this);
-        unindent() << "." << p->field();
+        write("%a.%s", p->record(), p->field().c_str());
     }
 
     void PyBody::visit(ast::List *p)
     {
-        unindent() << "[";
+        write("[");
         for (auto e = p->elements(); e != nullptr; e = e->next) {
             e->expression->accept(*this);
             if (e->next)
                 unindent() << ", ";
         }
-        unindent() << "]";
+        write("]");
     }
 
     void PyBody::visit(ast::Record *p)
     {
-        unindent() << PyUtils::record_name(p->type()) << "(";
+        write("%s(", PyUtils::record_name(p->type()).c_str());
         for (auto e = p->fields(); e != nullptr; e = e->next) {
             e->expression->accept(*this);
             if (e->next)
-                unindent() << ", ";
+                write(", ");
         }
-        unindent() << ")";
+        write(")");
     }
 
     void PyBody::visit(ast::FuncArgList *) {
@@ -731,12 +695,10 @@ namespace py_backend
     void PyBody::visit(ast::ForEach *p)
     {
         if (p->statements()) {
-            indent() << table_.get(p->loop_variable()) <<
-                     " = Loop(";
-            p->expression()->accept(*this);
-            unindent() << ")\n";
-            indent() << "for " << table_.get(p->variable()) << " in "
-                     << table_.get(p->loop_variable()) << ".list:\n";
+            windent("%s = Loop(%a)\n", table_.get(p->loop_variable()).c_str(),
+                    p->expression());
+            windent("for %s in %s.list:\n", table_.get(p->variable()).c_str(),
+                    table_.get(p->loop_variable()).c_str());
             indent_inc();
             p->statements()->accept(*this);
             indent() << table_.get(p->loop_variable()) << ".update()\n";
@@ -747,10 +709,10 @@ namespace py_backend
     void PyBody::visit(ast::ForEachEnum *p)
     {
         if (p->statements()) {
-            indent() << "for " << table_.get(p->index()) << ", "
-                     << table_.get(p->value()) << " in enumerate(";
-            p->expression()->accept(*this);
-            unindent() << "):\n";
+            windent("for %s, %s in enumerate(%a):\n",
+                    table_.get(p->index()).c_str(),
+                    table_.get(p->value()).c_str(),
+                    p->expression());
             indent_inc();
             p->statements()->accept(*this);
             indent_dec();
@@ -759,9 +721,7 @@ namespace py_backend
 
     void PyBody::visit(ast::If *p)
     {
-        indent() << "if ";
-        p->condition()->accept(*this);
-        unindent() << ":\n";
+        windent("if %a:\n", p->condition());
         indent_inc();
         if (p->statements())
             p->statements()->accept(*this);
@@ -770,9 +730,7 @@ namespace py_backend
 
     void PyBody::visit(ast::Elif *p)
     {
-        indent() << "elif ";
-        p->condition()->accept(*this);
-        unindent() << ":\n";
+        windent("elif %a:\n", p->condition());
         indent_inc();
         if (p->statements())
             p->statements()->accept(*this);
@@ -784,7 +742,7 @@ namespace py_backend
     void PyBody::visit(ast::Else *p)
     {
         if (p->statements()) {
-            indent() << "else:\n";
+            windent("else:\n");
             indent_inc();
             p->statements()->accept(*this);
             indent_dec();
@@ -793,14 +751,12 @@ namespace py_backend
 
     void PyBody::visit(ast::Text *p)
     {
-        indent() << "write(_file, \"" << Escaper()(p->text()) << "\")\n";
+        windent("write(_file, \"%s\")\n", Escaper()(p->text()).c_str());
     }
 
     void PyBody::visit(ast::InlinedExpression *p)
     {
-        indent() << "write(_file, ";
-        p->expression()->accept(*this);
-        unindent() << ")\n";
+        windent("write(_file, %a)\n", p->expression());
     }
 
     void PyBody::visit(ast::VariableList *p)
@@ -812,9 +768,8 @@ namespace py_backend
 
     void PyBody::visit(ast::VariableAssignment *p)
     {
-        indent() << table_.get(p->variable()) << " = copy(";
-        p->expression()->accept(*this);
-        unindent() << ")\n";
+        windent("%s = copy(%a)\n", table_.get(p->variable()).c_str(),
+                p->expression());
     }
 
     void PyBody::visit(ast::VariableDeclaration *p)
@@ -825,14 +780,13 @@ namespace py_backend
 
     void PyBody::visit(ast::Create *p)
     {
-        indent() << "try:\n";
-        indent() << "    f = open_file(";
-        p->out->accept(*this);
-        unindent() << ", " << (p->ow_ask ? "True" : "False") << ")\n";
-        indent() << "    __args = {";
+        windent("try:\n");
+        windent("    f = open_file(%s, %s)\n", p->out,
+                (p->ow_ask ? "True" : "False"));
+        windent("    __args = {");
         auto pd = tgl_[p->tgl];
         for (symbol::Argument *a : pd->arguments) {
-            unindent() << "\"" << a->get_name() << "\": ";
+            write("\"%s\": ", a->get_name().c_str());
             auto it = p->args.find(a->get_name());
             if (it != p->args.end()) {
                 it->second->accept(*this);
@@ -840,28 +794,23 @@ namespace py_backend
                 PyConstToStream c(unindent());
                 a->get("default")->get()->accept(c);
             }
-            unindent() << ", ";
+            write(", ");
         }
-        unindent() << "}\n";
-        indent() << "    if f:\n";
-        indent() << "        try:\n";
-        indent() << "            generate(__args, f, \"" << p->tgl << "\")\n";
-        indent() << "        finally:\n";
-        indent() << "            f.close()\n";
-        indent() << "except IOError as e:\n";
-        indent() << "    print('Can\\'t create %s: %s' % (";
-        p->out->accept(*this);
-        unindent() << ", e.strerror))\n";
-        indent() << "    pass\n";
+        write("}\n");
+        windent("    if f:\n");
+        windent("        try:\n");
+        windent("            generate(__args, f, \"%s\")\n", p->tgl.c_str());
+        windent("        finally:\n");
+        windent("            f.close()\n");
+        windent("except IOError as e:\n");
+        windent("    print('Can\\'t create %%s: %%s' % (%a, e.strerror()))",
+                p->out);
+        windent("    pass\n");
     }
 
     void PyBody::binary(const string &s, ast::BinaryExpression *e)
     {
-        unindent() << "(";
-        e->lhs()->accept(*this);
-        unindent() << " " << s << " ";
-        e->rhs()->accept(*this);
-        unindent() << ")";
+        write("(%a %s %a)", e->lhs(), s.c_str(), e->rhs());
     }
 
     /** Generates main() and the main method call
@@ -987,5 +936,4 @@ namespace py_backend
     {
         PyUtils::check_cmd(args, { "-h", "-o", "--help", "--dir" } );
     }
-
 }
