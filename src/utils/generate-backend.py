@@ -33,7 +33,7 @@ def _input(s = ''):
 
 def open_file(path, ask):
     try:
-        fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
         return os.fdopen(fd, 'w')
     except OSError as e:
         if e.errno == errno.EEXIST:
