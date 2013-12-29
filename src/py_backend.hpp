@@ -66,11 +66,11 @@ namespace py_backend {
             void generate_record(const RecordType *);
     };
 
-    class PyBody : public PyWriter, public ast::AST_Visitor
+    class PyBody : public PyWriter,public BackendWriter,public ast::AST_Visitor
     {
         public:
             PyBody(ostream &os)
-                : PyWriter(os, 0), tgl_(), table_() {}
+                : PyWriter(os, 0), BackendWriter(os, *this), tgl_(), table_() {}
 
             /** Generates a body generation function named "generate"
              *
@@ -78,6 +78,15 @@ namespace py_backend {
              */
             void generate(ast::Statements *body);
             void generate(ParseData *, const map<string, ParseData *> &);
+
+            void windent(const char *fmt, ...) {
+                va_list val;
+                indent();
+
+                va_start(val, fmt);
+                writev(fmt, val);
+                va_end(val);
+            }
 
             virtual void visit(ast::TernaryIf *);
             virtual void visit(ast::And *);
