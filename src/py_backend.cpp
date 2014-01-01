@@ -569,7 +569,7 @@ namespace py_backend
 
         if (t == type::TypeFactory::get("bool")) {
             if (name == "str") {
-                write("'true' if %a else 'false'", e);
+                write("('true' if %a else 'false')", e);
             }
         } else if (t == type::TypeFactory::get("int")) {
             if (name == "downto") {
