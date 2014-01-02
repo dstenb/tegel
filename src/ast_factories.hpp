@@ -56,13 +56,33 @@ namespace ast_factory {
     {
         static BinaryExpression *create(Expression *lhs, Expression *rhs)
         {
+            auto st = TypeFactory::get("string");
+
             if (lhs->type() == rhs->type()) {
                 if (lhs->type() == TypeFactory::get("int"))
                     return new Plus(lhs, rhs);
-                else if (lhs->type() == TypeFactory::get("string"))
+                else if (lhs->type() == st)
                     return new StringConcat(lhs, rhs);
                 else if (lhs->type()->list())
                     return new ListConcat(lhs, rhs);
+            } else if (lhs->type() == st) {
+                /* Perform a string concatenation if rhs can be converted to a
+                 * string */
+                try {
+                    TypeMethod m = rhs->type()->lookup("str");
+                    return new StringConcat(lhs, new ast::MethodCall(rhs, m));
+                } catch (const NoSuchMethodError &) {
+                    /* The error is handled down below */
+                }
+            } else if (rhs->type() == st) {
+                /* Perform a string concatenation if lhs can be converted to a
+                 * string */
+                try {
+                    TypeMethod m = lhs->type()->lookup("str");
+                    return new StringConcat(new ast::MethodCall(lhs, m), rhs);
+                } catch (const NoSuchMethodError &) {
+                    /* The error is handled down below */
+                }
             }
             throw InvalidTypeError("Can't apply '+' operand on " +
                                    lhs->type()->str()  + " and " +

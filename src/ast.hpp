@@ -883,7 +883,7 @@ namespace ast {
     {
         public:
             MethodCall(Expression *e, const TypeMethod &m,
-                       ExpressionList *a)
+                       ExpressionList *a = nullptr)
                 : expression_(e), method_(m), args_(a) {}
 
             virtual void accept(AST_Visitor &);
