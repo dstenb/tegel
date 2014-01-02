@@ -76,6 +76,54 @@ class UnknownBackend : public runtime_error
             : runtime_error(s) {}
 };
 
+class BackendGenerator : public ast::AST_Visitor
+{
+    public:
+        BackendGenerator(ostream &os)
+            : os_(os) {}
+
+        void writev(const char *fmt, va_list val) {
+            while (*fmt) {
+                if (*fmt == '%') {
+                    ast::AST_Node *n;
+                    fmt++;
+                    switch (*fmt) {
+                    case '%':
+                        os_ << "%";
+                        break;
+                    case 'a':
+                        n = va_arg(val, ast::AST_Node *);
+                        if (n)
+                            n->accept(*this);
+                        break;
+                    case 's':
+                        os_ << va_arg(val, char *);
+                        break;
+                    case 'i':
+                        os_ << va_arg(val, int);
+                        break;
+                    default:
+                        os_ << "%" << *fmt;
+                        break;
+                    }
+                    fmt++;
+                } else {
+                    os_ << *fmt++;
+                }
+            }
+        }
+
+        void write(const char *fmt, ...) {
+            va_list val;
+
+            va_start(val, fmt);
+            writev(fmt, val);
+            va_end(val);
+        }
+    private:
+        ostream &os_;
+};
+
 class BackendWriter
 {
     public:

@@ -66,11 +66,11 @@ namespace py_backend {
             void generate_record(const RecordType *);
     };
 
-    class PyBody : public PyWriter,public BackendWriter,public ast::AST_Visitor
+    class PyBody : public PyWriter, public BackendGenerator
     {
         public:
             PyBody(ostream &os)
-                : PyWriter(os, 0), BackendWriter(os, *this), tgl_(), table_() {}
+                : PyWriter(os, 0), BackendGenerator(os), tgl_(), table_() {}
 
             /** Generates a body generation function named "generate"
              *
