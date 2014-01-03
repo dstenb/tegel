@@ -86,6 +86,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <INITIAL,control,inline>"?"       return '?';
 <INITIAL,control,inline>":"       return ':';
 <INITIAL,control,inline>"^"       return '^';
+<INITIAL,control,inline>"#"       return '#';
 <INITIAL,control,inline>for       return FOR;
 <INITIAL,control,inline>in        return IN;
 <INITIAL,control,inline>endfor    return ENDFOR;

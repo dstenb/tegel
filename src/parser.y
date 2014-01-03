@@ -156,7 +156,7 @@ void yyvwarning(YYLTYPE *, ParseContext *, const char *, ...);
 %left '<' '>' LE GE
 %left '+' '-'
 %left '*'
-%left '.'
+%left '.' '#'
 
 %start file
 
@@ -966,6 +966,15 @@ expression
             $$ = ast_factory::MinusUnaryFactory::create($2);
         } catch (const InvalidTypeError &e) {
             yyerror(&@2, context, e.what());
+            YYERROR;
+        }
+    }
+    | '#' expression
+    {
+        try {
+            $$ = ast_factory::LengthUnaryFactory::create($2);
+        } catch (const InvalidTypeError &e) {
+            yyverror(&@1, context, e.what());
             YYERROR;
         }
     }

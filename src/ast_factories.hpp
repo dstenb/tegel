@@ -21,13 +21,11 @@ namespace ast_factory {
                 return new Not(new Equals(e, new Constant(zero)));
             } else if (e->type() == TypeFactory::get("string")) {
                 auto empty = new StringConstantData("");
-                return new Not(new StringEquals(e,
-                                                new Constant(empty)));
+                return new Not(new StringEquals(e, new Constant(empty)));
             } else if (e->type()->list()) {
-                auto zero = new IntConstantData(0);
                 TypeMethod m = e->type()->lookup("size");
-                return new GreaterThan(new MethodCall(e, m,  nullptr),
-                                       new Constant(zero));
+                return new GreaterThan(new MethodCall(e, m),
+                                       new Constant(new IntConstantData(0)));
             } else {
                 throw InvalidTypeError("Type " + e->type()->str() +
                                        " can't be converted to bool");
@@ -102,6 +100,23 @@ namespace ast_factory {
                 return new Minus(new Constant(zero), e);
             }
             throw InvalidTypeError("Can't apply '-' operand on " +
+                                   e->type()->str());
+        }
+    };
+
+    /** Creates a length/size expression
+     *
+     */
+    struct LengthUnaryFactory
+    {
+        static UnaryExpression *create(Expression *e)
+        {
+            if (e->type() == TypeFactory::get("string"))
+                return new MethodCall(e, e->type()->lookup("length"));
+            else if (e->type()->list())
+                return new MethodCall(e, e->type()->lookup("size"));
+
+            throw InvalidTypeError("Can't apply '#' operand on " +
                                    e->type()->str());
         }
     };
