@@ -20,6 +20,9 @@ syn keyword tglControlKeyword with if elif else
 " Types
 syn keyword tglTypes bool int string contained
 
+" Functions
+syn keyword tglFunction filter map contained
+
 " Primitive values
 syn keyword tglBoolean true false contained
 syn match tglNumber "\d\+" contained
@@ -28,25 +31,28 @@ syn region tglString start=/\v"/ skip=/\v\\./ end=/\v"/
 " Comments
 syn keyword tglTodo contained TODO FIXME XXX NOTE
 syn region tglComment start="#" end="$" contains=tglTodo
+syn region tglBodyComment start="{#" end="#}" contains=tglTodo
 
 syn match tglContinue "\\$" contained
 
 syn region tglHeaderItem start='{' end='}'
  \ contains=@tglHeaderCluster,tglHeaderItemKeyword
 
+"
+syn cluster tglExpression contains=tglBoolean,tglNumber,tglString,tglTypes,
+ \ tglFunction,tglSharedKeyword
+
 " Clusters
 syn cluster tglHeaderCluster
- \ contains=tglBoolean,tglComment,tglHeaderKeyword,tglNumber,tglString,
- \ tglTypes,tglHeaderItem
+ \ contains=tglComment,tglHeaderKeyword,tglHeaderItem,@tglExpression
 
 syn cluster tglControlCluster
- \ contains=tglBoolean,tglControlKeyword,tglNumber,tglString,
- \ tglTypes,tglContinue,tglSharedKeyword
+ \ contains=tglControlKeyword,tglContinue,tglSharedKeyword,@tglExpression
 
 syn cluster tglInlineCluster
- \ contains=tglBoolean,tglNumber,tglString,tglSharedKeyword
+ \ contains=@tglExpression
 
-syn cluster tglBodyCluster contains=tglControl,tglInline
+syn cluster tglBodyCluster contains=tglControl,tglInline,tglBodyComment
 
 " TODO: handle multiple lines
 syn region tglControl matchgroup=tglControlSep start='^[ \t]*%'ms=e end='$'
@@ -63,6 +69,7 @@ syn region tglBody matchgroup=tglSectionSep
  \ start='^%%' end='\%$' contains=@tglBodyCluster contained
 
 hi def link tglBoolean Boolean
+hi def link tglBodyComment Comment
 hi def link tglComment Comment
 hi def link tglContinue Special
 hi def link tglControlKeyword Keyword
@@ -70,6 +77,7 @@ hi def link tglControlSep Special
 hi def link tglHeaderItemKeyword Keyword
 hi def link tglHeaderKeyword Keyword
 hi def link tglInlineSep Typedef
+hi def link tglFunction Function
 hi def link tglNumber Number
 hi def link tglSectionSep Special
 hi def link tglSharedKeyword Keyword
