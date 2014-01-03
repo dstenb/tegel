@@ -112,7 +112,7 @@ namespace type {
      * language corresponds to an unique object, meaning that simple pointer
      * comparison can be made to compare types in the language.
      *
-     * The class contains safe methods for safe upcasting, so that RTTI doesn't
+     * The class contains safe methods for upcasting, so that RTTI doesn't
      * have to be used.
      */
     class Type
