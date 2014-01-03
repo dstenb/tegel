@@ -248,17 +248,15 @@ namespace ast_factory {
     {
         static Expression *create(Expression *e)
         {
-            if (e->type() == TypeFactory::get("bool")) {
-                TypeMethod m = e->type()->lookup("str");
-                return new MethodCall(e, m,  nullptr);
-            } else if (e->type() == TypeFactory::get("int")) {
-                TypeMethod m = e->type()->lookup("str");
-                return new MethodCall(e, m,  nullptr);
-            } else if (e->type() == TypeFactory::get("string")) {
+            if (e->type() == TypeFactory::get("string"))
                 return e;
+
+            try {
+                return new MethodCall(e, e->type()->lookup("str"));
+            } catch (const NoSuchMethodError &) {
+                throw InvalidTypeError("Type " + e->type()->str() +
+                                       " can't be converted to string");
             }
-            throw InvalidTypeError("Type " + e->type()->str() +
-                                   " can't be converted to string");
         }
     };
 
