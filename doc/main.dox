@@ -3,7 +3,9 @@
 @author dstenb at gmail dot com
 @file
 @mainpage TeGeL - Template Generator Language
+ \tableofcontents
 
+ \section intro Introduction
  TeGeL is a language and program that generates runnable template scripts (e.g.
  Python scripts) from a template specification.
 
@@ -14,9 +16,54 @@
  TeGeL can either generate scripts that create single files, or scripts that
  create a set of files.
 
+ __Supports multiple backends:__ TeGeL can generate scripts for a number of
+   script languages. It can also be extended. See ... for how to write a
+   backend. A backend can generate a script, a function in a programming
+   language or whatever is needed.
+
+ At the moment, TeGeL has the following backends:
+
+ - __py:__ Python (2.7+) backend. This is the default backend.
+ - __pygtk:__ PyGTK graphical backend. For Python 2.7.
+
+ __Compile-time checks:__ Templates are statically typed and checked for
+   errors at compile time, so that the generated script won't contain any
+   runtime errors.
+
+ __Simple syntax__: TeGeL aims to provide syntax that is short and
+ simple, whilst not being in the way. A number of built-in features tries to
+ reduce the amount of code needed to be written, such as higher-order
+ functions.
+
+ For example, why write this
+ ~~~
+ % for u in users
+  % if not loop.last
+ {{ u.name + ":" + u.id }}, \\
+  % else
+ {{ u.name + ":" + u.id }}
+  % endif
+ % endfor
+ ~~~
+ when you instead can write this?
+ ~~~
+ {{ map(^user_t u: u.name + ":" + u.id, users).join(", ") }}
+ ~~~
+
+  \section getting_started Getting Started
+  - [Source Code](@ref source)
+  - [Installation](@ref installation)
+  - [Types](@ref tegel_types)
+  - [Example](@ref example)
+
+
  \section source Source Code
 
- The source code can be found at https://github.com/dstenb/tegel
+ The source code can be found at https://github.com/dstenb/tegel.
+
+ ~~~
+ git clone https://github.com/dstenb/tegel.git
+ ~~~
 
  \section installation Installation
 
@@ -32,18 +79,323 @@
   ~~~
   $ cmake .
   $ make
-  $ make install
+  # make install
   ~~~
 
-  \subsection win_installation Windows
+  \section quick_ref Quick Reference
+  Here is an short overview of the syntax and all of the features of the
+  language.
 
-  TODO
+  A .tgl file consists of a \ref header section and \ref body
+  section. The sections are divided by the "%%" separator.
+  \subsection header Header
 
-  \section getting_started Getting Started
+  The header consists of a list of \ref record and \ref argument declarations.
 
-  - [Types](@ref tegel_types)
-  - [Syntax](@ref syntax)
-  - [Example](@ref example)
-  - [Backends](@ref backends)
-  - [Design](@ref design)
+  ~~~~~~~~~~~~~
+  # Example record
+  record book {
+      string title;
+      int year;
+  }
+
+  arg book[] books {
+      default = [ book{"Book 1", 1997}, book{"Book 2", 2001} ];
+      cmd =  "--books";
+      info = "Book list";
+  }
+
+  # The body starts below
+  %%
+  ~~~~~~~~~~~~~
+
+  \subsection record Record
+  A record is declared using the following syntax
+  ~~~~~~~~~~~~~
+  record [name]  {
+      [type] [field-name];
+      ...
+  }
+  ~~~~~~~~~~~~~
+
+  A record can only hold primitive values. Below is an example of a record
+  declaration
+
+  ~~~~~~~~~~~~~
+  # Example record
+  record book {
+      string title;
+      int year;
+  }
+  ~~~~~~~~~~~~~
+
+  \subsection argument Argument
+  An argument is declared using the following syntax
+  ~~~~~~~~~~~~~
+  arg [type] [name]  {
+      [param-name] = [constant];
+      ...
+  }
+  ~~~~~~~~~~~~~
+
+  Where `param-name` can be any of the following
+
+  Parameter     | Description
+  ------------- | -------------
+  `default`     | Default value for the argument
+  `cmd`         | Command line parameter for the argument ("-X" for short, "--XYZ" for long)
+  `info`        | Information string
+
+  Below is an example of an argument declaration
+
+  ~~~~~~~~~~~~~
+  # Example argument
+  arg book[] books {
+      default = [ book{"Book 1", 1997}, book{"Book 2", 2001} ];
+      cmd = [ "b", "books=" ];
+      info = "Book list";
+  }
+  ~~~~~~~~~~~~~
+
+  \section body Body
+
+  \subsection variable Variables
+
+  Variables can be declared and initialized using
+
+  ~~~
+  % with string s = "test"
+  ~~~
+
+  Previously declared variables can be assigned using
+
+  ~~~
+  % with s = "new value";
+  ~~~
+
+  Declarations and assignments can be combined in a single with statement, e.g.
+
+  ~~~
+  % with string y = "1 and ", int x = 2, y = y + x.str()
+  ~~~
+
+  Sets `y` to `"1 and 2"` and `x` to `2`.
+
+  \subsection for For loops
+
+  \subsubsection foreach For Each loops
+
+  For(each) loops that iterate over lists are defined using the following
+  syntax
+
+  ~~~
+  % for [identifier] in [list-expression]
+  [statements]
+  % endfor
+  ~~~
+
+  Each loop contains an implicit record variable called loop, which has the
+  following values:
+
+  Field           | Type | Description
+  --------------- | ---- | -------------
+  `loop.index`    |`int` | Loop index (zero indexed)
+  `loop.first`    |`bool`| True if it's the first iteration
+  `loop.last`     |`bool`| True if it's the last iteration
+  `loop.length`   |`int` | Total number of iterations
+
+  For example
+
+  ~~~
+  % for b in books + [ book{"Book 3", 2009}, book{"Book 4", 2012 ]
+   % if not loop.last
+  {{ loop.index + 1 }}/{{ loop.length }}: {{ b.title }},
+   % else
+  {{ loop.index + 1 }}/{{ loop.length }}: {{ b.title }}
+   % endif
+  % endfor
+  ~~~
+
+  results in
+
+  ~~~
+  1/4: Book 1,
+  2/4: Book 2,
+  3/4: Book 3,
+  4/4: Book 4
+  ~~~
+
+  \subsubsection enumerated Enumerated For Each loops
+
+  Enmerated for(each) loops that iterate over lists are defined using the
+  following syntax
+
+  ~~~
+  % for [index-identifier], [value-identifier] in [list-expression]
+  [statements]
+  % endfor
+  ~~~
+
+  Where `[index-identifier]` starts at `0`.
+
+  \subsubsection range Loop over ranges
+  Typical for loops can be simulated using the `downto` and `upto` methods on
+  expressions of type `int`. The bounds are inclusive.
+
+  ~~~
+  % for [identifier] in [lower-bound].upto([upper-bound])
+  [statements]
+  % endfor
+  ~~~
+
+  and
+
+  ~~~
+  % for [identifier] in [upper-bound].downto([lower-bound])
+  [statements]
+  % endfor
+  ~~~
+
+  \subsection conditional Conditional statements
+
+  Conditional statements are defined using the following syntax
+
+  ~~~
+  % if [condition]
+  [statements]
+  % elif [condition]
+  [statements]
+  % else
+  [statements]
+  % endif
+  ~~~
+
+  \subsection text Text
+  Every line where the first non-whitespace character isn't a `"%"` is treated as
+  a raw text line. Everything on the line is seen as raw text except for the
+  following:
+
+  \subsubsection inline Inlined expressions
+  Expressions can be inlined using the `{{ [expression] }}` syntax. If you need
+  to add `"{{"` to a text line, this can easiest be done by escaping it
+
+  ~~~
+  {{ "{{" }}
+  ~~~
+
+  \subsubsection comments Inlining comments
+  Comments can be inlined using the `{# text #}` syntax. An inlined comment can
+  only span one line.
+
+  For example
+
+  ~~~
+  {# this will be removed #}test
+  ~~~
+
+  Generates `"test"`
+
+  \subsubsection newline Suppressing newlines
+  Newlines can be suppressed by adding `\\` to the end of a text line. For
+  example
+
+  ~~~
+  Hello, \\
+  World
+  ~~~
+
+  Generates `"Hello, World"`.
+
+  If you need to add `"\\"` to the end of a line, this can easiest be done by
+  escaping it
+
+  ~~~
+  {{ "\\\\" }}
+  ~~~
+
+  \section expression Expressions
+
+  \subsection func_call Functions
+  TeGeL has a number of built-in higher order functions. The language provides
+  simple lambda expressions, similar to Python, which is defined using the
+  following syntax:
+
+  ~~~
+  ^[type1] [variable1], ..., [typeN] [variableN]: [expression]
+  ~~~
+
+
+  \subsubsection filter filter
+  `filter` filters a list using a lambda expression.
+
+  Example:
+
+  ~~~
+  filter(^lambda s: s.length() < 3, [ "a", "bbb", "cc", "dddd"])
+  ~~~
+
+  Returns the following list `[ "a", "cc" ]`.
+
+  \subsubsection map map
+  `map` applies a lambda expression on each element of a list and returns a
+  list of the results of the lambda expressions.
+
+  Example:
+
+  ~~~
+  map(^lambda s: s.length(), [ "a", "bbb", "cc", "dddd"])
+  ~~~
+
+  Returns the following list `[ 1, 3, 2, 4 ]`.
+
+
+
+  \subsection conditional_op Conditional operator
+  `?:` operator as found in many programming languages.
+
+  For example
+
+  ~~~
+  b ? s : "empty"
+  ~~~
+
+  returns `s` when `b` is true, else `"empty"`.
+
+  \subsection string_concat String concatenation
+  Two string expressions can be concatenated by using the `+` operator.
+
+  ~~~
+  "abc" + "def"
+  ~~~
+
+  returns `"abcdef"`.
+
+  \subsection string_repeat String repetition
+  A string expression can be repeated by using the `*` operator with an integer
+  expression
+
+  ~~~
+  "x" * 5
+  ~~~
+
+  returns `"xxxxx"`.
+
+  \subsection list_concat List Concatenation
+  Two list expressions can be concatenated by using the `+` operator.
+
+  ~~~
+  [ 1, 2, 3] + [ 4, 5, 6 ]
+  ~~~
+
+  returns `[ 1, 2, 3, 4, 5, 6 ]`.
+
+  \subsection length_op Length Operator
+  The length of a string or list can be found out using the '#' operator.
+
+  ~~~
+  #"åäö" + #[1, 2, 3]
+  ~~~
+
+  returns `6`.
+
 */
