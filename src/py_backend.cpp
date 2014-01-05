@@ -781,7 +781,7 @@ namespace py_backend
     void PyBody::visit(ast::Create *p)
     {
         windent("try:\n");
-        windent("    f = open_file(%s, %s)\n", p->out,
+        windent("    f = open_file(%a, %s)\n", p->out,
                 (p->ow_ask ? "True" : "False"));
         windent("    __args = {");
         auto pd = tgl_[p->tgl];
@@ -803,7 +803,7 @@ namespace py_backend
         windent("        finally:\n");
         windent("            f.close()\n");
         windent("except IOError as e:\n");
-        windent("    print('Can\\'t create %%s: %%s' % (%a, e.strerror()))",
+        windent("    print('Can\\'t create %%s: %%s' % (%a, e.strerror()))\n",
                 p->out);
         windent("    pass\n");
     }
