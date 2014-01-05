@@ -757,12 +757,12 @@ variable_assign
 
             if (s->get_type() != $3->type()) {
                 yyverror(&@3, context,
-			"invalid type for assignment to %s (got %s, "
+                    "invalid type for assignment to %s (got %s, "
                     "expected %s)", $1, s->get_type()->str().c_str(),
                     $3->type()->str().c_str());
                 YYERROR;
             }
-            $$ = new ast::VariableAssignment(s->variable(), $3); 
+            $$ = new ast::VariableAssignment(s->variable(), $3);
         } catch (const SymTabNoSuchSymbolError &e) {
             yyverror(&@1, context, "no such variable: %s\n", e.what());
             YYERROR;
@@ -773,7 +773,13 @@ variable_assign
 inlined
     : L_INLINE expression R_INLINE
     {
-        $$ = new ast::InlinedExpression(ast_factory::StringFactory::create($2));
+        try {
+            $$ = new ast::InlinedExpression(
+                ast_factory::StringFactory::create($2));
+        } catch (const InvalidTypeError &e) {
+            yyverror(&@2, context, e.what());
+            YYERROR;
+        }
     }
     ;
 
