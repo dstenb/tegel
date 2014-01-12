@@ -27,6 +27,7 @@ void usage(ostream &os, const char *cmd)
     os << " -h, --help          show this help message and exit\n";
     os << " -b BACKEND          select the backend\n";
     os << " -o FILE             output to FILE instead of stdout\n";
+    os << " -t, --tgp           use the tgp instead\n";
     os << "\n";
     os << "Available backends\n";
     os << " bash                Bash (4.0+) backend (unfinished)\n";
@@ -34,7 +35,7 @@ void usage(ostream &os, const char *cmd)
     os << " pygtk               PyGTK backend\n";
 }
 
-Backend *get_backend(const string &str)
+Backend *get_tgl_backend(const string &str)
 {
     if (str.empty() || str == "py") {
         if (str.empty())
@@ -49,10 +50,34 @@ Backend *get_backend(const string &str)
     }
 }
 
-void generate(ostream &os, const string &backend, ParseData *data)
+TgpBackend *get_tgp_backend(const string &str)
 {
-    Backend *b = get_backend(backend);
+    if (str.empty() || str == "py") {
+        if (str.empty())
+            warning() << "no backend specified, defaulting to python\n";
+        return new py_backend::PyTgpBackend;
+    } else if (str == "bash") {
+        //return new bash_backend::BashBackend;
+        // TODO
+        throw UnknownBackend("unknown backend '" + str  + "'");
+    } else {
+        throw UnknownBackend("unknown backend '" + str  + "'");
+    }
+}
+
+/** Generate a file using the .tgl backend */
+void generate_tgl(ostream &os, const string &backend, ParseData *data)
+{
+    Backend *b = get_tgl_backend(backend);
     b->generate(os, data->arguments, data->body);
+}
+
+/** Generate a file using the .tgp backend */
+void generate_tgp(ostream &os, const string &backend,
+                  ParseData *tgp_data, map<string, ParseData *> tgl_data)
+{
+    TgpBackend *b = get_tgp_backend(backend);
+    b->generate(os, tgp_data, tgl_data);
 }
 
 int main(int argc, char **argv)
@@ -63,6 +88,7 @@ int main(int argc, char **argv)
     bool print_ast = false;
     bool print_types = false;
     bool success;
+    bool tgp = false;
 
     FILE *fp;
     string name;
@@ -91,6 +117,8 @@ int main(int argc, char **argv)
             print_ast = true;
         } else if (!strcmp(argv[i], "-s")) {
             print_types = true;
+        } else if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tgp")) {
+            tgp = true;
         } else if (argv[i][0] == '-') {
             usage(cerr, argv[0]);
             error() << "invalid argument '"<< argv[i] << "'\n";
@@ -100,7 +128,7 @@ int main(int argc, char **argv)
         }
     }
 
-    if (isatty(STDIN_FILENO)) {
+    if (tgp || isatty(STDIN_FILENO)) {
         /* Read data from input file */
 
         if (inpath.empty()) {
@@ -118,7 +146,7 @@ int main(int argc, char **argv)
     }
 
     /* Create context */
-    context = new ParseContext(name, fp, false);
+    context = new ParseContext(name, fp, tgp);
 
     /* Parse */
     success = (yyparse(context) == 0);
@@ -147,7 +175,11 @@ int main(int argc, char **argv)
                 error() << "failed to open '" << outpath << "' for writing\n";
                 return 1;
             }
-            generate(f, backend, context->data);
+
+            if (tgp)
+                generate_tgp(f, backend, context->data, context->parsed_files());
+            else
+                generate_tgl(f, backend, context->data);
             f.close();
 
             /* Set the file permission to 0775 */
@@ -158,7 +190,10 @@ int main(int argc, char **argv)
             }
         } else {
             /* Output to stdout */
-            generate(cout, backend, context->data);
+            if (tgp)
+                generate_tgp(cout, backend, context->data, context->parsed_files());
+            else
+                generate_tgl(cout, backend, context->data);
         }
     } catch (const UnknownBackend &e) {
         usage(cerr, argv[0]);
