@@ -408,7 +408,10 @@ namespace py_backend
     {
         windent("def generate(_args, _file):\n");
         indent_inc();
-        body->accept(*this);
+        if (body)
+            body->accept(*this);
+        else
+            indent() << "pass\n";
         indent_dec();
     }
 
@@ -420,7 +423,10 @@ namespace py_backend
         indent_inc();
         windent("if _body == \"\":\n");
         indent_inc();
-        tgp->body->accept(*this);
+        if (tgp->body)
+            tgp->body->accept(*this);
+        else
+            indent() << "pass\n";
         indent_dec();
         for (auto it = tgl.begin(); it != tgl.end(); ++it) {
             indent() << "elif _body == \"" << it->first << "\":\n";
@@ -877,26 +883,24 @@ namespace py_backend
                              const vector<symbol::Argument *> &args,
                              ast::Statements *body)
     {
-        if (body) {
-            vector<PyExtraArgument> extra = {
-                {   "'-o'", "argparse.FileType('w')", "sys.stdout",
-                    "'output to file instead of stdout'", "'_file'"
-                },
-            };
+        vector<PyExtraArgument> extra = {
+            {   "'-o'", "argparse.FileType('w')", "sys.stdout",
+                "'output to file instead of stdout'", "'_file'"
+            },
+        };
 
-            /* Validate the command line names */
-            check_cmd(args);
+        /* Validate the command line names */
+        check_cmd(args);
 
-            PyHeader h(os);
-            PyBody b(os);
-            PyMain m(os);
+        PyHeader h(os);
+        PyBody b(os);
+        PyMain m(os);
 
-            h.generate();
-            os << "\n";
-            b.generate(body);
-            os << "\n";
-            m.generate(args, extra, false);
-        }
+        h.generate();
+        os << "\n";
+        b.generate(body);
+        os << "\n";
+        m.generate(args, extra, false);
     }
 
     void PyBackend::check_cmd(const vector<symbol::Argument *> &args)
@@ -907,29 +911,27 @@ namespace py_backend
     void PyTgpBackend::generate(ostream &os, ParseData *tgp_data,
                                 map<string, ParseData *> &tgl_data)
     {
-        if (tgp_data->body) {
-            vector<PyExtraArgument> extra = {
-                {   "'-o'", "argparse.FileType('w')", "sys.stdout",
-                    "'output to file instead of stdout'", "'_file'"
-                },
-                {   "'--dir'", "str", "'.'", "'select output directory (will "
-                    "create the directory if non-existant)'", "'_dir'"
-                }
-            };
+        vector<PyExtraArgument> extra = {
+            {   "'-o'", "argparse.FileType('w')", "sys.stdout",
+                "'output to file instead of stdout'", "'_file'"
+            },
+            {   "'--dir'", "str", "'.'", "'select output directory (will "
+                "create the directory if non-existant)'", "'_dir'"
+            }
+        };
 
-            /* Validate the command line names */
-            check_cmd(tgp_data->arguments);
+        /* Validate the command line names */
+        check_cmd(tgp_data->arguments);
 
-            PyHeader h(os);
-            PyBody b(os);
-            PyMain m(os);
+        PyHeader h(os);
+        PyBody b(os);
+        PyMain m(os);
 
-            h.generate();
-            os << "\n";
-            b.generate(tgp_data, tgl_data);
-            os << "\n";
-            m.generate(tgp_data->arguments, extra, true);
-        }
+        h.generate();
+        os << "\n";
+        b.generate(tgp_data, tgl_data);
+        os << "\n";
+        m.generate(tgp_data->arguments, extra, true);
     }
 
     void PyTgpBackend::check_cmd(const vector<symbol::Argument *> &args)

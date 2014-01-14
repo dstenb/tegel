@@ -120,6 +120,15 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 <body>[ \t]*"%"      { BEGIN(control); }
 <body>(.|\n)         { unput(*yytext); BEGIN(text); }
+<body><<EOF>>        {  if (string_builder && string_builder > 0) {
+                          yylval->string = string_builder;
+                          string_builder = NULL;
+                          BEGIN(INITIAL);
+                          return TEXT;
+                        } else {
+			  return YY_NULL;
+			}
+                     }
 
  /* rules for raw text lines */
 <text>"{{"             {
@@ -152,6 +161,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
                          string_builder = NULL;
                          BEGIN(body);
                          return TEXT; }
+<text><<EOF>>          { BEGIN(body); }
 <text>{UANYN}          { string_builder_append(yytext); }
  /* TODO: string_builder should be rewritten in
   * a way that is more suitable for adding single characters */
