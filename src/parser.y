@@ -103,6 +103,7 @@ void yyvwarning(YYLTYPE *, ParseContext *, const char *, ...);
 %token AND "and" OR "or" NOT "not"
 %token WITH "with"
 %token CREATE "create"
+%token INCLUDE "include"
 %token L_INLINE "{{" R_INLINE "}}"
 %token LE "<=" EQ "==" NEQ "!=" GE ">="
 %token<string> TEXT

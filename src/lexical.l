@@ -96,6 +96,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 <INITIAL,control,inline>endif     return ENDIF;
 <INITIAL,control,inline>with      return WITH;
 <INITIAL,control,inline>create    return CREATE;
+<INITIAL,control,inline>include   return INCLUDE;
 <INITIAL,control,inline>"true"    { yylval->boolean = true; return BOOL; }
 <INITIAL,control,inline>"false"   { yylval->boolean = false; return BOOL; }
 <INITIAL,control,inline>{INTEGER} { yylval->integer = atoi(yytext); return INT; }
