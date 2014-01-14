@@ -26,8 +26,9 @@ void usage(ostream &os, const char *cmd)
     os << "\n";
     os << " -h, --help          show this help message and exit\n";
     os << " -b BACKEND          select the backend\n";
-    os << " -o FILE             output to FILE instead of stdout\n";
-    os << " -t, --tgp           use the tgp instead\n";
+    os << " -o FILE             output to FILE\n";
+    os << " -s, --stdout        output to stdout\n";
+    os << " -t, --tgp           use the tgp backend instead\n";
     os << "\n";
     os << "Available backends\n";
     os << " bash                Bash (4.0+) backend (unfinished)\n";
@@ -41,8 +42,6 @@ Backend *get_tgl_backend(const string &str)
         if (str.empty())
             warning() << "no backend specified, defaulting to python\n";
         return new py_backend::PyBackend;
-    } else if (str == "bash") {
-        return new bash_backend::BashBackend;
     } else if (str == "pygtk") {
         return new pygtk_backend::PyGtkBackend;
     } else {
@@ -56,10 +55,6 @@ TgpBackend *get_tgp_backend(const string &str)
         if (str.empty())
             warning() << "no backend specified, defaulting to python\n";
         return new py_backend::PyTgpBackend;
-    } else if (str == "bash") {
-        //return new bash_backend::BashBackend;
-        // TODO
-        throw UnknownBackend("unknown backend '" + str  + "'");
     } else {
         throw UnknownBackend("unknown backend '" + str  + "'");
     }
@@ -89,13 +84,17 @@ int main(int argc, char **argv)
     bool print_types = false;
     bool success;
     bool tgp = false;
+    bool use_stdout = false;
+    bool parse_opt = true;
 
     FILE *fp;
     string name;
     ParseContext *context;
 
     for (int i = 1; i < argc; i++) {
-        if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
+        if (!parse_opt) {
+            inpath = argv[i];
+        } else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             usage(cout, argv[0]);
             return 0;
         } else if (!strcmp(argv[i], "-b")) {
@@ -113,12 +112,16 @@ int main(int argc, char **argv)
                 return 1;
             }
             outpath = argv[i];
-        } else if (!strcmp(argv[i], "-a")) {
-            print_ast = true;
         } else if (!strcmp(argv[i], "-s")) {
-            print_types = true;
+            use_stdout = true;
         } else if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tgp")) {
             tgp = true;
+        } else if (!strcmp(argv[i], "--print-ast")) {
+            print_ast = true;
+        } else if (!strcmp(argv[i], "--print-types")) {
+            print_types = true;
+        } else if (!strcmp(argv[i], "--")) {
+            parse_opt = false;
         } else if (argv[i][0] == '-') {
             usage(cerr, argv[0]);
             error() << "invalid argument '"<< argv[i] << "'\n";
@@ -168,7 +171,10 @@ int main(int argc, char **argv)
         return 1;
 
     try {
-        if (!outpath.empty()) {
+        if (!use_stdout) {
+            if (outpath.empty())
+                outpath = "a.out";
+
             /* Output to file */
             ofstream f(outpath);
             if (!f) {
