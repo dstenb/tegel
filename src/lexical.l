@@ -120,7 +120,7 @@ UONLY   {U2}{U}|{U3}{U}{U}|{U4}{U}{U}{U}
 
 <body>[ \t]*"%"      { BEGIN(control); }
 <body>(.|\n)         { unput(*yytext); BEGIN(text); }
-<body><<EOF>>        {  if (string_builder && string_builder > 0) {
+<body><<EOF>>        {  if (string_builder && strlen(string_builder) > 0) {
                           yylval->string = string_builder;
                           string_builder = NULL;
                           BEGIN(INITIAL);
