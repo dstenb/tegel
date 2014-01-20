@@ -837,17 +837,24 @@ namespace py_backend
             indent() << "mkdir_chdir(args._dir)\n\n";
 
         indent() << "if sys.version < '3':\n";
+        indent() << "    def convert_elem(v):\n";
+        indent() << "        if type(v) == str:\n";
+        indent() << "            return v.decode(sys.stdin.encoding)\n";
+        indent() << "        elif type(v) in [ bool, int ]:\n";
+        indent() << "            return v\n";
+        indent() << "        else:\n";
+        indent() << "            l = [ (v[i].decode('utf-8') if (type(v[i]) == str)\n";
+        indent() << "                else v[i]) for i in range(len(v)) ]\n";
+        indent() << "            return v.__new__(type(v), *l)\n";
+        indent() << "\n";
         indent() << "    for a in vars(args):\n";
         indent() << "        v = getattr(args, a)\n";
         indent() << "        if not a.startswith('_'):\n";
-        indent() << "            if (type(v) == str):\n";
-        indent() << "                setattr(args, a, "
-                 "v.decode(sys.stdin.encoding))\n";
-        indent() << "            elif not type(v) in [ bool, int ]:\n";
-        indent() << "                l = [ (v[i].decode('utf-8') if "
-                 "(type(v[i]) == str)\n";
-        indent() << "                    else v[i]) for i in range(len(v)) ]\n";
-        indent() << "                setattr(args, a, v.__new__(type(v), *l))\n\n";
+        indent() << "            if type(v) == list:\n";
+        indent() <<
+                 "                setattr(args, a, [ convert_elem(e) for e in v ])\n";
+        indent() << "            else:\n";
+        indent() << "                setattr(args, a, convert_elem(v))\n";
 
         indent() << "generate(vars(args), args._file)\n\n";
 
