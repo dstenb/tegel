@@ -419,6 +419,9 @@ namespace type {
                     }
                 }
 
+                /* Setup methods */
+                setup_record_methods(t);
+
                 auto l = add_list(t);
                 setup_record_list_methods(l);
             }
@@ -552,6 +555,13 @@ namespace type {
                 };
 
                 add_record("loop", fields);
+            }
+
+            static void setup_record_methods(RecordType *t) {
+                vector<const Type *> e_v = { };
+                const Type *sl = get_list(get("string")->single());
+
+                t->add_method(TypeMethod("elems", sl, e_v));
             }
 
             static void setup_record_list_methods(ListType *t) {

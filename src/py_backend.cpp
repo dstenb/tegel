@@ -327,6 +327,12 @@ namespace py_backend
         unindent() << "    else:\n";
         unindent() << "        f.buffer.write(s.encode('utf-8'))\n\n";
 
+        unindent() << "def to_str(x):\n";
+        unindent() << "    if type(x) == bool:\n";
+        unindent() << "        return 'true' if x else 'false'\n";
+        unindent() << "    else:\n";
+        unindent() << "        return str(x)\n\n";
+
         /* The loop record variable in loops are instances of Loop instead of
          * tuple_list to improve performance (by not having to create a new
          * tuple every iteration); however, when other variables are
@@ -575,7 +581,7 @@ namespace py_backend
 
         if (t == type::TypeFactory::get("bool")) {
             if (name == "str") {
-                write("('true' if %a else 'false')", e);
+                write("to_str(%a)", e);
             }
         } else if (t == type::TypeFactory::get("int")) {
             if (name == "downto") {
@@ -602,6 +608,10 @@ namespace py_backend
                 write("%a.replace(%a, %a)", e, a0, a1);
             } else if (name == "wrap") {
                 write("textwrap.wrap(%a, %a)", e, a0);
+            }
+        } else if (t->record()) {
+            if (name == "elems") {
+                write("map(lambda x: to_str(x), list(%a))", e);
             }
         } else if (t->list()) {
             if (name == "size") {
