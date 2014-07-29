@@ -28,3 +28,15 @@ FILE *load_file(const char *path)
     }
     return fp;
 }
+
+char *xstrdup(const char *s)
+{
+    char *ns = strdup(s);
+
+    if (!ns) {
+        error() << "couldn't allocate data!\n";
+        exit(1);
+    }
+
+    return ns;
+}

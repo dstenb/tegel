@@ -74,4 +74,6 @@ class AsciiStringCreator
         string str_;
 };
 
+char *xstrdup(const char *);
+
 #endif

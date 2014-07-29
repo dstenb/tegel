@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "ast.hpp"
 #include "ast_printer.hpp"
@@ -29,6 +30,10 @@ void usage(ostream &os, const char *cmd)
     os << " -o FILE             output to FILE\n";
     os << " -s, --stdout        output to stdout\n";
     os << " -t, --tgp           use the tgp backend instead\n";
+    os << " -x, --exec          execute the generated script. all arguments "
+        "passed after '--' are fed to the script.\n";
+    os << "                     this will create an a.out file if the -s "
+        "option is also used\n";
     os << "\n";
     os << "Available backends\n";
     os << " bash                Bash (4.0+) backend (unfinished)\n";
@@ -75,6 +80,37 @@ void generate_tgp(ostream &os, const string &backend,
     b->generate(os, tgp_data, tgl_data);
 }
 
+void execute(const string file, const string &backend, char **exec_args)
+{
+    if (backend.empty() || backend == "py") {
+        // argv[0] = python
+        // argv[1] = filename
+        // argv[N - 1] = nullptr
+        size_t len = 3;
+
+        if (exec_args) {
+            for (char **p = exec_args; *p; p++) {
+                len++;
+            }
+        }
+
+        char **eargs = new char*[len];
+        eargs[0] = xstrdup("python");
+        eargs[1] = xstrdup(file.c_str());
+
+        if (exec_args) {
+            for (int i = 2; *exec_args; exec_args++)
+                eargs[i++] = *exec_args;
+        }
+
+        eargs[len - 1] = nullptr;
+        execvp("python", eargs);
+        delete eargs;
+    } else {
+
+    }
+}
+
 int main(int argc, char **argv)
 {
     string inpath = "";
@@ -85,16 +121,16 @@ int main(int argc, char **argv)
     bool success;
     bool tgp = false;
     bool use_stdout = false;
-    bool parse_opt = true;
+    bool exec_directly = false;
+
+    char **exec_args = nullptr;
 
     FILE *fp;
     string name;
     ParseContext *context;
 
     for (int i = 1; i < argc; i++) {
-        if (!parse_opt) {
-            inpath = argv[i];
-        } else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
+        if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             usage(cout, argv[0]);
             return 0;
         } else if (!strcmp(argv[i], "-b")) {
@@ -114,6 +150,8 @@ int main(int argc, char **argv)
             outpath = argv[i];
         } else if (!strcmp(argv[i], "-s")) {
             use_stdout = true;
+        } else if (!strcmp(argv[i], "-x") || !strcmp(argv[i], "--exec")) {
+            exec_directly = true;
         } else if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tgp")) {
             tgp = true;
         } else if (!strcmp(argv[i], "--print-ast")) {
@@ -121,7 +159,8 @@ int main(int argc, char **argv)
         } else if (!strcmp(argv[i], "--print-types")) {
             print_types = true;
         } else if (!strcmp(argv[i], "--")) {
-            parse_opt = false;
+            exec_args = &argv[i + 1];
+            break;
         } else if (argv[i][0] == '-') {
             usage(cerr, argv[0]);
             error() << "invalid argument '"<< argv[i] << "'\n";
@@ -171,7 +210,7 @@ int main(int argc, char **argv)
         return 1;
 
     try {
-        if (!use_stdout) {
+        if (!use_stdout || exec_directly) {
             if (outpath.empty())
                 outpath = "a.out";
 
@@ -194,6 +233,9 @@ int main(int argc, char **argv)
                 warning() << "couldn't set file permission ("
                           << strerror(errno) << ")\n";
             }
+
+            if (exec_directly)
+                execute(outpath, backend, exec_args);
         } else {
             /* Output to stdout */
             if (tgp)
